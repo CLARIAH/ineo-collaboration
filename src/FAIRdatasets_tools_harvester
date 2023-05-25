@@ -1,0 +1,29 @@
+import os
+import requests
+from bs4 import BeautifulSoup
+
+url = "https://tools.clariah.nl/files/"
+save_directory = "tools_metadata"
+
+if not os.path.exists(save_directory):
+    os.makedirs(save_directory)
+
+response = requests.get(url)
+soup = BeautifulSoup(response.content, 'html.parser')
+links = soup.find_all('a')
+
+count = 0
+
+for link in links:
+    href = link.get('href')
+    if href.endswith('.json'):
+        file_url = url + href
+        print(f"Downloading {file_url}")
+        response = requests.get(file_url)
+        file_name = os.path.join(save_directory, href)
+        with open(file_name, 'wb') as file:
+            file.write(response.content)
+        count += 1
+
+print(f"Downloaded all the tools metadata! Total JSON files: {count}")
+
