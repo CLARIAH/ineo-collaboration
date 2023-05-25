@@ -1,29 +1,66 @@
 import os
 import requests
+from typing import List, Optional
 from bs4 import BeautifulSoup
+import hashlib
+import sqlite3
 
-url = "https://tools.clariah.nl/files/"
-save_directory = "tools_metadata"
+def get_md5(file_name):
+    """
+    Getting MD5 of each individual json file
+    """
+    hash_md5 = hashlib.md5()
+    with open(file_name, 'rb') as file:
+        for chunk in iter(lambda: file.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
 
-if not os.path.exists(save_directory):
-    os.makedirs(save_directory)
 
-response = requests.get(url)
-soup = BeautifulSoup(response.content, 'html.parser')
-links = soup.find_all('a')
+def download_json_files() -> List[str]:
+    files_list = []
+    url = "https://tools.clariah.nl/files/"
+    save_directory = "tools_metadata"
 
-count = 0
+    if not os.path.exists(save_directory):
+        os.makedirs(save_directory)
 
-for link in links:
-    href = link.get('href')
-    if href.endswith('.json'):
-        file_url = url + href
-        print(f"Downloading {file_url}")
-        response = requests.get(file_url)
-        file_name = os.path.join(save_directory, href)
-        with open(file_name, 'wb') as file:
-            file.write(response.content)
-        count += 1
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    links = soup.find_all('a')
 
-print(f"Downloaded all the tools metadata! Total JSON files: {count}")
+    count = 0
+
+    for link in links:
+        href = link.get('href')
+        if href.endswith('.json'):
+            file_url = url + href
+            print(f"Downloading {file_url}")
+            response = requests.get(file_url)
+            file_name = os.path.join(save_directory, href)
+            files_list.append(file_name)
+            with open(file_name, 'wb') as file:
+                file.write(response.content)
+            count += 1
+
+    print(f"Downloaded all the tools metadata! Total JSON files: {count}")
+    return files_list
+
+def get_files(folder_name: str) -> Optional[List[str]]:
+    """
+    get all the files in the folder
+    """
+    if not os.path.exists(folder_name):
+        return None
+    files_list = os.listdir(folder_name)
+    return files_list
+
+
+if __name__ == '__main__':
+    # get all the json files
+    _ = download_json_files()
+
+    # compute md5 for each json file
+    #for file in files:
+    for file in get_files("tools_metadata"):
+        print(f"file: {file} md5: {get_md5(os.path.join('tools_metadata', file))}")
 
