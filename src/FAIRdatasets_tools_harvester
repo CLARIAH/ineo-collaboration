@@ -4,6 +4,8 @@ from typing import List, Optional
 from bs4 import BeautifulSoup
 import hashlib
 import sqlite3
+from datetime import datetime
+
 
 def get_md5(file_name):
     """
@@ -17,6 +19,11 @@ def get_md5(file_name):
 
 
 def download_json_files() -> List[str]:
+    """
+    Download and count all individual json files
+    
+    """
+    
     files_list = []
     url = "https://tools.clariah.nl/files/"
     save_directory = "tools_metadata"
@@ -45,6 +52,7 @@ def download_json_files() -> List[str]:
     print(f"Downloaded all the tools metadata! Total JSON files: {count}")
     return files_list
 
+
 def get_files(folder_name: str) -> Optional[List[str]]:
     """
     get all the files in the folder
@@ -55,12 +63,69 @@ def get_files(folder_name: str) -> Optional[List[str]]:
     return files_list
 
 
+def create_db_table(conn: sqlite3.Connection, table_name: str = "tools_metadata") -> None:
+    """
+    create a table in the database
+    """
+    c = conn.cursor()
+    c.execute(f"CREATE TABLE {table_name} (file_name text, md5 text, timestamp text DEFAULT CURRENT_TIMESTAMP)")
+    conn.commit()
+
+
+def db_table_exists(conn: sqlite3.Connection, table_name: str = "tools_metadata") -> bool:
+    """
+    check if the table exists in the database
+    """
+    c = conn.cursor()
+    c.execute(f"SELECT count(name) FROM sqlite_master WHERE type='table' AND name='{table_name}'")
+    if c.fetchone()[0] == 1:
+        return True
+    return False
+
+
+def init_check_db(db_file_name: str, table_name: str) -> Optional[sqlite3.Connection]:
+    """
+    check if the database exists, if not create one
+    """
+    conn = sqlite3.connect(db_file_name)
+    
+    # check if table exists
+    if not db_table_exists(conn, table_name):
+        print(f"Table {table_name} does not exis, creating!")
+        create_db_table(conn, table_name)
+
+    return conn
+
+
 if __name__ == '__main__':
+    """
+    main function
+    """
+    # init db and check if the table exists
+    conn = init_check_db(db_file_name="tools_metadata.db", table_name="tools_metadata")
+    if conn is None:
+        print("Error in creating the database connection!")
+        exit(1)
+    
+    # create a cursor
+    c = conn.cursor()
+
     # get all the json files
     _ = download_json_files()
 
-    # compute md5 for each json file
-    #for file in files:
-    for file in get_files("tools_metadata"):
-        print(f"file: {file} md5: {get_md5(os.path.join('tools_metadata', file))}")
+    # compute md5 for each json file aqnd store them in the database
+    # for file in files:
+    files = get_files("tools_metadata")
+    if files is None:
+        print("No files found in the directory")
+        exit(0)
+
+    timestamp = datetime.now()
+    for file in files:
+        md5_hash = get_md5(os.path.join('tools_metadata', file))
+        print(f"file: {file} md5: {md5_hash}")
+        # store the md5 in the database
+        c.execute("INSERT INTO tools_metadata VALUES (?, ?, ?)", (file, md5_hash, str(timestamp)))
+        
+        conn.commit()
 
