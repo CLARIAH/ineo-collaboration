@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import hashlib
 import sqlite3
 from datetime import datetime
+#from rumble import Rumble
 
 
 def get_md5(file_name):
@@ -113,7 +114,7 @@ if __name__ == '__main__':
     # get all the json files
     _ = download_json_files()
 
-    # compute md5 for each json file aqnd store them in the database
+    # compute md5 for each json file and store them in the database
     # for file in files:
     files = get_files("tools_metadata")
     if files is None:
