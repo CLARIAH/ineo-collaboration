@@ -5,7 +5,8 @@ from bs4 import BeautifulSoup
 import hashlib
 import sqlite3
 from datetime import datetime
-#from rumble import Rumble
+import jsonlines
+import json
 
 
 def get_md5(file_name):
@@ -40,7 +41,7 @@ def download_json_files() -> List[str]:
 
     for link in links:
         href = link.get('href')
-        if href.endswith('.json'):
+        if href.endswith('.codemeta.json'):
             file_url = url + href
             print(f"Downloading {file_url}")
             response = requests.get(file_url)
@@ -111,11 +112,16 @@ if __name__ == '__main__':
     # create a cursor
     c = conn.cursor()
 
-    # get all the json files
-    _ = download_json_files()
-
+    # get all the json files and convert it into one jsonlines file named codemeta.jsonl 
+    docfiles = download_json_files()
+     
+    with jsonlines.open("codemeta.jsonl", mode="w") as writer:
+        for file in docfiles:
+            with open(file, 'r') as json_file:
+                data = json.load(json_file)
+                writer.write(data)
+    
     # compute md5 for each json file and store them in the database
-    # for file in files:
     files = get_files("tools_metadata")
     if files is None:
         print("No files found in the directory")
@@ -126,7 +132,7 @@ if __name__ == '__main__':
         md5_hash = get_md5(os.path.join('tools_metadata', file))
         print(f"file: {file} md5: {md5_hash}")
         # store the md5 in the database
-        c.execute("INSERT INTO tools_metadata VALUES (?, ?, ?)", (file, md5_hash, str(timestamp)))
+        c.execute("INSERT OR REPLACE INTO tools_metadata VALUES (?, ?, ?)", (file, md5_hash, str(timestamp)))
         
         conn.commit()
 
