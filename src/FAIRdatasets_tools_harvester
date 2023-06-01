@@ -133,6 +133,7 @@ c.execute("SELECT md5 FROM tools_metadata WHERE file_name='codemeta.jsonl' ORDER
 md5_timestamp = c.fetchone()
 
 if md5_timestamp is not None and md5_timestamp[0] == codemeta_hash:
+    print("codemeta.jsonl hash has not changed. Skipping individual file hashes calculation.")
 
 else:
     # compute MD5 hash for each json file and store them in the database
