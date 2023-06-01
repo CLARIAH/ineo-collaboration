@@ -19,7 +19,6 @@ def get_md5(file_name):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
-
 def download_json_files() -> List[str]:
     """
     Download and count all individual json files
@@ -112,16 +111,31 @@ if __name__ == '__main__':
     # create a cursor
     c = conn.cursor()
 
-    # get all the json files and convert it into one jsonlines file named codemeta.jsonl 
-    docfiles = download_json_files()
-     
-    with jsonlines.open("codemeta.jsonl", mode="w") as writer:
-        for file in docfiles:
-            with open(file, 'r') as json_file:
-                data = json.load(json_file)
-                writer.write(data)
-    
-    # compute md5 for each json file and store them in the database
+# get all the json files and convert them into one jsonlines file named codemeta.jsonl
+docfiles = download_json_files()
+
+# simulating a change in codemeta.jsonl (remove # line 119)
+with jsonlines.open("codemeta.jsonl", mode="w") as writer:
+    #writer.write({"INEOtool_field": "INEOtool_value"})
+
+    for file in docfiles:
+        with open(file, 'r') as json_file:
+            data = json.load(json_file)
+            writer.write(data)
+
+# calculate MD5 hash for codemeta.jsonl
+timestamp = datetime.now()
+codemeta_hash = get_md5('codemeta.jsonl')
+print(f"codemeta.jsonl md5: {codemeta_hash}")
+
+# retrieve the previous hash value of codemeta.jsonl from the database
+c.execute("SELECT md5 FROM tools_metadata WHERE file_name='codemeta.jsonl' ORDER BY timestamp DESC LIMIT 1")
+md5_timestamp = c.fetchone()
+
+if md5_timestamp is not None and md5_timestamp[0] == codemeta_hash:
+
+else:
+    # compute MD5 hash for each json file and store them in the database
     files = get_files("tools_metadata")
     if files is None:
         print("No files found in the directory")
@@ -132,7 +146,9 @@ if __name__ == '__main__':
         md5_hash = get_md5(os.path.join('tools_metadata', file))
         print(f"file: {file} md5: {md5_hash}")
         # store the md5 in the database
-        c.execute("INSERT OR REPLACE INTO tools_metadata VALUES (?, ?, ?)", (file, md5_hash, str(timestamp)))
-        
-        conn.commit()
+        c.execute("INSERT INTO tools_metadata VALUES (?, ?, ?)", (file, md5_hash, str(timestamp)))
 
+# store the codemeta.jsonl md5 hash in the database
+c.execute("INSERT INTO tools_metadata VALUES (?, ?, ?)", ('codemeta.jsonl', codemeta_hash, str(timestamp)))
+
+conn.commit()
