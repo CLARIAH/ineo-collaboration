@@ -9,7 +9,6 @@ import jsonlines
 import json
 import shutil
 
-
 def get_md5(file_name):
     """
     Getting MD5 of each individual json file
@@ -178,3 +177,12 @@ codemeta_timestamp = datetime.now()
 c.execute("INSERT INTO tools_metadata VALUES (?, ?, ?)", ('codemeta.jsonl', codemeta_hash, str(codemeta_timestamp.strftime("%Y-%m-%d %H:%M:%S"))))
 
 conn.commit()
+
+# RumbleDB query (rating >= 3 stars)
+rumble_query = """
+    for $i in json-file("codemeta.jsonl",10)
+    where $i.review.reviewRating ge 3
+    return $i.identifier
+    """
+with open("rumble_query.rq", "w") as file:
+    file.write(rumble_query)
