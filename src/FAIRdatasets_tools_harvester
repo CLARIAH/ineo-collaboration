@@ -111,78 +111,78 @@ if __name__ == '__main__':
     # create a cursor
     c = conn.cursor()
 
-# get all the json files and convert them into one jsonlines file named codemeta.jsonl
-docfiles = download_json_files()
+    # get all the json files and convert them into one jsonlines file named codemeta.jsonl
+    docfiles = download_json_files()
 
-with jsonlines.open("codemeta.jsonl", mode="w") as writer:
-    # simulating a change in codemeta.jsonl (remove #)
-    # writer.write({"INEOtool_field": "INEOtool_value"})
+    with jsonlines.open("codemeta.jsonl", mode="w") as writer:
+        # simulating a change in codemeta.jsonl (remove #)
+        # writer.write({"INEOtool_field": "INEOtool_value"})
 
-    for file in docfiles:
-        with open(file, 'r') as json_file:
-            data = json.load(json_file)
-            writer.write(data)
+        for file in docfiles:
+            with open(file, 'r') as json_file:
+                data = json.load(json_file)
+                writer.write(data)
 
-# Calculate MD5 hash for codemeta.jsonl
-codemeta_hash = get_md5('codemeta.jsonl')
-print(f"codemeta.jsonl md5: {codemeta_hash}")
+    # Calculate MD5 hash for codemeta.jsonl
+    codemeta_hash = get_md5('codemeta.jsonl')
+    print(f"codemeta.jsonl md5: {codemeta_hash}")
 
-# Check if the hash of codemeta.jsonl has changed since the last timestamp
-c.execute("SELECT md5 FROM tools_metadata WHERE file_name='codemeta.jsonl' ORDER BY timestamp DESC LIMIT 1")
-md5_timestamp = c.fetchone()
+    # Check if the hash of codemeta.jsonl has changed since the last timestamp
+    c.execute("SELECT md5 FROM tools_metadata WHERE file_name='codemeta.jsonl' ORDER BY timestamp DESC LIMIT 1")
+    md5_timestamp = c.fetchone()
 
-if md5_timestamp is not None and md5_timestamp[0] == codemeta_hash:
-    print("codemeta.jsonl hash has not changed. Skipping individual file hashes calculation and back-up.")
-else:
-    # Retrieve the latest timestamp from the database
-    c.execute("SELECT timestamp FROM tools_metadata ORDER BY timestamp DESC LIMIT 1")
-    latest_timestamp = c.fetchone()
-
-    if latest_timestamp is not None:
-        latest_timestamp = datetime.strptime(latest_timestamp[0], "%Y-%m-%d %H:%M:%S")
+    if md5_timestamp is not None and md5_timestamp[0] == codemeta_hash:
+        print("codemeta.jsonl hash has not changed. Skipping individual file hashes calculation and back-up.")
     else:
-        latest_timestamp = datetime.now()
+        # Retrieve the latest timestamp from the database
+        c.execute("SELECT timestamp FROM tools_metadata ORDER BY timestamp DESC LIMIT 1")
+        latest_timestamp = c.fetchone()
 
-    # Create a directory to back-up tools_metadata (because the hash of codemeta.jsonl has changed)
-    backup_directory = f"tools_metadata_backup_{latest_timestamp.strftime('%Y%m%d%H%M%S')}"
+        if latest_timestamp is not None:
+            latest_timestamp = datetime.strptime(latest_timestamp[0], "%Y-%m-%d %H:%M:%S")
+        else:
+            latest_timestamp = datetime.now()
 
-    if not os.path.exists(backup_directory):
-        os.makedirs(backup_directory)
-    else:
-        print(f"Backup directory '{backup_directory}' already exists. Skipping back-up.")
+        # Create a directory to back-up tools_metadata (because the hash of codemeta.jsonl has changed)
+        backup_directory = f"tools_metadata_backup_{latest_timestamp.strftime('%Y%m%d%H%M%S')}"
 
-    # Copy all files from the original directory to the backup directory
-    files = get_files("tools_metadata")
-    if files is None:
-        print("No files found in the directory")
-        exit(0)
+        if not os.path.exists(backup_directory):
+            os.makedirs(backup_directory)
+        else:
+            print(f"Backup directory '{backup_directory}' already exists. Skipping back-up.")
 
-    for file in files:
-        source_path = os.path.join('tools_metadata', file)
-        destination_path = os.path.join(backup_directory, file)
-        shutil.copyfile(source_path, destination_path)
+        # Copy all files from the original directory to the backup directory
+        files = get_files("tools_metadata")
+        if files is None:
+            print("No files found in the directory")
+            exit(0)
 
-    # Compute MD5 hash for each json file and store them in the database
-    files = get_files("tools_metadata")
+        for file in files:
+            source_path = os.path.join('tools_metadata', file)
+            destination_path = os.path.join(backup_directory, file)
+            shutil.copyfile(source_path, destination_path)
 
-    for file in files:
-        timestamp = datetime.now()
-        md5_hash = get_md5(os.path.join('tools_metadata', file))
-        print(f"file: {file} md5: {md5_hash}")
-        # Store the md5 in the database
-        c.execute("INSERT INTO tools_metadata VALUES (?, ?, ?)", (file, md5_hash, str(timestamp.strftime("%Y-%m-%d %H:%M:%S"))))
+        # Compute MD5 hash for each json file and store them in the database
+        files = get_files("tools_metadata")
 
-# Update the timestamp for codemeta.jsonl in the database
-codemeta_timestamp = datetime.now() 
-c.execute("INSERT INTO tools_metadata VALUES (?, ?, ?)", ('codemeta.jsonl', codemeta_hash, str(codemeta_timestamp.strftime("%Y-%m-%d %H:%M:%S"))))
+        for file in files:
+            timestamp = datetime.now()
+            md5_hash = get_md5(os.path.join('tools_metadata', file))
+            print(f"file: {file} md5: {md5_hash}")
+            # Store the md5 in the database
+            c.execute("INSERT INTO tools_metadata VALUES (?, ?, ?)", (file, md5_hash, str(timestamp.strftime("%Y-%m-%d %H:%M:%S"))))
 
-conn.commit()
+    # Update the timestamp for codemeta.jsonl in the database
+    codemeta_timestamp = datetime.now() 
+    c.execute("INSERT INTO tools_metadata VALUES (?, ?, ?)", ('codemeta.jsonl', codemeta_hash, str(codemeta_timestamp.strftime("%Y-%m-%d %H:%M:%S"))))
 
-# RumbleDB query (rating >= 3 stars)
-rumble_query = """
-    for $i in json-file("codemeta.jsonl",10)
-    where $i.review.reviewRating ge 3
-    return $i.identifier
-    """
-with open("rumble_query.rq", "w") as file:
-    file.write(rumble_query)
+    conn.commit()
+
+    # RumbleDB query (rating >= 3 stars)
+    rumble_query = """
+        for $i in json-file("codemeta.jsonl",10)
+        where $i.review.reviewRating ge 3
+        return $i.identifier
+        """
+    with open("rumble_query.rq", "w") as file:
+        file.write(rumble_query)
