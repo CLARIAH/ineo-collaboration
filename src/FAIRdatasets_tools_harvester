@@ -14,8 +14,27 @@ def get_md5(file_name):
     """
     Getting MD5 of each individual json file
     """
+    """
+    first create a canonical version of the json file
+    """
+    md5_file = file_name
+    if file_name.endswith('.json'):
+        canon_file = f"{file_name}.canon"
+        with open(file_name, 'r') as json_file:
+            data = json.load(json_file)
+            print(file_name)
+            print(data)
+            if 'review' in data:
+                data['review']['@id'] = '__canon_purge__'
+                data['review']['datePublished'] = '__canon_purge__'
+            else:
+                print("no review!")
+        with open(canon_file, 'w') as json_file:
+            json.dump(data, json_file)
+        md5_file = canon_file
+
     hash_md5 = hashlib.md5()
-    with open(file_name, 'rb') as file:
+    with open(md5_file, 'rb') as file:
         for chunk in iter(lambda: file.read(4096), b""):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
@@ -158,7 +177,10 @@ if __name__ == '__main__':
         latest_timestamp = c.fetchone()
 
         #if latest_timestamp is not None:
-        latest_timestamp = datetime.strptime(latest_timestamp[0], "%Y-%m-%d %H:%M:%S")
+        try:
+            latest_timestamp = datetime.strptime(latest_timestamp[0], "%Y-%m-%d %H:%M:%S.%f")
+        except ValueError:
+            latest_timestamp = datetime.strptime(latest_timestamp[0], "%Y-%m-%d %H:%M:%S")
         #else:
         #    latest_timestamp = datetime.now()
 
@@ -186,6 +208,7 @@ if __name__ == '__main__':
             timestamp = datetime.now()
             md5_hash = get_md5(os.path.join('tools_metadata', file))
             print(f"file: {file} md5: {md5_hash}")
+            # exit(10) # if we want one file only
             
             # Retrieve the previous hash for the file from the database
             c.execute("SELECT md5 FROM tools_metadata WHERE file_name=? ORDER BY timestamp DESC LIMIT 1", (file,))
