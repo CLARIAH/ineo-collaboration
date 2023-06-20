@@ -8,6 +8,7 @@ from datetime import datetime
 import jsonlines
 import json
 import shutil
+import jsondiff
 
 def get_md5(file_name):
     """
@@ -51,8 +52,28 @@ def download_json_files() -> List[str]:
             count += 1
 
     print(f"Downloaded all the tools metadata! Total JSON files: {count}")
+    
+    # Modify the contents of the grlc.codemeta.json file
+    
+    """
+    grlc_file = os.path.join(save_directory, 'grlc.codemeta.json')
+    if grlc_file in files_list:
+        with open(grlc_file, 'r') as json_file:
+            data = json.load(json_file)
+            data['new_tools'] = 'new_value'
+        with open(grlc_file, 'w') as json_file:
+            json.dump(data, json_file)
+    
+    alpino_file = os.path.join(save_directory, 'alpino-service.codemeta.json')
+    if alpino_file in files_list:
+        with open(alpino_file, 'r') as json_file:
+            data = json.load(json_file)
+            data['new_tool'] = 'new_value'
+        with open(alpino_file, 'w') as json_file:
+            json.dump(data, json_file)
+    """
     return files_list
-
+    
 
 def get_files(folder_name: str) -> Optional[List[str]]:
     """
@@ -97,7 +118,6 @@ def init_check_db(db_file_name: str, table_name: str) -> Optional[sqlite3.Connec
 
     return conn
 
-
 if __name__ == '__main__':
     """
     main function
@@ -116,7 +136,7 @@ if __name__ == '__main__':
 
     with jsonlines.open("codemeta.jsonl", mode="w") as writer:
         # simulating a change in codemeta.jsonl (remove #)
-        # writer.write({"INEOtool_field": "INEOtool_value"})
+        # writer.write({"INEOtools_field": "INEOtools_value"})
 
         for file in docfiles:
             with open(file, 'r') as json_file:
@@ -130,18 +150,17 @@ if __name__ == '__main__':
     # Check if the hash of codemeta.jsonl has changed since the last timestamp
     c.execute("SELECT md5 FROM tools_metadata WHERE file_name='codemeta.jsonl' ORDER BY timestamp DESC LIMIT 1")
     md5_timestamp = c.fetchone()
-
     if md5_timestamp is not None and md5_timestamp[0] == codemeta_hash:
-        print("codemeta.jsonl hash has not changed. Skipping individual file hashes calculation and back-up.")
+        print(f"codemeta.jsonl hash {codemeta_hash} has not changed. Skipping individual file hashes calculation and back-up.")
     else:
         # Retrieve the latest timestamp from the database
         c.execute("SELECT timestamp FROM tools_metadata ORDER BY timestamp DESC LIMIT 1")
         latest_timestamp = c.fetchone()
 
-        if latest_timestamp is not None:
-            latest_timestamp = datetime.strptime(latest_timestamp[0], "%Y-%m-%d %H:%M:%S")
-        else:
-            latest_timestamp = datetime.now()
+        #if latest_timestamp is not None:
+        latest_timestamp = datetime.strptime(latest_timestamp[0], "%Y-%m-%d %H:%M:%S")
+        #else:
+        #    latest_timestamp = datetime.now()
 
         # Create a directory to back-up tools_metadata (because the hash of codemeta.jsonl has changed)
         backup_directory = f"tools_metadata_backup_{latest_timestamp.strftime('%Y%m%d%H%M%S')}"
@@ -163,15 +182,42 @@ if __name__ == '__main__':
             shutil.copyfile(source_path, destination_path)
 
         # Compute MD5 hash for each json file and store them in the database
-        files = get_files("tools_metadata")
 
-        for file in files:
             timestamp = datetime.now()
             md5_hash = get_md5(os.path.join('tools_metadata', file))
             print(f"file: {file} md5: {md5_hash}")
-            # Store the md5 in the database
-            c.execute("INSERT INTO tools_metadata VALUES (?, ?, ?)", (file, md5_hash, str(timestamp.strftime("%Y-%m-%d %H:%M:%S"))))
+            
+            # Retrieve the previous hash for the file from the database
+            c.execute("SELECT md5 FROM tools_metadata WHERE file_name=? ORDER BY timestamp DESC LIMIT 1", (file,))
+            previous_hash = c.fetchone()
+            
+            if previous_hash is not None and md5_hash != previous_hash[0]:
+                print(f"file {file} has changed! Old hash was: {previous_hash}")
+                
+                # Compare the newly changed file with its backup
+                backup_file = os.path.join(backup_directory, file)
+                print(backup_file, file)
+                
+                """ not working 
+                with open(file, 'r') as new_file, open(backup_file, 'r') as backup:
+                    json_new = json.load(new_file)
+                    json_backup = json.load(backup)
 
+                diff = jsondiff.diff(json_backup, json_new)
+                if diff:
+                    print(f"Differences between {file} and its backup:")
+                    print(diff)
+                else:
+                    print(f"No differences found between {file} and its backup.")
+            """
+            
+            else:
+                print(f"file: {file} md5: {md5_hash} has not changed!")
+
+            # Store the new md5 in the database
+            c.execute("INSERT INTO tools_metadata VALUES (?, ?, ?)", (file, md5_hash, str(timestamp.strftime("%Y-%m-%d %H:%M:%S"))))
+            new_hash = c.fetchone()
+    
     # Update the timestamp for codemeta.jsonl in the database
     codemeta_timestamp = datetime.now() 
     c.execute("INSERT INTO tools_metadata VALUES (?, ?, ?)", ('codemeta.jsonl', codemeta_hash, str(codemeta_timestamp.strftime("%Y-%m-%d %H:%M:%S"))))
