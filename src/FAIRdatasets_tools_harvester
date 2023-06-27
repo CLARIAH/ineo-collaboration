@@ -73,8 +73,8 @@ def download_json_files() -> List[str]:
     print(f"Downloaded all the tools metadata! Total JSON files: {count}")
     
     # Modify the contents of the grlc.codemeta.json file
-    
     """
+
     grlc_file = os.path.join(save_directory, 'grlc.codemeta.json')
     if grlc_file in files_list:
         with open(grlc_file, 'r') as json_file:
@@ -91,8 +91,18 @@ def download_json_files() -> List[str]:
         with open(alpino_file, 'w') as json_file:
             json.dump(data, json_file)
     """
+    
     return files_list
     
+def generate_codemeta_jsonl(canon_files: List[str]) -> None:
+    """
+    Make a codemeta.jsonl file from the canon files
+    """
+    with jsonlines.open("codemeta.jsonl", mode="w") as writer:
+        for file in canon_files:
+            with open(file, 'r') as json_file:
+                data = json.load(json_file)
+                writer.write(data)
 
 def get_files(folder_name: str) -> Optional[List[str]]:
     """
@@ -132,7 +142,7 @@ def init_check_db(db_file_name: str, table_name: str) -> Optional[sqlite3.Connec
     
     # check if table exists
     if not db_table_exists(conn, table_name):
-        print(f"Table {table_name} does not exis, creating!")
+        print(f"Table {table_name} does not exist, creating!")
         create_db_table(conn, table_name)
 
     return conn
@@ -152,11 +162,10 @@ if __name__ == '__main__':
 
     # get all the json files and convert them into one jsonlines file named codemeta.jsonl
     docfiles = download_json_files()
-
+    
     with jsonlines.open("codemeta.jsonl", mode="w") as writer:
         # simulating a change in codemeta.jsonl (remove #)
-        # writer.write({"INEOtools_field": "INEOtools_value"})
-
+        # writer.write({"INEOtool_field": "INEOtools_value"})
         for file in docfiles:
             with open(file, 'r') as json_file:
                 data = json.load(json_file)
@@ -174,15 +183,18 @@ if __name__ == '__main__':
     else:
         # Retrieve the latest timestamp from the database
         c.execute("SELECT timestamp FROM tools_metadata ORDER BY timestamp DESC LIMIT 1")
+        
         latest_timestamp = c.fetchone()
 
-        #if latest_timestamp is not None:
-        try:
-            latest_timestamp = datetime.strptime(latest_timestamp[0], "%Y-%m-%d %H:%M:%S.%f")
-        except ValueError:
-            latest_timestamp = datetime.strptime(latest_timestamp[0], "%Y-%m-%d %H:%M:%S")
-        #else:
-        #    latest_timestamp = datetime.now()
+        if latest_timestamp is not None:
+            latest_timestamp = latest_timestamp[0]
+            try:
+                latest_timestamp = datetime.strptime(latest_timestamp, "%Y-%m-%d %H:%M:%S.%f")
+            except ValueError:
+                latest_timestamp = datetime.strptime(latest_timestamp, "%Y-%m-%d %H:%M:%S")
+        else:
+            latest_timestamp = datetime.now()
+
 
         # Create a directory to back-up tools_metadata (because the hash of codemeta.jsonl has changed)
         backup_directory = f"tools_metadata_backup_{latest_timestamp.strftime('%Y%m%d%H%M%S')}"
@@ -221,19 +233,6 @@ if __name__ == '__main__':
                 backup_file = os.path.join(backup_directory, file)
                 print(backup_file, file)
                 
-                """ not working 
-                with open(file, 'r') as new_file, open(backup_file, 'r') as backup:
-                    json_new = json.load(new_file)
-                    json_backup = json.load(backup)
-
-                diff = jsondiff.diff(json_backup, json_new)
-                if diff:
-                    print(f"Differences between {file} and its backup:")
-                    print(diff)
-                else:
-                    print(f"No differences found between {file} and its backup.")
-            """
-            
             else:
                 print(f"file: {file} md5: {md5_hash} has not changed!")
 
