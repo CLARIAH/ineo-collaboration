@@ -10,29 +10,33 @@ import json
 import shutil
 import jsondiff
 
+def get_canonical(file_name):
+    
+    """
+    Create a canonical version of the json file
+    """
+    canon_file = f"{file_name}.canon"
+    with open(file_name, 'r') as json_file:
+        data = json.load(json_file)
+        print(file_name)
+        print(data)
+        if 'review' in data:
+            data['review']['@id'] = '__canon_purge__'
+            data['review']['datePublished'] = '__canon_purge__'
+        else:
+            print("no review!")
+    with open(canon_file, 'w') as json_file:
+        json.dump(data, json_file)
+    return canon_file
+
 def get_md5(file_name):
     """
     Getting MD5 of each individual json file
     """
-    """
-    first create a canonical version of the json file
-    """
     md5_file = file_name
     if file_name.endswith('.json'):
-        canon_file = f"{file_name}.canon"
-        with open(file_name, 'r') as json_file:
-            data = json.load(json_file)
-            print(file_name)
-            print(data)
-            if 'review' in data:
-                data['review']['@id'] = '__canon_purge__'
-                data['review']['datePublished'] = '__canon_purge__'
-            else:
-                print("no review!")
-        with open(canon_file, 'w') as json_file:
-            json.dump(data, json_file)
-        md5_file = canon_file
-
+        md5_file = get_canonical(file_name)
+    
     hash_md5 = hashlib.md5()
     with open(md5_file, 'rb') as file:
         for chunk in iter(lambda: file.read(4096), b""):
@@ -42,7 +46,7 @@ def get_md5(file_name):
 def download_json_files() -> List[str]:
     """
     Download and count all individual json files
-    
+
     """
     
     files_list = []
@@ -72,37 +76,7 @@ def download_json_files() -> List[str]:
 
     print(f"Downloaded all the tools metadata! Total JSON files: {count}")
     
-    # Modify the contents of the grlc.codemeta.json file
-    """
-
-    grlc_file = os.path.join(save_directory, 'grlc.codemeta.json')
-    if grlc_file in files_list:
-        with open(grlc_file, 'r') as json_file:
-            data = json.load(json_file)
-            data['new_tools'] = 'new_value'
-        with open(grlc_file, 'w') as json_file:
-            json.dump(data, json_file)
-    
-    alpino_file = os.path.join(save_directory, 'alpino-service.codemeta.json')
-    if alpino_file in files_list:
-        with open(alpino_file, 'r') as json_file:
-            data = json.load(json_file)
-            data['new_tool'] = 'new_value'
-        with open(alpino_file, 'w') as json_file:
-            json.dump(data, json_file)
-    """
-    
     return files_list
-    
-def generate_codemeta_jsonl(canon_files: List[str]) -> None:
-    """
-    Make a codemeta.jsonl file from the canon files
-    """
-    with jsonlines.open("codemeta.jsonl", mode="w") as writer:
-        for file in canon_files:
-            with open(file, 'r') as json_file:
-                data = json.load(json_file)
-                writer.write(data)
 
 def get_files(folder_name: str) -> Optional[List[str]]:
     """
@@ -164,8 +138,6 @@ if __name__ == '__main__':
     docfiles = download_json_files()
     
     with jsonlines.open("codemeta.jsonl", mode="w") as writer:
-        # simulating a change in codemeta.jsonl (remove #)
-        # writer.write({"INEOtool_field": "INEOtools_value"})
         for file in docfiles:
             with open(file, 'r') as json_file:
                 data = json.load(json_file)
