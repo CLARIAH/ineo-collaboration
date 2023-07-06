@@ -275,6 +275,7 @@ if __name__ == '__main__':
     if has_previous_batch is None:
         print("No previous batch exists in the database")
         previous_batch = None
+        previous_timestamp = None
     else:
         previous_timestamp = has_previous_batch[2]
         if previous_timestamp is None:
