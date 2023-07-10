@@ -63,6 +63,9 @@ def download_json_files(
     Download and count all individual json files
 
     """
+    # first backup previous JSON files
+    backup_directory = "tools_metadata_backup"
+    backup_json_files(save_directory, backup_directory)
     
     files_list = []
 
@@ -90,6 +93,23 @@ def download_json_files(
     print(f"Downloaded all the tools metadata! Total JSON files: {count}")
     return files_list
 
+def backup_json_files(source_directory: str, backup_directory: str) -> None:
+    """
+    Make a backup copy of the previously downloaded JSON files.
+    """
+    if not os.path.exists(source_directory):
+        os.makedirs(source_directory)
+
+    
+    if not os.path.exists(backup_directory):
+        os.makedirs(backup_directory)
+
+    for file_name in os.listdir(source_directory):
+        source_file = os.path.join(source_directory, file_name)
+        backup_file = os.path.join(backup_directory, file_name)
+        shutil.copyfile(source_file, backup_file)
+
+    print("Backup of previous JSON files created.")
 
 def get_files(folder_name: str) -> Optional[List[str]]:
     """
@@ -199,8 +219,11 @@ def process_list(diff_list, jsonlines_file, current_timestamp, previous_batch_di
         previous_md5 = previous_batch_dict.get(file, None) if previous_batch_dict is not None else None
 
         if md5 != previous_md5:
+            if previous_md5 is not None:
+                print(f"File {file} has changed! Old hash was: {previous_md5}")
             add_to_jsonlines(file, jsonlines_file)
-
+        else:
+            print(f"File {file} has not changed.")
         c.execute("INSERT INTO tools_metadata (file_name, md5, timestamp) VALUES (?, ?, ?)", (file, md5, current_timestamp))
 
 
