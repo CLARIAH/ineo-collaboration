@@ -10,6 +10,8 @@ import json
 import shutil
 import jsondiff
 
+output_path = "/data"
+
 def get_db_cursor(db_file_name="tools_metadata.db", table_name="tools_metadata"):
     """
     Get a cursor to the database
@@ -140,7 +142,6 @@ def add_to_jsonlines(file, file_handle):
     file_handle: handle to JSONlines file
     returns: None
     """
-    # TODO: finish the function
     with open(file, 'r') as json_file:
         data = make_jsonline(json_file)
         file_handle.write(data)
@@ -316,7 +317,7 @@ if __name__ == '__main__':
     # compare the 2 lists and get the difference
     diff_list = compare_lists(current_batch, previous_batch)
 
-    with jsonlines.open("codemeta.jsonl", "w") as jsonlines_file:
+    with jsonlines.open(os.path.join(output_path, "codemeta.jsonl"), "w") as jsonlines_file:
         process_list(diff_list, jsonlines_file, current_timestamp, None)
 
         if has_previous_batch is not None:
@@ -338,6 +339,6 @@ if __name__ == '__main__':
         where $i.review.reviewRating ge 3
         return $i.identifier
         """
-    with open("rumble_query.rq", "w") as file:
+    with open(os.path.join(output_path, "rumbledb.rq"), "w") as file:
         file.write(rumble_query)
     print("Done!")
