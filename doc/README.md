@@ -1,18 +1,20 @@
 # Resources api
 
+The api is available at https://ineo-resources-api-5b568b0ad6eb.herokuapp.com.
+
 ## Use GET to request resources
 
 When the http request method is `GET` you can request resources. This is an optional catch all route. So you can either fetch all resources at the base endpoint, or specific resources by specifying their id's in subsequent path segments.
 
-- `/api/resources` returns all resources;
-- `/api/resources/123` returns resource with id `123`;
-- `/api/resources/123/456` returns resources with id's `123` and `456`.
+- `/resources` returns all resources;
+- `/resources/123` returns resource with id `123`;
+- `/resources/123/456` returns resources with id's `123` and `456`.
 
 The response contains the resource(s) as json.
 
 ## Use POST to send resources
 
-When the http request method is `POST` you can send resources to the base endpoint `/api/resources`. The expected body content type is `application/json`. Always send an array of objects. Each object must contain an operation and a document.
+When the http request method is `POST` you can send resources to the base endpoint `/resources`. The expected body content type is `application/json`. Always send an array of objects. Each object must contain an operation and a document.
 
 ### Operations
 
@@ -205,13 +207,13 @@ Only the `id` is needed to delete a resource.
 
 | Name                 | Value                                                                   |
 | -------------------- | ----------------------------------------------------------------------- |
-| resourceTypes        | "Not yet available" or +1 of `/resources/properties/resourceTypes`      |
-| researchActivities   | "Not yet available" or +1 of `/resources/properties/researchActivities` |
-| researchDomains      | "Not yet available" or +1 of `/resources/properties/researchDomains`    |
-| informationTypes     | "Not yet available" or +1 of `/resources/properties/informationTypes`   |
-| mediaTypes           | "Not yet available" or +1 of `/resources/properties/mediaTypes`         |
-| status               | "Not yet available" or +1 of `/resources/properties/status`             |
-| languages            | "Not yet available" or +1 of `/resources/properties/languages`          |
+| resourceTypes        | "Not yet available" or +1 of `/properties/resourceTypes`      |
+| researchActivities   | "Not yet available" or +1 of `/properties/researchActivities` |
+| researchDomains      | "Not yet available" or +1 of `/properties/researchDomains`    |
+| informationTypes     | "Not yet available" or +1 of `/properties/informationTypes`   |
+| mediaTypes           | "Not yet available" or +1 of `/properties/mediaTypes`         |
+| status               | "Not yet available" or +1 of `/properties/status`             |
+| languages            | "Not yet available" or +1 of `/properties/languages`          |
 | access               | multiple objects containing a title and optionally a url                |
 | versions             | multiple objects containing a title and optionally a url                |
 | programmingLanguages | multiple objects containing a title and optionally a url                |
