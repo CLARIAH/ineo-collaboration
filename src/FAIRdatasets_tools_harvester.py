@@ -251,6 +251,17 @@ def get_previous_batch(previous_timestamp, table_name: str = "tools_metadata") -
 
     return previous_batch
 
+def sync_ruc():
+    """
+    if !ineo-content dir exists
+         git clone https://github.com/CLARIAH/ineo-content.git
+
+    cd ineo-content
+    git pull
+    """
+    if not os.path.exists("./ineo-content"):
+        
+
 """
 main function
 """
@@ -277,6 +288,9 @@ use case 2: found previous batch (previous_timestamp = select * from tools_metad
 
 """
 if __name__ == '__main__':
+
+    sync_ruc();
+
     c, conn = get_db_cursor()
     # if you want to keep older json files, please copy them to a different folder
     # backup_json_files(older_filder, new_folder)
