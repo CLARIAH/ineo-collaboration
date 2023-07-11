@@ -26,7 +26,7 @@ Images inside the `media.thumbnail` or `media.slider` will be uploaded to Ineo's
 
 A full resource looks like this:
 
-```
+```JSON
 [
   {
     "operation": "create",
@@ -162,7 +162,7 @@ A full resource looks like this:
 
 The update operation actually patches the document. So you only have to send the document properties that contain changes.
 
-```
+```JSON
 [
   {
     "operation": "update",
@@ -185,7 +185,7 @@ The update operation actually patches the document. So you only have to send the
 
 Only the `id` is needed to delete a resource.
 
-```
+```JSON
 [
   {
     "operation": "delete",
@@ -240,11 +240,25 @@ Contact
 | researchContact | multiple objects containing a title and optionally a url |
 | problemContact | multiple objects containing a title and optionally a url |
 
-### 200 Response
+### Response
+
+Each `POST` responds with an object containing the url that can be used to poll its status:
+
+```JSON
+{
+  "url": "http://localhost:5001/transaction/4c3b8bb1-7b32-49c5-8f06-91f631b1473b"
+}
+```
+
+#### 100
+
+While the job queue is in progress the url will return `null` with http status code response code `100 Continue`.
+
+#### 200
 
 Each request consists of a single transaction, so either all of its operations succeed or they all fail. Upon success the http status response code is `200 OK`. The response body contains a summary of the transaction:
 
-```
+```JSON
 {
   "transactionId": "QNqHkAlGW14Qk9SrSjrqcy",
   "results": [
@@ -256,23 +270,23 @@ Each request consists of a single transaction, so either all of its operations s
 }
 ```
 
-### 500
+#### 500
 
 When the transaction fails the http status response code is `500 Internal Server Error`. The response body contains a description of the error(s):
 
-```
+```JSON
 {
-  description: 'Mutation(s) failed with 1 error(s)',
-  items: [
+  "description": "Mutation(s) failed with 1 error(s)",
+  "items": [
     {
-      error: {
-        description: 'Document by ID "123" already exists',
-        id: '123',
-        type: 'documentAlreadyExistsError'
+      "error": {
+        "description": "Document by ID \"123\" already exists",
+        "id": "123",
+        "type": "documentAlreadyExistsError"
       },
-      index: 2
+      "index": 2
     }
   ],
-  type: 'mutationError'
+  "type": "mutationError"
 }
 ```
