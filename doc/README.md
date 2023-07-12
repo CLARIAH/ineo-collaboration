@@ -6,7 +6,7 @@ The api is available at https://ineo-resources-api-5b568b0ad6eb.herokuapp.com.
 
 All requests need the "Authorization header". For example:
 
-`curl 'https://ineo-resources-api-5b568b0ad6eb.herokuapp.com/resources/' -H "Authorization: bearer $INEO_RESOURCES_API_TOKEN" -H 'Content-Type: application/json'`
+`curl 'https://ineo-resources-api-5b568b0ad6eb.herokuapp.com/resources/' -H "Authorization: bearer $INEO_RESOURCES_API_TOKEN"`
 
 ## Use GET to request resources
 
