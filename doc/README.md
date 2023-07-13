@@ -2,6 +2,12 @@
 
 The api is available at https://ineo-resources-api-5b568b0ad6eb.herokuapp.com.
 
+## Authorization
+
+All requests need the "Authorization header". For example:
+
+`curl 'https://ineo-resources-api-5b568b0ad6eb.herokuapp.com/resources/' -H "Authorization: bearer $INEO_RESOURCES_API_TOKEN"`
+
 ## Use GET to request resources
 
 When the http request method is `GET` you can request resources. This is an optional catch all route. So you can either fetch all resources at the base endpoint, or specific resources by specifying their id's in subsequent path segments.
@@ -205,8 +211,8 @@ Only the `id` is needed to delete a resource.
 | link  | Url to the website of the resource.     |
 | intro | A short description about the resource. |
 
-| Name                 | Value                                                                   |
-| -------------------- | ----------------------------------------------------------------------- |
+| Name                 | Value                                                         |
+| -------------------- | ------------------------------------------------------------- |
 | resourceTypes        | "Not yet available" or +1 of `/properties/resourceTypes`      |
 | researchActivities   | "Not yet available" or +1 of `/properties/researchActivities` |
 | researchDomains      | "Not yet available" or +1 of `/properties/researchDomains`    |
@@ -214,12 +220,12 @@ Only the `id` is needed to delete a resource.
 | mediaTypes           | "Not yet available" or +1 of `/properties/mediaTypes`         |
 | status               | "Not yet available" or +1 of `/properties/status`             |
 | languages            | "Not yet available" or +1 of `/properties/languages`          |
-| access               | multiple objects containing a title and optionally a url                |
-| versions             | multiple objects containing a title and optionally a url                |
-| programmingLanguages | multiple objects containing a title and optionally a url                |
-| standards            | multiple objects containing a title and optionally a url                |
-| provenance           | multiple objects containing a title and optionally a url                |
-| sourceCodeLocation   | multiple objects containing a title and optionally a url                |
+| access               | multiple objects containing a title and optionally a url      |
+| versions             | multiple objects containing a title and optionally a url      |
+| programmingLanguages | multiple objects containing a title and optionally a url      |
+| standards            | multiple objects containing a title and optionally a url      |
+| provenance           | multiple objects containing a title and optionally a url      |
+| sourceCodeLocation   | multiple objects containing a title and optionally a url      |
 
 Links
 | Name | Value |
