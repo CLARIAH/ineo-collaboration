@@ -8,7 +8,7 @@ from datetime import datetime
 import jsonlines
 import json
 import shutil
-import jsondiff
+import subprocess
 
 output_path = "/data"
 
@@ -58,6 +58,7 @@ def get_md5(file_name):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
+
 def download_json_files(
         url: str = "https://tools.clariah.nl/files/",
         save_directory: str = "tools_metadata") -> List[str]:
@@ -95,6 +96,7 @@ def download_json_files(
     print(f"Downloaded all the tools metadata! Total JSON files: {count}")
     return files_list
 
+
 def backup_json_files(source_directory: str, backup_directory: str) -> None:
     """
     Make a backup copy of the previously downloaded JSON files.
@@ -102,7 +104,6 @@ def backup_json_files(source_directory: str, backup_directory: str) -> None:
     if not os.path.exists(source_directory):
         os.makedirs(source_directory)
 
-    
     if not os.path.exists(backup_directory):
         os.makedirs(backup_directory)
 
@@ -179,9 +180,6 @@ def compare_lists(list1: Optional[List[str]], list2: Optional[List[str]]) -> Lis
     print(f"list2 diff is {diff2}")
     return diff + diff2
 
-
-
-
 def create_db_table(conn: sqlite3.Connection, table_name: str = "tools_metadata") -> None:
     """
     create a table in the database
@@ -200,7 +198,6 @@ def db_table_exists(conn: sqlite3.Connection, table_name: str = "tools_metadata"
     if c.fetchone()[0] == 1:
         return True
     return False
-
 
 def process_list(diff_list, jsonlines_file, current_timestamp, previous_batch_dict=None):
     """
@@ -241,7 +238,6 @@ def init_check_db(db_file_name: str, table_name: str) -> Optional[sqlite3.Connec
 
     return conn
 
-
 def get_previous_batch(previous_timestamp, table_name: str = "tools_metadata") -> List[str]:
     c, conn = get_db_cursor()
     c.execute(f"SELECT file_name FROM {table_name} WHERE timestamp = ?", (previous_timestamp,))
@@ -251,46 +247,51 @@ def get_previous_batch(previous_timestamp, table_name: str = "tools_metadata") -
 
     return previous_batch
 
-def sync_ruc():
+def sync_ruc(github_url, github_dir):
     """
-    if !ineo-content dir exists
-         git clone https://github.com/CLARIAH/ineo-content.git
+    Retrieves Rich User Content of Gihub repistory ineo-content. 
+    """
 
-    cd ineo-content
-    git pull
-    """
-    if not os.path.exists("./ineo-content"):
-        
+    # Check if the ineo-content github repository directory exists
+    if not os.path.exists(github_dir):
+    # Clone the repository 
+        subprocess.run(["git", "clone", github_url])
+    else:
+        print(f"The github directory '{github_dir}' already exists.")
+
+    # cd ineo-content
+    os.chdir(github_dir)
+
+    # Pull the latest changes
+    subprocess.run(["git", "pull"])
+
+
 
 """
 main function
 """
-"""
-Workflow (db centric):
-1. download json files
 
-use case 1: no previous batch exists in db (select * from tools_metadata order by timestamp desc limit 1)
-    for each file in the current batch:
-    canon_file = canonicalize(file)
-    md5 = get_md5(canon_file)
-    insert into tools_metadata (file_name, md5) values (canon_file, md5)
-    if current_md5 != previous_md5 is None:
-        add_to_jsonlines(file) 
-
-use case 2: found previous batch (previous_timestamp = select * from tools_metadata order by timestamp desc limit 1)
-    previous_batch = select * from tools_metadata where timestamp = previous_timestamp
-    for each file in the current batch:
-        canon_file = canonicalize(file)
-        md5 = get_md5(canon_file)
-        insert into tools_metadata (file_name, md5) values (canon_file, md5)
-        if current_md5 != previous_batch[file_name]:
-            add_to_jsonlines(file)
-
-"""
 if __name__ == '__main__':
 
-    sync_ruc();
+    # rich user content: clone and pull changes github repository ineo-content
+    github_url = "https://github.com/CLARIAH/ineo-content.git"
+    github_dir = "./ineo-content"
+    sync_ruc(github_url, github_dir)
 
+    tools_folder = os.path.join(github_dir, "src", "tools")  # Separate "src" and "tools" with commas
+    
+    
+    print(f"Current working directory: {os.getcwd()}")
+    print(f"tools folder path: {tools_folder}")
+    
+    if os.path.exists(tools_folder):
+        files = os.listdir(tools_folder)
+        for file in files:
+            print(file)
+    else:
+        print("tools folder does not exist.")
+
+    exit()
     c, conn = get_db_cursor()
     # if you want to keep older json files, please copy them to a different folder
     # backup_json_files(older_filder, new_folder)
@@ -331,7 +332,8 @@ if __name__ == '__main__':
     # compare the 2 lists and get the difference
     diff_list = compare_lists(current_batch, previous_batch)
 
-    with jsonlines.open(os.path.join(output_path, "codemeta.jsonl"), "w") as jsonlines_file:
+    #with jsonlines.open(os.path.join(output_path, "codemeta.jsonl"), "w") as jsonlines_file:
+    with jsonlines.open("codemeta.jsonl", "w") as jsonlines_file:
         process_list(diff_list, jsonlines_file, current_timestamp, None)
 
         if has_previous_batch is not None:
@@ -353,6 +355,7 @@ if __name__ == '__main__':
         where $i.review.reviewRating ge 3
         return $i.identifier
         """
-    with open(os.path.join(output_path, "rumbledb.rq"), "w") as file:
+    #with open(os.path.join(output_path, "rumbledb.rq"), "w") as file:
+    with open("rumble_query.rq", "w") as file:    
         file.write(rumble_query)
     print("Done!")
