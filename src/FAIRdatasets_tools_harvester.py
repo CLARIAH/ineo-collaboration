@@ -9,10 +9,11 @@ import jsonlines
 import json
 import shutil
 import subprocess
+import regex as regex
 
-output_path = "/data"
+output_path = "../"
 
-def get_db_cursor(db_file_name="tools_metadata.db", table_name="tools_metadata"):
+def get_db_cursor(db_file_name= os.path.join(output_path, "tools_metadata.db"), table_name="tools_metadata"):
     """
     Get a cursor to the database
     """
@@ -126,7 +127,6 @@ def get_files(folder_name: str) -> Optional[List[str]]:
         if f.endswith('.json'):
             results.append(f"{folder_name}/{f}")
     return results
-
 
 def make_jsonline(jsonfile):
     """
@@ -266,7 +266,6 @@ def sync_ruc(github_url, github_dir):
     subprocess.run(["git", "pull"])
 
 
-
 """
 main function
 """
@@ -277,25 +276,21 @@ if __name__ == '__main__':
     github_url = "https://github.com/CLARIAH/ineo-content.git"
     github_dir = "./ineo-content"
     sync_ruc(github_url, github_dir)
-
-    tools_folder = os.path.join(github_dir, "src", "tools")  # Separate "src" and "tools" with commas
-    
-    
-    print(f"Current working directory: {os.getcwd()}")
-    print(f"tools folder path: {tools_folder}")
+    tools_folder = os.path.join("src", "tools")
     
     if os.path.exists(tools_folder):
         files = os.listdir(tools_folder)
-        for file in files:
-            print(file)
+        for file_name in files:
+            file_path = os.path.join(tools_folder, file_name)
+            with open(file_path, 'r') as file:
+                file_contents = file.read()
+                ruc_contents = regex.extract_ruc(file_contents)
+                print(f"Rich User Contents of {file_name} is:\n{ruc_contents}\n")
     else:
-        print("tools folder does not exist.")
-
-    exit()
+        print("No files.")
+            
     c, conn = get_db_cursor()
-    # if you want to keep older json files, please copy them to a different folder
-    # backup_json_files(older_filder, new_folder)
-
+    
     # get all the json files
     # download url and download dir are optional parameters, they have default value in the download_json_files function
     download_url = ""
@@ -332,8 +327,8 @@ if __name__ == '__main__':
     # compare the 2 lists and get the difference
     diff_list = compare_lists(current_batch, previous_batch)
 
-    #with jsonlines.open(os.path.join(output_path, "codemeta.jsonl"), "w") as jsonlines_file:
-    with jsonlines.open("codemeta.jsonl", "w") as jsonlines_file:
+
+    with jsonlines.open(os.path.join(output_path, "codemeta.jsonl"), "w") as jsonlines_file:
         process_list(diff_list, jsonlines_file, current_timestamp, None)
 
         if has_previous_batch is not None:
@@ -355,7 +350,8 @@ if __name__ == '__main__':
         where $i.review.reviewRating ge 3
         return $i.identifier
         """
-    #with open(os.path.join(output_path, "rumbledb.rq"), "w") as file:
-    with open("rumble_query.rq", "w") as file:    
+    
+    with open(os.path.join(output_path, "rumbledb.rq"), "w") as file:
+    #with open("rumble_query.rq", "w") as file:    
         file.write(rumble_query)
     print("Done!")
