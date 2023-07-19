@@ -11,12 +11,14 @@ import shutil
 import subprocess
 import regex as regex
 
-output_path = "../"
+output_path_data = "./data"
+output_path_query = "./queries"
 
-def get_db_cursor(db_file_name= os.path.join(output_path, "tools_metadata.db"), table_name="tools_metadata"):
+def get_db_cursor(db_file_name= os.path.join(output_path_data, "tools_metadata.db"), table_name="tools_metadata"):
     """
     Get a cursor to the database
     """
+    
     # init db and check if the table exists
     conn = init_check_db(db_file_name, table_name)
     if conn is None:
@@ -251,19 +253,25 @@ def sync_ruc(github_url, github_dir):
     """
     Retrieves Rich User Content of Gihub repistory ineo-content. 
     """
-
+    #store the current working directory
+    current_dir = os.getcwd()
+    
     # Check if the ineo-content github repository directory exists
     if not os.path.exists(github_dir):
     # Clone the repository 
         subprocess.run(["git", "clone", github_url])
+    
     else:
         print(f"The github directory '{github_dir}' already exists.")
 
-    # cd ineo-content
-    os.chdir(github_dir)
+        # cd ineo-content
+        os.chdir(github_dir)
 
-    # Pull the latest changes
-    subprocess.run(["git", "pull"])
+        # Pull the latest changes
+        subprocess.run(["git", "pull"])
+
+        # Change back to the previous working directory
+        os.chdir(current_dir)
 
 
 """
@@ -272,23 +280,25 @@ main function
 
 if __name__ == '__main__':
 
+
+    # Create the "data" folder if it doesn't exist
+    data_folder = "data"
+    if not os.path.exists(data_folder):
+        os.makedirs(data_folder)
+    
     # rich user content: clone and pull changes github repository ineo-content
     github_url = "https://github.com/CLARIAH/ineo-content.git"
     github_dir = "./ineo-content"
     sync_ruc(github_url, github_dir)
-    tools_folder = os.path.join("src", "tools")
     
-    if os.path.exists(tools_folder):
-        files = os.listdir(tools_folder)
-        for file_name in files:
-            file_path = os.path.join(tools_folder, file_name)
-            with open(file_path, 'r') as file:
-                file_contents = file.read()
-                ruc_contents = regex.extract_ruc(file_contents)
-                print(f"Rich User Contents of {file_name} is:\n{ruc_contents}\n")
-    else:
-        print("No files.")
-            
+    folder_path = "./ineo-content/src/tools"
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        with open(file_path, 'r') as file:
+                contents = file.read()
+                ruc_contents = regex.extract_ruc(contents)
+                print(f"Rich User Contents of {file_path} is:\n{ruc_contents}\n")
+      
     c, conn = get_db_cursor()
     
     # get all the json files
@@ -327,8 +337,8 @@ if __name__ == '__main__':
     # compare the 2 lists and get the difference
     diff_list = compare_lists(current_batch, previous_batch)
 
-
-    with jsonlines.open(os.path.join(output_path, "codemeta.jsonl"), "w") as jsonlines_file:
+    with jsonlines.open(os.path.join(output_path_data, "codemeta.jsonl"), "w") as jsonlines_file:
+    #with jsonlines.open("codemeta.jsonl", "w") as jsonlines_file:
         process_list(diff_list, jsonlines_file, current_timestamp, None)
 
         if has_previous_batch is not None:
@@ -345,13 +355,19 @@ if __name__ == '__main__':
 
     # RumbleDB query (rating >= 3 stars)
     print("Generating RumbleDB query...")
+    # Create the "queries" folder if it doesn't exist
+    query_folder = "queries"
+    if not os.path.exists(query_folder):
+        os.makedirs(query_folder)
+    
     rumble_query = """
         for $i in json-file("/data/codemeta.jsonl",10)
         where $i.review.reviewRating ge 3
         return $i.identifier
         """
     
-    with open(os.path.join(output_path, "rumbledb.rq"), "w") as file:
+    with open(os.path.join(output_path_query, "rumbledb.rq"), "w") as file:
     #with open("rumble_query.rq", "w") as file:    
         file.write(rumble_query)
     print("Done!")
+

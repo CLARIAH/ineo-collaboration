@@ -1,16 +1,22 @@
 import re
+import yaml
+
+re_fields = re.compile(r'^---(.*)---', flags=re.DOTALL)
+# re_split = re.compile(r'^(.*):(\s(.*)$|$)')
+re_descriptions = re.compile(r'---\n#(.*?)\n\n(.*?)\n\n##', flags=re.DOTALL)
+re_sections = re.compile(r'(?m)^##\s+(.*?)$(.*?)(?=^##\s|\Z)', flags=re.DOTALL | re.MULTILINE)
+
 
 def extract_ruc(ruc_content):
     dictionary = {}
-    
-    regex = r'^---(.*)---'
-    fields = re.search(regex, ruc_content, flags=re.DOTALL).group(1)
-    
+    fields = re_fields.search(ruc_content).group(1)
+    dictionary = yaml.load(fields, Loader=yaml.SafeLoader)
+
+    """
     key = ""
     val = ""
-    for f in fields.splitlines():
-        regex = r'^(.*):(\s(.*)$|$)'
-        kv = re.search(regex, f)
+    for f in fields.splitlines():  
+        kv = re.search(re_split, f)
         if kv:       
             key = kv.group(1)
             val = kv.group(2)
@@ -18,17 +24,15 @@ def extract_ruc(ruc_content):
             val += '\n' + f
         if not key == "":
             dictionary[key] = val.strip()
-
-    regex = r'---\n#(.*?)\n\n(.*?)\n\n##'
-    descriptions = re.findall(regex, ruc_content, flags=re.DOTALL)
+    """
+    descriptions = re.findall(re_descriptions, ruc_content)
 
     for description in descriptions:
         section_name = description[0].strip()
         section_content = description[1].strip()
         dictionary[section_name] = section_content
     
-    regex = r'(?m)^##\s+(.*?)$(.*?)(?=^##\s|\Z)'
-    sections = re.finditer(regex, ruc_content, flags=re.DOTALL | re.MULTILINE)
+    sections = re.finditer(re_sections, ruc_content)
     
     for section in sections:
         section_name = section.group(1)
@@ -37,4 +41,23 @@ def extract_ruc(ruc_content):
         dictionary[section_name] = section_content.strip()
     
     return dictionary
- 
+
+"""
+# Read the content from the Rich User Content file
+with open('./grlc_copy.md', 'r') as file:
+    grlc_mdfile = file.read()
+
+# Extract the information and create the dictionary
+ruc_contents = extract_ruc(grlc_mdfile)
+
+print("grlc Rich User Contents: ", ruc_contents)
+
+with open('./mediasuite_copy.md', 'r') as file:
+    mediasuite_mdfile = file.read()
+
+# Extract the information and create the dictionary for "mediasuite.md"
+mediasuite_contents = extract_ruc(mediasuite_mdfile)
+
+# Print the resulting dictionary for "mediasuite.md"
+print(f"mediasuite Rich User Contents: ", mediasuite_contents)
+"""
