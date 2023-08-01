@@ -64,13 +64,13 @@ def get_md5(file_name):
 
 def download_json_files(
         url: str = "https://tools.clariah.nl/files/",
-        save_directory: str = "tools_metadata") -> List[str]:
+        save_directory: str = os.path.join(output_path_data, "tools_metadata")) -> List[str]:
     """
     Download and count all individual json files
 
     """
     # first backup previous JSON files
-    backup_directory = "tools_metadata_backup"
+    backup_directory = os.path.join(output_path_data, "tools_metadata_backup")
     backup_json_files(save_directory, backup_directory)
     
     files_list = []
@@ -213,9 +213,12 @@ def process_list(diff_list, jsonlines_file, current_timestamp, previous_batch_di
     if previous batch dict is none, then it will always add the file to the jsonlines file
     if previous batch dict is not none, then it will compare the md5 of the current file with the md5 of the previous batch
     """
+
+    dir = os.path.join(output_path_data, "tools_metadata")
     for file in diff_list:
-        canon_file = get_canonical(file)
-        md5 = get_md5(canon_file)
+        file = os.path.normpath(os.path.join(dir, file))
+        #canon_file = get_canonical(file)
+        md5 = get_md5(file)
         previous_md5 = previous_batch_dict.get(file, None) if previous_batch_dict is not None else None
 
         if md5 != previous_md5:
@@ -273,6 +276,24 @@ def sync_ruc(github_url, github_dir):
         # Change back to the previous working directory
         os.chdir(current_dir)
 
+def get_ruc_contents():
+    github_url = "https://github.com/CLARIAH/ineo-content.git"
+    github_dir = "./ineo-content"
+    sync_ruc(github_url, github_dir)
+    
+    folder_path = "./ineo-content/src/tools"
+    all_ruc_contents = {}
+    
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        with open(file_path, 'r') as file:
+            contents = file.read()
+            ruc_contents = regex.extract_ruc(contents)
+            print(f"Rich User Contents of {file_path} is:\n{ruc_contents}\n")
+            all_ruc_contents[filename] = ruc_contents
+            
+    return all_ruc_contents
+
 
 """
 main function
@@ -286,25 +307,20 @@ if __name__ == '__main__':
     if not os.path.exists(data_folder):
         os.makedirs(data_folder)
     
-    # rich user content: clone and pull changes github repository ineo-content
-    github_url = "https://github.com/CLARIAH/ineo-content.git"
-    github_dir = "./ineo-content"
-    sync_ruc(github_url, github_dir)
+    ruc_contents_dict = get_ruc_contents()
+
+    # Serialize the dictionary into a JSON string and write to a file for each tool
+    for filename, ruc_contents in ruc_contents_dict.items():
+        json_file_path = os.path.join("./ineo-content", os.path.splitext(filename)[0] + ".json")
+        with open(json_file_path, "w") as json_file:
+            json.dump(ruc_contents, json_file)
     
-    folder_path = "./ineo-content/src/tools"
-    for filename in os.listdir(folder_path):
-        file_path = os.path.join(folder_path, filename)
-        with open(file_path, 'r') as file:
-                contents = file.read()
-                ruc_contents = regex.extract_ruc(contents)
-                print(f"Rich User Contents of {file_path} is:\n{ruc_contents}\n")
-      
     c, conn = get_db_cursor()
     
     # get all the json files
     # download url and download dir are optional parameters, they have default value in the download_json_files function
     download_url = ""
-    download_dir = "tools_metadata"
+    download_dir = os.path.join(output_path_data, "tools_metadata")
 
     # get the current timestamp to be used in the database and make sure all the files in the same batch have the same timestamp
     current_timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -345,16 +361,20 @@ if __name__ == '__main__':
             # get previous batch from db
             c.execute("SELECT file_name, md5 FROM tools_metadata WHERE timestamp = ?", (previous_timestamp,))
             previous_batch = c.fetchall()
+        
             # previous_batch_dict contains key value pair in the form of {file_name: md5}
             previous_batch_dict = {x[0]: x[1] for x in previous_batch}
 
+            batch = [x.split("/")[-1]  for x in current_batch]    
+        
             # loop through current batch and compare with previous batch on hash value
-            process_list(current_batch, jsonlines_file, current_timestamp, previous_batch_dict)
+            process_list(batch, jsonlines_file, current_timestamp, previous_batch_dict)
 
         conn.commit()
 
     # RumbleDB query (rating >= 3 stars)
     print("Generating RumbleDB query...")
+    
     # Create the "queries" folder if it doesn't exist
     query_folder = "queries"
     if not os.path.exists(query_folder):
