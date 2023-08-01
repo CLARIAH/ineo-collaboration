@@ -1,6 +1,6 @@
 import sys
 import json
-import FAIRdatasets_tools_harvester as harvester
+
 
 def debug(func,msg):
     print(f"?DBG:{func}:{msg}", file=sys.stderr)
@@ -100,11 +100,6 @@ def retrieve_info(info, ruc):
             res = "null" #there is no Null in python, None becomes null in json
     return res
 
-        
-        
-        
-    
-
 
 # DSL template
 template = [
@@ -119,8 +114,8 @@ template = [
 
 # Rich User Contents
 ruc = None
-with open("./ineo-content/grlc.json", "r") as json_file:
-    ruc = json.load(json_file)[0]
+with open("./data/grlc.json", "r") as json_file:
+    ruc = json.load(json_file)
 
 debug("main",f"RUC contents of grlc: {ruc}")
 
@@ -128,20 +123,8 @@ res = traverse_data(template, ruc)
 
 json.dump(res, sys.stdout, indent=2)
 
-"""
-# Rich User Contents
-ruc = {
-  "identifier": "grlc",
-  "title": "grlc",
-  "grlc": "grlc makes all your Linked Data accessible to the Web by automatically converting your SPARQL queries into RESTful APIs.",
-  "Overview": "* grlc is a lightweight server that takes SPARQL queries (stored in a GitHub repository, in your local filesystem, or listed in a URL), and translates them to Linked Data Web APIs. This enables universal access to Linked Data. Users are not required to know SPARQL to query their data, but instead can access a web API.\n* grlc assumes that you have a collection of SPARQL queries as .rq files. grlc will create one API operation for each SPARQL query/.rq file in the collection.\n* Your queries can add API parameters to each operation by using the parameter mapping syntax. This allows your query to define query variables which will be mapped to API parameters for your API operation (see here for an example).\n* Your queries can include special decorators to add extra functionality to your API.",
-  "Learn": "### Instruction webpages\n\n* The Quick Tutorial is a quick walkthrough for deploying your own Linked Data API using grlc.",
-  "Mentions": "### Articles (incl. conference papers, presentations and demo\u2019s)\n\n* Albert Mero\u00f1o-Pe\u00f1uela, Rinke Hoekstra. \u201cgrlc Makes GitHub Taste Like Linked Data APIs\u201d. The Semantic Web \u2013 ESWC 2016 Satellite Events, Heraklion, Crete, Greece, May 29 \u2013 June 2, 2016, Revised Selected Papers. LNCS 9989, pp. 342-353 (2016). (PDF)\n* Albert Mero\u00f1o-Pe\u00f1uela, Rinke Hoekstra. \u201cSPARQL2Git: Transparent SPARQL and Linked Data API Curation via Git\u201d. In: Proceedings of the 14th Extended Semantic Web Conference (ESWC 2017), Poster and Demo Track. Portoroz, Slovenia, May 28th \u2013 June 1st, 2017 (2017). (PDF)\n* Albert Mero\u00f1o-Pe\u00f1uela, Rinke Hoekstra. \u201cAutomatic Query-centric API for Routine Access to Linked Data\u201d. In: The Semantic Web \u2013 ISWC 2017, 16th International Semantic Web Conference. Lecture Notes in Computer Science, vol 10587, pp. 334-339 (2017). (PDF)\n* Pasquale Lisena, Albert Mero\u00f1o-Pe\u00f1uela, Tobias Kuhn, Rapha\u00ebl Troncy. \u201cEasy Web API Development with SPARQL Transformer\u201d. In: The Semantic Web \u2013 ISWC 2019, 18th International Semantic Web Conference. Lecture Notes in Computer Science, vol 11779, pp. 454-470 (2019). (PDF)\n\n### Projects\n\n### Teaching and Instruction"
-}
 
 """
-"""
-
 # DSL
 with open("./template.json", 'r') as file:
     template = json.load(file)

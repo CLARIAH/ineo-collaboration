@@ -12,7 +12,7 @@ import subprocess
 import regex as regex
 
 output_path_data = "./data"
-output_path_query = "./queries"
+output_path_queries = "./queries"
 
 def get_db_cursor(db_file_name= os.path.join(output_path_data, "tools_metadata.db"), table_name="tools_metadata"):
     """
@@ -311,7 +311,7 @@ if __name__ == '__main__':
 
     # Serialize the dictionary into a JSON string and write to a file for each tool
     for filename, ruc_contents in ruc_contents_dict.items():
-        json_file_path = os.path.join("./ineo-content", os.path.splitext(filename)[0] + ".json")
+        json_file_path = os.path.join("./data", os.path.splitext(filename)[0] + ".json")
         with open(json_file_path, "w") as json_file:
             json.dump(ruc_contents, json_file)
     
@@ -386,7 +386,7 @@ if __name__ == '__main__':
         return $i.identifier
         """
     
-    with open(os.path.join(output_path_query, "rumbledb.rq"), "w") as file:
+    with open(os.path.join(output_path_queries, "rumbledb.rq"), "w") as file:
     #with open("rumble_query.rq", "w") as file:    
         file.write(rumble_query)
     print("Done!")

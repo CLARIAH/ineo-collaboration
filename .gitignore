@@ -8,3 +8,9 @@ src/codemeta.jsonl
 **/__pycache__
 src/venv
 src/ineo-content
+src/data/codemeta.jsonl
+src/data/grlc.json
+src/data/mediasuite.json
+src/data/tools_metadata.db
+src/grlc.json
+src/queries/rumbledb.rq
