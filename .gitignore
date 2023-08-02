@@ -14,3 +14,5 @@ src/data/mediasuite.json
 src/data/tools_metadata.db
 src/grlc.json
 src/queries/rumbledb.rq
+src/data/frog.json
+src/data/stam.json
