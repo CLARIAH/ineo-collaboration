@@ -6,7 +6,7 @@ src/rumble_query.rq
 src/tools_metadata.db
 src/codemeta.jsonl
 **/__pycache__
-src/venv
+**/venv
 src/ineo-content
 src/data/codemeta.jsonl
 src/data/grlc.json

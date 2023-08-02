@@ -1,5 +1,13 @@
 import sys
 import json
+import requests
+
+#RUMBLEDB = "http://rumbledb:8001/jsoniq"
+RUMBLEDB = "http://localhost:8001/jsoniq"
+JSONL = "/data/codemeta.jsonl"
+
+ID="mediasuite"
+#ID="grlc"
 
 
 def debug(func,msg):
@@ -87,7 +95,20 @@ def retrieve_info(info, ruc):
                 break  # Exit the loop once a match is found
      
         if info_value.startswith("md"):
+            info is None
             debug("retrieve_info",f"Starting with 'md':{info_value}")
+            path = info_value.split(":")[1].strip()
+            query = f"for $i in json-file(\"{JSONL}\",10) where $i.identifier eq \"{ruc['identifier']}\" return $i.{path}"
+            debug("retrieve_info",f"rumbledb query[{query}]")
+            response = requests.post(RUMBLEDB, data = query)
+            debug("retrieve_info",f"rumbledb result[{response.text}]")
+            resp = json.loads(response.text)
+            if len(resp['values']) > 0 :
+                info = resp['values'][0]
+            if info is not None:
+                debug("retrieve_info",f"The value of '{path}' in the MD: {info}")
+                res = info
+                break  # Exit the loop once a match is found
 
         if info_value.startswith("err"):
             msg = info_value.split(":")[1].strip()
@@ -100,21 +121,13 @@ def retrieve_info(info, ruc):
             res = "null" #there is no Null in python, None becomes null in json
     return res
 
-
-# DSL template
-template = [
-    {
-        "tabs": {
-            "overview": {
-                "body":"<ruc:tabs/overview/body/foo,md:query,err:there is no overview!,null"           
-            }
-        }
-    }
-]
+# DSL
+with open("./template.json", 'r') as file:
+    template = json.load(file)
 
 # Rich User Contents
 ruc = None
-with open("./data/grlc.json", "r") as json_file:
+with open(f"./data/{ID}.json", "r") as json_file:
     ruc = json.load(json_file)
 
 debug("main",f"RUC contents of grlc: {ruc}")
@@ -124,9 +137,3 @@ res = traverse_data(template, ruc)
 json.dump(res, sys.stdout, indent=2)
 
 
-"""
-# DSL
-with open("./template.json", 'r') as file:
-    template = json.load(file)
-result = traverse_data(template)
-"""
