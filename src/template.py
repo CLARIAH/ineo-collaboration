@@ -7,8 +7,8 @@ import re
 RUMBLEDB = "http://localhost:8001/jsoniq"
 JSONL = "/data/codemeta.jsonl"
 
-#ID="mediasuite"
-ID="grlc"
+ID="mediasuite"
+#ID="grlc"
 
 
 def debug(func,msg):
@@ -110,10 +110,9 @@ def retrieve_info(info, ruc):
                     info = match.group(1)
                     debug("retrieve_info", f"The value of '{template_key}' in the RUC: {info}")
                     debug("retrieve_info", f"The regex value of '{template_key}' in the RUC: {info}")
-                    res = info
-                    break  # Exit the loop once a match is found
+                    return info
+                   # break  # Exit the loop once a match is found
     
-
         if info_value.startswith("md"):
             info is None
             debug("retrieve_info",f"Starting with 'md':{info_value}")
