@@ -1,13 +1,14 @@
 import sys
 import json
 import requests
+import re 
 
 #RUMBLEDB = "http://rumbledb:8001/jsoniq"
 RUMBLEDB = "http://localhost:8001/jsoniq"
 JSONL = "/data/codemeta.jsonl"
 
-ID="mediasuite"
-#ID="grlc"
+#ID="mediasuite"
+ID="grlc"
 
 
 def debug(func,msg):
@@ -60,6 +61,7 @@ def traverse_data(data, ruc):
                     res[key] = None
                 else:
                     res[key] = value
+    
     # If the data is a list
     elif isinstance(data, list):
         res = []
@@ -78,6 +80,7 @@ def traverse_data(data, ruc):
                     res.append(item)
     return res
 
+#TODO: "### Overview\n* from the API
 def retrieve_info(info, ruc):
     res = None
     debug("retrieve_info",f"info[{info}]")
@@ -85,15 +88,32 @@ def retrieve_info(info, ruc):
     for info_value in info_values:
         debug("retrieve_info",f"info_value[{info_value}]")
         if info_value.startswith("ruc"):
-            debug("retrieve_info",f"Starting with 'ruc':{info_value}")
-            template_key = info_value.split(":")[1].strip().lower()
-            debug("retrieve_info",f"template_key[{template_key}]")
-            info = resolve_path(ruc,template_key)
-            if info is not None:
-                debug("retrieve_info",f"The value of '{template_key}' in the RUC: {info}")
-                res = info
-                break  # Exit the loop once a match is found
-     
+            info_parts = info_value.split(":")
+            debug("retrieve_info",f"info_parts[{info_parts}]")
+        
+            if len(info_parts) == 2:
+                template_key = info_parts[1].strip().lower()
+                info = resolve_path(ruc, template_key)
+                debug("retrieve_info", f"The value of '{template_key}' in the RUC: {info}")
+                return info
+            
+            if len(info_parts) > 2:
+                template_key, regex_str = map(str.strip, info_parts[1:3])
+                regex = re.compile(regex_str, flags=re.DOTALL)
+                debug("retrieve_info",f"template_key[{template_key}]")
+                debug("retrieve_info",f"the regex string from {template_key} is: {regex_str}")
+            
+                info = resolve_path(ruc,template_key)
+                match = regex.search(info)
+                
+                if match is not None:
+                    info = match.group(1)
+                    debug("retrieve_info", f"The value of '{template_key}' in the RUC: {info}")
+                    debug("retrieve_info", f"The regex value of '{template_key}' in the RUC: {info}")
+                    res = info
+                    break  # Exit the loop once a match is found
+    
+
         if info_value.startswith("md"):
             info is None
             debug("retrieve_info",f"Starting with 'md':{info_value}")
