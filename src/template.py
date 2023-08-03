@@ -91,28 +91,28 @@ def retrieve_info(info, ruc):
             info_parts = info_value.split(":")
             debug("retrieve_info",f"info_parts[{info_parts}]")
         
-            if len(info_parts) == 2:
+            if len(info_parts) >= 2:
                 template_key = info_parts[1].strip().lower()
                 info = resolve_path(ruc, template_key)
-                debug("retrieve_info", f"The value of '{template_key}' in the RUC: {info}")
-                return info
-            
-            if len(info_parts) > 2:
-                template_key, regex_str = map(str.strip, info_parts[1:3])
+                debug("retrieve_info", f"The value of '{template_key}' in the RUC: {info}")    
+
+            if info is not None and len(info_parts) > 2:
+                regex_str = info_parts[2].strip()
                 regex = re.compile(regex_str, flags=re.DOTALL)
-                debug("retrieve_info",f"template_key[{template_key}]")
-                debug("retrieve_info",f"the regex string from {template_key} is: {regex_str}")
-            
-                info = resolve_path(ruc,template_key)
+                debug("retrieve_info",f"the regex string is: {regex_str}")
                 match = regex.search(info)
                 
                 if match is not None:
                     info = match.group(1)
                     debug("retrieve_info", f"The value of '{template_key}' in the RUC: {info}")
                     debug("retrieve_info", f"The regex value of '{template_key}' in the RUC: {info}")
-                    return info
-                   # break  # Exit the loop once a match is found
-    
+                    res = info
+                    break  # Exit the loop once a match is found
+            else:
+                res = info
+                if res is not None:
+                    break
+
         if info_value.startswith("md"):
             info is None
             debug("retrieve_info",f"Starting with 'md':{info_value}")
@@ -137,7 +137,8 @@ def retrieve_info(info, ruc):
  
         if info_value.startswith("null"): 
             debug("retrieve_info",f"Starting with 'null':{info_value}")
-            res = "null" #there is no Null in python, None becomes null in json
+            res = "null" 
+    
     return res
 
 # DSL

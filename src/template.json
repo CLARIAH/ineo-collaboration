@@ -2,8 +2,8 @@
     {
         "tabs": {
             "overview": {
-                "body":"<ruc:overview:^(.*)### Data.*,ruc:overview,md:description,err:there is no overview!", 
-                "bodyMore":"<ruc:overview:^.*(### Data.*)"          
+                "body":"<ruc:overview:^(.*)### Data.*,ruc:overview:^(.*)$,md:description,err:there is no overview!", 
+                "bodyMore":"<ruc:overview:^.*(### Data.*),null"          
             }
         }
     }
