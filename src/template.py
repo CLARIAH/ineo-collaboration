@@ -7,8 +7,9 @@ import re
 RUMBLEDB = "http://localhost:8001/jsoniq"
 JSONL = "/data/codemeta.jsonl"
 
-ID="mediasuite"
-#ID="grlc"
+ID="grlc"
+if len(sys.argv) > 1:
+    ID = sys.argv[1]
 
 
 def debug(func,msg):
@@ -104,14 +105,20 @@ def retrieve_info(info, ruc):
                 
                 if match is not None:
                     info = match.group(1)
-                    debug("retrieve_info", f"The value of '{template_key}' in the RUC: {info}")
-                    debug("retrieve_info", f"The regex value of '{template_key}' in the RUC: {info}")
-                    res = info
-                    break  # Exit the loop once a match is found
-            else:
-                res = info
-                if res is not None:
-                    break
+                    debug("retrieve_info", f"The regex value of '{regex_str}': {info}")
+                else:
+                    info = None
+                    debug("retrieve_info", f"The regex value of '{regex_str}': {info}")
+
+            if info is not None and len(info_parts) > 3:
+                text = info_parts[3].strip()
+                text = text.replace("$1",info)  
+                info = text
+                debug("retrieve_info", f"The text value of '{info_parts[3].strip()}': {info}")
+                
+            res = info
+            if res is not None:
+                break  # Exit the loop once a match is found
 
         if info_value.startswith("md"):
             info is None
@@ -131,7 +138,6 @@ def retrieve_info(info, ruc):
 
         if info_value.startswith("err"):
             msg = info_value.split(":")[1].strip()
-            
             # Print the error message to stderr
             error(None,f"{msg}")
  
