@@ -11,6 +11,9 @@ ID="grlc"
 if len(sys.argv) > 1:
     ID = sys.argv[1]
 
+TEMPLATE = "./template.json"
+if len(sys.argv) > 2:
+    TEMPLATE = sys.argv[2]
 
 def debug(func,msg):
     print(f"?DBG:{func}:{msg}", file=sys.stderr)
@@ -26,16 +29,29 @@ def resolve_path(ruc, path):
     debug("resolve_path",f"path[{path}]")
     steps = path.split("/")
     step = steps[0]
+    debug("resolve_path",f"step[{step}]")
+    if step.startswith("$"):
+        step = step.replace("$","")
+        ruc_key = step 
+        for key in ruc.keys():
+            if key.lower() == step.lower():
+                ruc_key = key
+        step = ruc[ruc_key]
+        debug("resolve_path",f"$step[{step}]")
     ruc_key = None 
     for key in ruc.keys():
         debug("resolve_path",f"key[{key}]")
-        if key.lower() == step:
+        if key.lower() == step.lower():
             ruc_key = key
             if len(steps) == 1:
-                return ruc[ruc_key]
+                res =  ruc[ruc_key]
+                debug("resolve_path",f"res[{res}]")
+                return res
             else:
                 if isinstance(ruc[ruc_key],dict):
-                    return resolve_path(ruc[ruc_key],'/'.join(steps[1:]))
+                    res =  resolve_path(ruc[ruc_key],'/'.join(steps[1:]))
+                    debug("resolve_path",f"res[{res}]")
+                    return res
                 else:
                     debug("resolve_path",f"path is deeper, but dict not!")
                     return None
@@ -148,7 +164,7 @@ def retrieve_info(info, ruc):
     return res
 
 # DSL
-with open("./template.json", 'r') as file:
+with open(TEMPLATE, 'r') as file:
     template = json.load(file)
 
 # Rich User Contents

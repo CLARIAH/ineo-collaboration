@@ -1,0 +1,13 @@
+[
+    {
+        "id": "<ruc:identifier",
+        "title": "<ruc:title",
+        "intro": "<ruc:$Identifier",
+        "tabs": {
+            "overview": {
+                "body":"<ruc:overview:^(.*)### Data.*:### Overview\n $1,ruc:overview:^(.*):### Overview\n $1,md:description,err:there is no overview!", 
+                "bodyMore":"<ruc:overview:^.*(### Data.*),null"          
+            }
+        }
+    }
+]
