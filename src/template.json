@@ -2,7 +2,7 @@
     {
         "id": "<ruc:identifier",
         "title": "<ruc:title",
-        "intro": "<ruc:$identifier",
+        "intro": "<ruc:$title",
         "tabs": {
             "overview": {
                 "body": "<ruc:overview:^(.*)### Data.*:### Overview\n $1,ruc:overview:^(.*):### Overview\n $1,md:description,err:there is no overview!",
@@ -17,12 +17,7 @@
             "metadata": null
         },
         "properties": {
-            "programmingLanguages": [
-                {
-                    "title": "R",
-                    "link": "https://github.com/CLARIAH/grlcR"
-                }
-            ],
+            "programmingLanguages": "<md:programmingLanguage[]"
             "learn": [
                 {
                     "title": "Manual",
@@ -57,7 +52,7 @@
                     "link": "https://github.com/CLARIAH/grlc"
                 }
             ],
-            "sourceCodeLocation": null,
+            "sourceCodeLocation": "<md:codeRepository",
             "researchContact": [
                 {
                     "title": "This information is not (yet) available",
