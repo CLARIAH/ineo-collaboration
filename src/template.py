@@ -148,9 +148,10 @@ def retrieve_info(info, ruc):
             query = None
             if path.startswith("@"):
                 file = path[1:]
-                # TODO: lees query uit file
-                query = "for $i in json-file(\"{JSONL}\", 10) where $i.identifier eq \"{IDENT}\" return [{\"title\": $i.programmingLanguage}]"
-                # TODO: replace {JSONL} en {IDENT}
+                debug("path",f"path for the query[{file}]")
+                with open(file, 'r') as file:
+                    query = file.read()
+            if query is not None:      
                 query = query.replace("{JSONL}",JSONL)
                 query = query.replace("{IDENT}",ruc["identifier"])
             else:    
