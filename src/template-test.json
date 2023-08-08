@@ -2,12 +2,89 @@
     {
         "id": "<ruc:identifier",
         "title": "<ruc:title",
-        "intro": "<ruc:$Identifier",
+        "intro": "<ruc:$title",
         "tabs": {
             "overview": {
-                "body":"<ruc:overview:^(.*)### Data.*:### Overview\n $1,ruc:overview:^(.*):### Overview\n $1,md:description,err:there is no overview!", 
-                "bodyMore":"<ruc:overview:^.*(### Data.*),null"          
-            }
+                "body": "<ruc:overview:^(.*)### Data.*:### Overview\n $1,ruc:overview:^(.*):### Overview\n $1,md:description,err:there is no overview!",
+                "bodyMore": "<ruc:overview:^.*(### Data.*),null"
+            },
+            "learn": {
+                "body": "<ruc:learn,err:there is no learn!"
+            },
+            "mentions": {
+                "body": "<ruc:mentions,err:there is no mentions!"
+            },
+            "metadata": null
+        },
+        "properties": {
+            "programmingLanguages": "<md:programmingLanguage[]",
+            "learn": [
+                {
+                    "title": "Manual",
+                    "link": "https://grlc.io/"
+                },
+                {
+                    "title": "FAQ on GitHub",
+                    "link": "https://github.com/CLARIAH/grlc/wiki/FAQ"
+                }
+            ],
+            "resourceHost": [
+                {
+                    "title": "Huygens Instituut",
+                    "link": "https://www.huygens.knaw.nl/"
+                }
+            ],
+            "funding": "<md:funding.name",
+            "problemContact": [
+                {
+                    "title": "This information is not (yet) available",
+                    "link": null
+                }
+            ],
+            "informationTypes": [
+                "2 Computer Files",
+                "3 Continuing Resources"
+            ],
+            "languages": ["English"],
+            "access": [
+                {
+                    "title": "GitHub users",
+                    "link": "https://github.com/CLARIAH/grlc"
+                }
+            ],
+            "sourceCodeLocation": "<md:codeRepository",
+            "researchContact": [
+                {
+                    "title": "This information is not (yet) available",
+                    "link": null
+                }
+            ],
+            "resourceTypes": ["Tools"],
+            "status": "<md:developmentStatus:skos:prefLabel[]",
+            "versions": [
+                {
+                    "title": "This information is not (yet) available",
+                    "link": null
+                }
+            ],
+            "standards": null,
+            "resourceOwner": null,
+            "link": "https://github.com/CLARIAH/grlc",
+            "intro": "<md:name",
+            "researchActivities": "<md:keywords[]",
+            "researchDomains": [
+                "5 Computers and humanities",
+                "11 History"
+            ],
+            "mediaTypes": [null],
+            "provenance": null,
+            "community": [
+                {
+                    "title": "This information is not (yet) available",
+                    "link": null
+                }
+            ],
+            "development": null
         }
     }
 ]

@@ -97,7 +97,6 @@ def traverse_data(data, ruc):
                     res.append(item)
     return res
 
-#TODO: "### Overview\n* from the API
 def retrieve_info(info, ruc):
     res = None
     debug("retrieve_info",f"info[{info}]")
@@ -140,15 +139,26 @@ def retrieve_info(info, ruc):
             info is None
             debug("retrieve_info",f"Starting with 'md':{info_value}")
             path = info_value.split(":")[1].strip()
-            #TODO: strip off []
-            query = f"for $i in json-file(\"{JSONL}\",10) where $i.identifier eq \"{ruc['identifier']}\" return $i.{path}"
+            
+            original_path = None  
+            if path.endswith("[]"):
+                original_path = path
+                path = path[:-2]  # Remove the '[]' suffix
+
+            if original_path:
+                query = f'for $i in json-file("{JSONL}", 10) where $i.identifier eq "{ruc["identifier"]}" return [{{"title": $i.{path}}}]'
+            else:
+                query = f'for $i in json-file("{JSONL}",10) where $i.identifier eq "{ruc["identifier"]}" return $i.{path}'
+
             debug("retrieve_info",f"rumbledb query[{query}]")
             response = requests.post(RUMBLEDB, data = query)
             debug("retrieve_info",f"rumbledb result[{response.text}]")
             resp = json.loads(response.text)
             if len(resp['values']) > 0 :
-                #TODO: if [] then resp['values'] else resp['values'][0]
-                info = resp['values'][0]
+                if original_path:
+                    info = resp['values']
+                else:
+                    info = resp['values'][0]
             if info is not None:
                 debug("retrieve_info",f"The value of '{path}' in the MD: {info}")
                 res = info
