@@ -145,9 +145,15 @@ def retrieve_info(info, ruc):
                 original_path = path
                 path = path[:-2]  # Remove the '[]' suffix
 
-            if original_path:
-                query = f'for $i in json-file("{JSONL}", 10) where $i.identifier eq "{ruc["identifier"]}" return [{{"title": $i.{path}}}]'
-            else:
+            query = None
+            if path.startswith("@"):
+                file = path[1:]
+                # TODO: lees query uit file
+                query = "for $i in json-file(\"{JSONL}\", 10) where $i.identifier eq \"{IDENT}\" return [{\"title\": $i.programmingLanguage}]"
+                # TODO: replace {JSONL} en {IDENT}
+                query = query.replace("{JSONL}",JSONL)
+                query = query.replace("{IDENT}",ruc["identifier"])
+            else:    
                 query = f'for $i in json-file("{JSONL}",10) where $i.identifier eq "{ruc["identifier"]}" return $i.{path}'
 
             debug("retrieve_info",f"rumbledb query[{query}]")
