@@ -138,7 +138,7 @@ def retrieve_info(info, ruc):
         if info_value.startswith("md"):
             info is None
             debug("retrieve_info",f"Starting with 'md':{info_value}")
-            path = info_value.split(":")[1].strip()
+            path = info_value.split(":")[1].strip()    
             
             original_path = None  
             if path.endswith("[]"):

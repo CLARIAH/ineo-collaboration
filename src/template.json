@@ -17,7 +17,7 @@
             "metadata": null
         },
         "properties": {
-            "programmingLanguages": "<md:@queries/plangs.rq",
+            "programmingLanguages": "<md:@queries/plangs.rq,null",
             "learn": [
                 {
                     "title": "Manual",
