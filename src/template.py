@@ -153,9 +153,9 @@ def retrieve_info(info, ruc):
                     query = file.read()
             if query is not None:      
                 query = query.replace("{JSONL}",JSONL)
-                query = query.replace("{IDENT}",ruc["identifier"])
+                query = query.replace("{ID}",ruc["identifier"].lower())
             else:    
-                query = f'for $i in json-file("{JSONL}",10) where $i.identifier eq "{ruc["identifier"]}" return $i.{path}'
+                query = f'for $i in json-file("{JSONL}",10) where $i.identifier eq "{ruc["identifier"].lower()}" return $i.{path}'
 
             debug("retrieve_info",f"rumbledb query[{query}]")
             response = requests.post(RUMBLEDB, data = query)

@@ -1,1 +1,5 @@
-for $i in json-file("{JSONL}", 10) where $i.identifier eq "{IDENT}" return [{"title": $i.programmingLanguage}]
+for $i in json-file("{JSONL}", 10)
+where $i.identifier eq "{ID}"
+return
+    if ($i.programmingLanguage and $i.programmingLanguage."name") then [{"title": $i.programmingLanguage."name", "link": $i.readme}]
+    else [{"title": $i.programmingLanguage, "link": $i.readme}]

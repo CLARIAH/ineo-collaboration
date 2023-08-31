@@ -3,6 +3,15 @@
         "id": "<ruc:identifier",
         "title": "<ruc:title",
         "intro": "<ruc:$title",
+        "publishedAt": "yyyy-mm-dd",
+        "media": {
+            "thumbnail": "<md:thumbnailUrl",
+            "slider": [
+              "https://picsum.photos/800/600.webp",
+              "https://vimeo.com/538016781",
+              "https://youtu.be/INUHCQST7CU"
+            ]
+          },
         "tabs": {
             "overview": {
                 "body": "<ruc:overview:^(.*)### Data.*:### Overview\n $1,ruc:overview:^(.*):### Overview\n $1,md:description,err:there is no overview!",
@@ -17,24 +26,15 @@
             "metadata": null
         },
         "properties": {
-            "programmingLanguages": "<md:@queries/plangs.rq,null",
-            "learn": [
-                {
-                    "title": "Manual",
-                    "link": "https://grlc.io/"
-                },
-                {
-                    "title": "FAQ on GitHub",
-                    "link": "https://github.com/CLARIAH/grlc/wiki/FAQ"
-                }
-            ],
+            "programmingLanguages": "<md:@queries/plangs.rq",
+            "learn": "<md:@queries/softwarehelp.rq",
             "resourceHost": [
                 {
                     "title": "Huygens Instituut",
                     "link": "https://www.huygens.knaw.nl/"
                 }
             ],
-            "funding": null,
+            "funding": "<md:@queries/funding.rq",
             "problemContact": [
                 {
                     "title": "This information is not (yet) available",
@@ -52,25 +52,26 @@
                     "link": "https://github.com/CLARIAH/grlc"
                 }
             ],
-            "sourceCodeLocation": "<md:codeRepository",
+            "sourceCodeLocation": "<md:@queries/coderepository.rq",
             "researchContact": [
                 {
                     "title": "This information is not (yet) available",
                     "link": null
                 }
             ],
-            "resourceTypes": ["Tools"],
-            "status": ["Active"],
-            "versions": [
+            "generalContact": [
                 {
-                    "title": "This information is not (yet) available",
-                    "link": null
+                  "title": "string",
+                  "link": "url"
                 }
-            ],
+              ],
+            "resourceTypes": ["Tools"],
+            "status": "<md:@queries/status.rq",
+            "versions": "<md:@queries/version.rq",
             "standards": null,
             "resourceOwner": null,
-            "link": "https://github.com/CLARIAH/grlc",
-            "intro": "grlc converts SPARQL queries into RESTful APIs",
+            "link": "<md:@queries/url.rq",
+            "intro": "<md:description",
             "researchActivities": [
                 "2.1 Converting",
                 "2.3.4 Querying",

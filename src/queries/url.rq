@@ -1,0 +1,6 @@
+for $i in json-file("{JSONL}", 10)
+where $i.identifier eq "{ID}"
+return
+    if ($i.url and $i.url.url) then $i.url.url
+    else $i.url
+

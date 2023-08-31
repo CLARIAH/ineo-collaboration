@@ -1,0 +1,1 @@
+for $i in json-file("{JSONL}", 10) where $i.identifier eq "{ID}" return [{"title": $i.funding."name", "link": $i.funding."url"}]

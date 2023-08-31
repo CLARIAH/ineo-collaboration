@@ -1,0 +1,5 @@
+for $i in json-file("{JSONL}", 10)
+where $i.identifier eq "{ID}"
+return
+    if ($i.softwareHelp and $i.softwareHelp."name") then [{"title": $i.softwareHelp."name", "link": $i.softwareHelp."url"}]
+    else $i.softwareHelp
