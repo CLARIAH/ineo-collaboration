@@ -6,11 +6,8 @@
         "publishedAt": "yyyy-mm-dd",
         "media": {
             "thumbnail": "<md:thumbnailUrl",
-            "slider": [
-              "https://picsum.photos/800/600.webp",
-              "https://vimeo.com/538016781",
-              "https://youtu.be/INUHCQST7CU"
-            ]
+            "slider": "<ruc:carousel,null" 
+
           },
         "tabs": {
             "overview": {
@@ -69,7 +66,7 @@
             "status": "<md:@queries/status.rq",
             "versions": "<md:@queries/version.rq",
             "standards": null,
-            "resourceOwner": null,
+            "resourceOwner": "<md:@queries/producer.rq",
             "link": "<md:@queries/url.rq",
             "intro": "<md:description",
             "researchActivities": [

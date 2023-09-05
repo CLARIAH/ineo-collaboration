@@ -1,0 +1,8 @@
+for $i in json-file("{JSONL}", 10)
+where $i.identifier eq "{ID}"
+return
+  for $name in ($i.producer."name", 10)
+  return 
+    if ($name."@language" == "en")
+    then [{"title": $name."@value", "link": $i.producer.name."url"}]
+    else [{"title": $i.producer."name"."@value", "link": $i.producer."url"}]
