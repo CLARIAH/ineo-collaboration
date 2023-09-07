@@ -1,8 +1,9 @@
-for $i in json-file("{JSONL}", 10)
-where $i.identifier eq "{ID}"
+for $i in json-file("/data/codemeta.jsonl", 10)
+where $i.identifier eq "alud"
 return
-  for $name in ($i.producer."name", 10)
-  return 
-    if ($name."@language" == "en")
-    then [{"title": $name."@value", "link": $i.producer.name."url"}]
-    else [{"title": $i.producer."name"."@value", "link": $i.producer."url"}]
+  if ($i.producer.name instance of string) then [{"title": $i.producer."name", "link": $i.producer."url"}]
+else [
+  for $name in $i.producer.name[]
+  where $name."@language" eq "en"
+  return   {"title": $name."@value", "link": $i.producer."url"}
+  ]
