@@ -136,8 +136,8 @@ def retrieve_info(info, ruc):
                 break  # Exit the loop once a match is found
 
         if info_value.startswith("md"):
-            info is None
-            debug("retrieve_info",f"Starting with 'md':{info_value}")
+            info = None
+            debug("retrieve_info",f"Starting with {info_value}")
             path = info_value.split(":")[1].strip()    
             
             original_path = None  
@@ -159,13 +159,22 @@ def retrieve_info(info, ruc):
 
             debug("retrieve_info",f"rumbledb query[{query}]")
             response = requests.post(RUMBLEDB, data = query)
-            debug("retrieve_info",f"rumbledb result[{response.text}]")
+            assert response.status_code == 200, f"Error running {query} on rumbledb: {response.text}"
+
+            # check whether the query run was successful
             resp = json.loads(response.text)
+            if ("error-code" in resp) or ("error-message" in resp):
+                error("retrieve_info",f"Error running {query} on rumbledb: {response.text}")
+                exit()
+
             if len(resp['values']) > 0 :
                 if original_path:
                     info = resp['values']
                 else:
                     info = resp['values'][0]
+            else:
+                info = None
+                
             if info is not None:
                 debug("retrieve_info",f"The value of '{path}' in the MD: {info}")
                 res = info
@@ -182,19 +191,32 @@ def retrieve_info(info, ruc):
     
     return res
 
-# DSL
-with open(TEMPLATE, 'r') as file:
-    template = json.load(file)
+def main():
+    """
+    Main function
+    This function starts the process of traversing the template and retrieving the information from the RUC and MD
+    then merge then info an INEO json file for feeding into INEO API
 
-# Rich User Contents
-ruc = None
-with open(f"./data/{ID}.json", "r") as json_file:
-    ruc = json.load(json_file)
+    TEMPLATE: the template file loaded as json, by default it is always a list of dictionaries as INEO supports multiple records
+    RUC: the rich user contents file loaded as json, by default it is always a dictionary as it contains only one record
 
-debug("main",f"RUC contents of grlc: {ruc}")
+    return: None
+    """
+    # DSL
+    with open(TEMPLATE, 'r') as file:
+        template = json.load(file)
 
-res = traverse_data(template, ruc)
+    # Rich User Contents
+    ruc = None
+    with open(f"./data/{ID}.json", "r") as json_file:
+        ruc = json.load(json_file)
 
-json.dump(res, sys.stdout, indent=2)
+    debug("main",f"RUC contents of grlc: {ruc}")
+
+    res = traverse_data(template, ruc)
+
+    json.dump(res, sys.stdout, indent=2)
 
 
+if __name__ == "__main__":
+    main()
