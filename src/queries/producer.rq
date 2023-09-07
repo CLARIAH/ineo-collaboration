@@ -1,5 +1,5 @@
-for $i in json-file("/data/codemeta.jsonl", 10)
-where $i.identifier eq "alud"
+for $i in json-file("{JSONL}", 10)
+where $i.identifier eq "{ID}"
 return
   if ($i.producer.name instance of string) then [{"title": $i.producer."name", "link": $i.producer."url"}]
 else [
