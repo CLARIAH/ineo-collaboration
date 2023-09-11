@@ -111,8 +111,8 @@ def retrieve_info(info, ruc):
                 template_key = info_parts[1].strip().lower()
                 if template_key.endswith("[]"):
                     template_key = template_key[:-2]
-                    link = info_parts[2] + info_parts[3] + info_parts[4]
-                    print("THIS IS THE LINK", link)
+                    regex_link = info_parts[2] + info_parts[3] + info_parts[4]
+                    print("THIS IS THE LINK", regex_link)
                     exit
                 info = resolve_path(ruc, template_key)
                 debug("retrieve_info", f"The value of '{template_key}' in the RUC: {info}")
