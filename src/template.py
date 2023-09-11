@@ -106,12 +106,17 @@ def retrieve_info(info, ruc):
         if info_value.startswith("ruc"):
             info_parts = info_value.split(":")
             debug("retrieve_info",f"info_parts[{info_parts}]")
-        
+    
             if len(info_parts) >= 2:
                 template_key = info_parts[1].strip().lower()
+                if template_key.endswith("[]"):
+                    template_key = template_key[:-2]
+                    link = info_parts[2] + info_parts[3] + info_parts[4]
+                    print("THIS IS THE LINK", link)
+                    exit
                 info = resolve_path(ruc, template_key)
-                debug("retrieve_info", f"The value of '{template_key}' in the RUC: {info}")    
-
+                debug("retrieve_info", f"The value of '{template_key}' in the RUC: {info}")
+               
             if info is not None and len(info_parts) > 2:
                 regex_str = info_parts[2].strip()
                 regex = re.compile(regex_str, flags=re.DOTALL)

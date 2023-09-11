@@ -6,7 +6,7 @@
         "publishedAt": "yyyy-mm-dd",
         "media": {
             "thumbnail": "<md:thumbnailUrl,null",
-            "slider": "<ruc:carousel,null" 
+            "slider": "<ruc:carousel[]:/(.*):https://raw.githubusercontent.com/CLARIAH/ineo-content/master/$1,null"
 
           },
         "tabs": {
