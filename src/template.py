@@ -2,6 +2,8 @@ import sys
 import json
 import requests
 import re 
+import pretty_errors
+
 
 #RUMBLEDB = "http://rumbledb:8001/jsoniq"
 RUMBLEDB = "http://localhost:8001/jsoniq"
@@ -108,12 +110,13 @@ def retrieve_info(info, ruc):
             debug("retrieve_info",f"info_parts[{info_parts}]")
     
             if len(info_parts) >= 2:
+                """
+                get the content of the key in the RUC and assigin it to info
+                """
                 template_key = info_parts[1].strip().lower()
                 if template_key.endswith("[]"):
                     template_key = template_key[:-2]
-                    regex_link = info_parts[2] + info_parts[3] + info_parts[4]
-                    print("THIS IS THE LINK", regex_link)
-                    exit
+
                 info = resolve_path(ruc, template_key)
                 debug("retrieve_info", f"The value of '{template_key}' in the RUC: {info}")
                
@@ -121,18 +124,37 @@ def retrieve_info(info, ruc):
                 regex_str = info_parts[2].strip()
                 regex = re.compile(regex_str, flags=re.DOTALL)
                 debug("retrieve_info",f"the regex string is: {regex_str}")
-                match = regex.search(info)
+                if isinstance(info, list):
+                    match = [regex.search(item) if regex.search(item) is not None else item for item in info ]
+                else:
+                    match = regex.search(info)
                 
-                if match is not None:
-                    info = match.group(1)
+                info: list | None = []
+                if match is not None and isinstance(match, list):
+                    for m in match:
+                        if isinstance(m, str):
+                            info.append(m)
+                        else:
+                            info.append(m.group(1))
+                elif match is not None:
+                    info.append(match.group(1))
                     debug("retrieve_info", f"The regex value of '{regex_str}': {info}")
                 else:
                     info = None
                     debug("retrieve_info", f"The regex value of '{regex_str}': {info}")
 
             if info is not None and len(info_parts) > 3:
-                text = info_parts[3].strip()
-                text = text.replace("$1",info)  
+                template_key = info_parts[1].strip().lower()
+                if template_key.endswith("[]"):
+                    # in case of carosel
+                    text: str = ":".join(info_parts[3:])
+                    text: list = [text.replace("$1", i) if not (i.startswith("https://") or i.startswith("http://")) else i for i in info]
+                else:
+                    # in case of string
+                    text: str = info_parts[3].strip()
+                    # text is changing type here to list
+                    text: str = text.replace("$1", info[0])
+
                 info = text
                 debug("retrieve_info", f"The text value of '{info_parts[3].strip()}': {info}")
                 
