@@ -1,13 +1,12 @@
 [
     {
-        "id": "<ruc:identifier",
+        "id": "<ruc:identifier,err:there is no identifier!",
         "title": "<ruc:title",
         "intro": "<ruc:$title",
         "publishedAt": "yyyy-mm-dd",
         "media": {
             "thumbnail": "<md:thumbnailUrl,null",
             "slider": "<ruc:carousel[]:^/(.*):https://raw.githubusercontent.com/CLARIAH/ineo-content/master/$1,null"
-
           },
         "tabs": {
             "overview": {

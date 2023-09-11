@@ -146,7 +146,7 @@ def retrieve_info(info, ruc):
             if info is not None and len(info_parts) > 3:
                 template_key = info_parts[1].strip().lower()
                 if template_key.endswith("[]"):
-                    # in case of carosel
+                    # in case of carousel
                     text: str = ":".join(info_parts[3:])
                     text: list = [text.replace("$1", i) if not (i.startswith("https://") or i.startswith("http://")) else i for i in info]
                 else:
