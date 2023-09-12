@@ -1,5 +1,8 @@
 for $i in json-file("{JSONL}", 10)
 where $i.identifier eq "{ID}"
-return
-    if ($i.programmingLanguage and $i.programmingLanguage."name") then [{"title": $i.programmingLanguage."name", "link": $i.readme}]
-    else [{"title": $i.programmingLanguage, "link": $i.readme}]
+for $item in $i.programmingLanguage
+return if ($i.programmingLanguage instance of string) then [{"title": $i.programmingLanguage, "link": $i.readme}] 
+else if ($i.programmingLanguage instance of object) then [{"title": $i.programmingLanguage."name", "link": $i.readme}]
+else if ($i.programmingLanguage instance of array) then [{"title": $i.programmingLanguage,"link": $i.readme}]
+
+else "no idea"

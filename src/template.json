@@ -22,15 +22,15 @@
             "metadata": null
         },
         "properties": {
-            "programmingLanguages": "<md:@queries/plangs.rq",
-            "learn": "<md:@queries/softwarehelp.rq",
+            "programmingLanguages": "<md:@queries/plangs.rq,null",
+            "learn": "<md:@queries/softwarehelp.rq,null",
             "resourceHost": [
                 {
                     "title": "Huygens Instituut",
                     "link": "https://www.huygens.knaw.nl/"
                 }
             ],
-            "funding": "<md:@queries/funding.rq",
+            "funding": "<md:@queries/funding.rq,null",
             "problemContact": [
                 {
                     "title": "This information is not (yet) available",
@@ -48,7 +48,7 @@
                     "link": "https://github.com/CLARIAH/grlc"
                 }
             ],
-            "sourceCodeLocation": "<md:@queries/coderepository.rq",
+            "sourceCodeLocation": "<md:@queries/coderepository.rq,null",
             "researchContact": [
                 {
                     "title": "This information is not (yet) available",
@@ -62,12 +62,12 @@
                 }
               ],
             "resourceTypes": ["Tools"],
-            "status": "<md:@queries/status.rq",
-            "versions": "<md:@queries/version.rq",
+            "status": "<md:@queries/status.rq,null",
+            "versions": "<md:@queries/version.rq,null",
             "standards": null,
-            "resourceOwner": "<md:@queries/producer.rq",
-            "link": "<md:@queries/url.rq",
-            "intro": "<md:description",
+            "resourceOwner": "<md:@queries/producer.rq,null",
+            "link": "<md:@queries/url.rq,null",
+            "intro": "<md:description,null",
             "researchActivities": [
                 "2.1 Converting",
                 "2.3.4 Querying",
