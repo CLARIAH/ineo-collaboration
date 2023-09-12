@@ -1,1 +1,8 @@
-for $i in json-file("{JSONL}", 10) where $i.identifier eq "{ID}" return [$i.developmentStatus."skos:prefLabel"]
+for $i in json-file("{JSONL}", 10) 
+where $i.identifier eq "{ID}" 
+for $item in $i.developmentStatus
+return if ($item instance of object) then [$i.developmentStatus."skos:prefLabel"]
+else if ($item instance of array) then [
+for $l in $item[]
+return $l."skos:prefLabel"]
+else "null"

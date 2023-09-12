@@ -1,1 +1,13 @@
-for $i in json-file("{JSONL}", 10) where $i.identifier eq "{ID}" return [{"title": $i.funding."name", "link": $i.funding."url"}]
+for $i in json-file("/data/codemeta.jsonl", 10) 
+where $i.identifier eq "frog" 
+
+return 
+if ($i.funder) then
+[{"title": $i.funder."name", "link": $i.funder."url"}]
+else if ($i.funding instance of object) then
+[{"title": [$i.funding."name",$i.funding.funder.name][[1]], "link": [$i.funding."url", $i.funding.funder.url][[1]]}]
+else if ($i.funding instance of array) then [
+for $item in $i.funding[]
+return {"title": $item.name, "link": $item.url}]
+
+else "null"
