@@ -1,0 +1,5 @@
+for $i in json-file("{JSONL}", 10) 
+where $i.identifier eq "{ID}" 
+for $item in $i.author[]
+return [{"title": $item."givenName" || " " || $item."familyName", 
+"link": [$item."url", $item."@id", $item."email"][[1]]}]
