@@ -63,12 +63,7 @@
             "resourceOwner": "<md:@queries/producer.rq,null",
             "link": "<md:@queries/url.rq,null",
             "intro": "<md:description,null",
-            "researchActivities": [
-                "2.1 Converting",
-                "2.3.4 Querying",
-                "4.5.4 Linked Open Data",
-                "5.1.7 Linked Open Data"
-            ],
+            "researchActivities": "<md:@queries/activities.rq,null",
             "researchDomains": [
                 "5 Computers and humanities",
                 "11 History"
