@@ -1,5 +1,6 @@
 for $i in json-file("{JSONL}", 10)
 where $i.identifier eq "{ID}" 
+
 return
   if ($i.applicationCategory instance of array) then 
     for $item in $i."applicationCategory"[]
@@ -9,10 +10,13 @@ return
         where $label."@language" eq "en"
         return [$label."@value"]
       else if ($item."skos:prefLabel"."@language" eq "en")
-      then $item."skos:prefLabel"."@value"
-      else ()
-  else if ($i.applicationCategory instance of string) then [$i.applicationCategory]  
-  else ()
+      then [$item."skos:prefLabel"."@value"]
+      else [$item]
+
+else if ($i.applicationCategory instance of string) then [$i.applicationCategory] 
+
+else ()
+
 
 
 
