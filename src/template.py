@@ -3,7 +3,7 @@ import json
 import requests
 import re 
 import pretty_errors
-
+import jsonlines
 
 #RUMBLEDB = "http://rumbledb:8001/jsoniq"
 RUMBLEDB = "http://localhost:8001/jsoniq"
@@ -99,6 +99,30 @@ def traverse_data(data, ruc):
                     res.append(item)
     return res
 
+def check_links(links):
+    if isinstance(links, str):
+        # If 'links' is a single URL in vocabs
+        if "vocabs.dariah.eu" in links:
+            debug("info", "The link contains 'vocabs.dariah.eu'")
+            return True
+        else:
+            debug("info", "The link does not contain 'vocabs.dariah.eu'")
+            return False
+    elif isinstance(links, list):
+        # If 'links' is a list of strings
+        matching_links = [link for link in links if "vocabs.dariah.eu" in link]
+        if matching_links:
+            debug("info", "Links containing 'vocabs.dariah.eu':")
+            for link in matching_links:
+                debug("link", link)
+                return True
+        else:
+            debug("info", "None of the links in the API contain 'vocabs.dariah.eu'")
+            return False
+    else:
+        debug("info", "Invalid input. 'links' should be either a string or a list of strings")
+        return False 
+    
 def retrieve_info(info, ruc):
     res = None
     debug("retrieve_info",f"info[{info}]")
@@ -111,7 +135,7 @@ def retrieve_info(info, ruc):
     
             if len(info_parts) >= 2:
                 """
-                get the content of the key in the RUC and assigin it to info
+                get the content of the key in the RUC and assign it to info
                 """
                 template_key = info_parts[1].strip().lower()
                 if template_key.endswith("[]"):
@@ -146,6 +170,7 @@ def retrieve_info(info, ruc):
             if info is not None and len(info_parts) > 3:
                 template_key = info_parts[1].strip().lower()
                 if template_key.endswith("[]"):
+                    
                     # in case of carousel
                     text: str = ":".join(info_parts[3:])
                     text: list = [text.replace("$1", i) if not (i.startswith("https://") or i.startswith("http://")) else i for i in info]
@@ -204,6 +229,30 @@ def retrieve_info(info, ruc):
                 
             if info is not None:
                 debug("retrieve_info",f"The value of '{path}' in the MD: {info}")
+                
+                # Check if info contains "vocabs.dariah.eu" 
+                if check_links(info):  # Check a single link
+                    debug("single activity", info)
+        
+                    with open(f"./researchActivity.json", "r") as vocabs_file:
+                            vocabs = json.load(vocabs_file)
+        
+                    vocabs_list = []
+                    # Iterate through the items in the "result" array of the vocabs
+                    for item in vocabs.get("result", []):
+                        if item.get("link") == info:
+                            title = item.get("title")
+                            index = item.get("index")
+                            result = f"{index} {title}"
+                            vocabs_list.append(result)
+                            debug("vocabs", f"vocabs index and title':{result}")
+                            info = result
+
+                        #for result in vocabs_list:
+                         #   info = result
+                
+                debug("final result", info)
+                
                 res = info
                 break  # Exit the loop once a match is found
 
