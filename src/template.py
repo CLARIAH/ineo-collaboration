@@ -228,7 +228,7 @@ def retrieve_info(info, ruc):
             if info is not None:
                 debug("retrieve_info",f"The value of '{path}' in the MD: {info}")
                 #info = ["https://vocabs.dariah.eu/tadirah/structuralAnalysis","https://vocabs.dariah.eu/tadirah/analyzing"]
-                #info = "https://vocabs.dariah.eu/tadirah/structuralAnalysis"
+                info = ["https://vocabs.dariah.eu/tadirah/structuralAnalysis"]
                 
                 # Check if info contains "vocabs.dariah.eu" 
                 for item in info:
