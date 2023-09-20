@@ -451,8 +451,7 @@
             "skos:prefLabel": "Software for humanities",
             "skos:notation": "37.10.00",
             "skos:broader": "https://w3id.org/nwo-research-fields#ComputersAndTheHumanities",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
-            "skos:exactMatch": "5.3 Software for the humanities"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#TextualAndContentAnalysis",
