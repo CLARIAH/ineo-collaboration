@@ -235,7 +235,7 @@ def retrieve_info(info, ruc):
                     if check_links(item): 
                         debug("research activity", item)
             
-                        with open(f"./researchActivity.json", "r") as vocabs_file:
+                        with open(f"./vocabs/researchActivity.json", "r") as vocabs_file:
                                 vocabs = json.load(vocabs_file)
             
                         vocabs_list = []
