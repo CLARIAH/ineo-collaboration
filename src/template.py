@@ -112,10 +112,8 @@ def check_links(links):
         # If 'links' is a list of strings
         matching_links = [link for link in links if "vocabs.dariah.eu" in link]
         if matching_links:
-            debug("info", "Links containing 'vocabs.dariah.eu':")
-            for link in matching_links:
-                debug("link", link)
-                return True
+            debug("info", "Multiple links contain 'vocabs.dariah.eu'")
+            return True
         else:
             debug("info", "None of the links in the API contain 'vocabs.dariah.eu'")
             return False
@@ -229,28 +227,31 @@ def retrieve_info(info, ruc):
                 
             if info is not None:
                 debug("retrieve_info",f"The value of '{path}' in the MD: {info}")
+                #info = ["https://vocabs.dariah.eu/tadirah/structuralAnalysis","https://vocabs.dariah.eu/tadirah/analyzing"]
+                #info = "https://vocabs.dariah.eu/tadirah/structuralAnalysis"
                 
                 # Check if info contains "vocabs.dariah.eu" 
-                if check_links(info):  # Check a single link
-                    debug("single activity", info)
-        
-                    with open(f"./researchActivity.json", "r") as vocabs_file:
-                            vocabs = json.load(vocabs_file)
-        
-                    vocabs_list = []
-                    # Iterate through the items in the "result" array of the vocabs
-                    for item in vocabs.get("result", []):
-                        if item.get("link") == info:
-                            title = item.get("title")
-                            index = item.get("index")
-                            result = f"{index} {title}"
-                            vocabs_list.append(result)
-                            debug("vocabs", f"vocabs index and title':{result}")
-                            info = result
+                for item in info:
+                    if check_links(item): 
+                        debug("research activity", item)
+            
+                        with open(f"./researchActivity.json", "r") as vocabs_file:
+                                vocabs = json.load(vocabs_file)
+            
+                        vocabs_list = []
+                    
+                        
+                        # Iterate through the items in the "result" array of the vocabs
+                        for vocabs_item in vocabs.get("result", []):
+                            if vocabs_item.get("link") == item:
+                                title = vocabs_item.get("title")
+                                index = vocabs_item.get("index")
+                                result = f"{index} {title}"
+                                vocabs_list.append(result)
+                                debug("vocabs", f"vocabs index and title':{result}")
+                                for result in vocabs_list:
+                                    info = result     
 
-                        #for result in vocabs_list:
-                         #   info = result
-                
                 debug("final result", info)
                 
                 res = info
