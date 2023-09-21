@@ -5,9 +5,9 @@ import re
 import pretty_errors
 import jsonlines
 
-# RUMBLEDB = "http://rumbledb:8001/jsoniq"
-RUMBLEDB = "http://localhost:8001/jsoniq"
-JSONL = "/data/codemeta.jsonl"
+RUMBLEDB = "http://rumbledb:8001/jsoniq"
+# RUMBLEDB = "http://localhost:8001/jsoniq"
+JSONL = "/data/data/codemeta.jsonl"
 
 ID = "grlc"
 if len(sys.argv) > 1:

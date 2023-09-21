@@ -10,14 +10,16 @@ services:
     image: ineo-sync:latest
     container_name: ineo-sync
     volumes:
-      - ineo-sync:/src/data
+      # - ineo-sync:/src/data
+      - ./:/src
     restart: unless-stopped
 
   rumbledb:
     image: rumbledb/rumble:latest
     container_name: rumbledb
     volumes:
-      - ineo-sync:/data
+      # - ineo-sync:/data
+      - ./:/data
     restart: unless-stopped
     command: ["serve", "-p", "8001", "-h", "0.0.0.0"]
     ports:
