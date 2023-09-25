@@ -1,0 +1,2474 @@
+{
+    "@context": {
+        "nwo": "https://w3id.org/nwo-research-fields#",
+        "skos": "http://www.w3.org/2004/02/skos/core#",
+        "og": "http://ogp.me/ns#",
+        "dct": "http://purl.org/dc/terms/",
+        "ResearchField": {
+            "@id": "nwo:ResearchField"
+        }
+    },
+    "@graph": [
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Scheme",
+            "@type": "skos:ConceptScheme",
+            "dct:title": "NWO Research Fields",
+            "dct:description": "Ontology of the NWO Research fields, as used in grant applications by the Dutch Research Council (NWO): https://www.nwo.nl/en/nwo-research-fields",
+            "dct:creator": "Maarten van Gompel"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Archaeology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Archeology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "1 Archeology"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Prehistory",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "26.10.00",
+            "skos:prefLabel": "Prehistory",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Archaeology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "1.7 Prehistory (archaeology)"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#AntiquityAndLateAntiquity",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "26.20.00",
+            "skos:prefLabel": "Antiquity and late antiquity",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Archaeology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "1.1 Antiquity and Late Antiquity (archeology)"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#OrientalArchaeology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "26.30.00",
+            "skos:prefLabel": "Oriental archaeology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Archaeology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#MediaevalArchaeology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "26.40.00",
+            "skos:prefLabel": "Mediaeval archaeology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Archaeology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "1.2 Archeology of the Middle Ages"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#IndustrialArchaeology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "26.50.00",
+            "skos:prefLabel": "Industrial archaeology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Archaeology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "1.4 Industrial archaeology"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#PreservationAndRestorationMuseums",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "26.60.00",
+            "skos:prefLabel": "Preservation and restauration, museums",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Archaeology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "1.3 Conservation and restoration, museums"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#MethodsAndTechniques",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "26.70.00",
+            "skos:prefLabel": "Methods and techniques",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Archaeology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "1.5 Methods and techniques"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ArchaeologyOther",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "26.90.00",
+            "skos:prefLabel": "Archaeology, other",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Archaeology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "1.8 Archeology, other"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#AreaStudies",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Area studies",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "2 Area studies"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#AsianLanguagesAndLiterature",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "36.10.00",
+            "skos:prefLabel": "Asian languages and literature",
+            "skos:broader": "https://w3id.org/nwo-research-fields#AreaStudies",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "2.1 Asian languages and literatures"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#AsianReligionsAndPhilosophies",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "36.15.00",
+            "skos:prefLabel": "Asian religions and philosophies",
+            "skos:broader": "https://w3id.org/nwo-research-fields#AreaStudies",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "2.2 Asian religions and philosophies"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#JewishStudies",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "36.20.00",
+            "skos:prefLabel": "Jewish studies",
+            "skos:broader": "https://w3id.org/nwo-research-fields#AreaStudies",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "2.6 Jewish studies"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#IslamicStudies",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "36.25.00",
+            "skos:prefLabel": "Islamic studies",
+            "skos:broader": "https://w3id.org/nwo-research-fields#AreaStudies",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "2.5 Islamic studies"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#IranianAndArmenianStudies",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "36.30.00",
+            "skos:prefLabel": "Iranian and Armenian studies",
+            "skos:broader": "https://w3id.org/nwo-research-fields#AreaStudies",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "2.4 Iranian and Armenian studies"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#CentralAsianStudies",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "36.35.00",
+            "skos:prefLabel": "Central Asian studies",
+            "skos:broader": "https://w3id.org/nwo-research-fields#AreaStudies",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "2.7 Languages and cultures of Central Asia"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#IndianStudies",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "36.40.00",
+            "skos:prefLabel": "Indian studies",
+            "skos:broader": "https://w3id.org/nwo-research-fields#AreaStudies",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "2.3 Indian studies"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#SouthEastAsianStudies",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "36.45.00",
+            "skos:prefLabel": "South-east Asian studies",
+            "skos:broader": "https://w3id.org/nwo-research-fields#AreaStudies",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "2.9 Languages and cultures of Southeast Asia"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Sinology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "36.50.00",
+            "skos:prefLabel": "Sinology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#AreaStudies",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "2.10 Sinology"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#JapaneseStudies",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "36.55.00",
+            "skos:prefLabel": "Japanese studies",
+            "skos:broader": "https://w3id.org/nwo-research-fields#AreaStudies",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "2.8 Languages and cultures of Japan"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#AreaStudiesOther",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "36.90.00",
+            "skos:prefLabel": "Area studies, other",
+            "skos:broader": "https://w3id.org/nwo-research-fields#AreaStudies",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "2.11 Area studies, other"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ArtAndArchitecture",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Art and architecture",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "3.12 Art and architecture, other"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#AstronomyAstrophysics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Astronomy, astrophysics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Biology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Biology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Microbiology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "22.10.00",
+            "skos:prefLabel": "Microbiology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Biology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#BiogeographyTaxonomy",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "22.20.00",
+            "skos:prefLabel": "Biogeography, taxonomy",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Biology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#AnimalEthologyAnimalPsychology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "22.30.00",
+            "skos:prefLabel": "Animal ethology, animal psychology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Biology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Ecology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "22.40.00",
+            "skos:prefLabel": "Ecology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Biology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Botany",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "22.50.00",
+            "skos:prefLabel": "Botany",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Biology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Zoology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "22.60.00",
+            "skos:prefLabel": "Zoology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Biology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ToxicologyPlantsInvertebrates",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "22.70.00",
+            "skos:prefLabel": "Toxicology (plants, invertebrates)",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Biology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Biotechnology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "22.80.00",
+            "skos:prefLabel": "Biotechnology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Biology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#BiologyOther",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "22.90.00",
+            "skos:prefLabel": "Biology, other",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Biology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#BusinessAdministration",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "39.90.00",
+            "skos:prefLabel": "Business administration",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Chemistry",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Chemistry",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#AnalyticalChemistry",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "13.10.00",
+            "skos:prefLabel": "Analytical chemistry",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Chemistry",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#MacromolecularChemistryPolymerChemistry",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "13.20.00",
+            "skos:prefLabel": "Macromolecular chemistry, polymer chemistry",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Chemistry",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#OrganicChemistry",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "13.30.00",
+            "skos:prefLabel": "Organic chemistry",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Chemistry",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#InorganicChemistry",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "13.40.00",
+            "skos:prefLabel": "Inorganic chemistry",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Chemistry",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#PhysicalChemistry",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "13.50.00",
+            "skos:prefLabel": "Physical chemistry",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Chemistry",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Catalysis",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "13.60.00",
+            "skos:prefLabel": "Catalysis",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Chemistry",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#TheoreticalChemistryQuantumChemistry",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "13.70.00",
+            "skos:prefLabel": "Theoretical chemistry, quantum chemistry",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Chemistry",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ChemistryOther",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "13.90.00",
+            "skos:prefLabel": "Chemistry, other",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Chemistry",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#CommunicationScience",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Communication science",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "4 Communication sciences"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ComputerScience",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "49.90.00",
+            "skos:prefLabel": "Computer science",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ComputerSystemsArchitecturesNetworks",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Computer systems, architectures, networks",
+            "skos:notation": "16.10.00",
+            "skos:broader": "https://w3id.org/nwo-research-fields#ComputerScience",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "13.4 Computer systems, architectures, networks"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#SoftwareAlgorithmsControlSystems",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Software, algorithms, control systems",
+            "skos:notation": "16.20.00",
+            "skos:broader": "https://w3id.org/nwo-research-fields#ComputerScience",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "13.7 Software, algorithms, operating systems"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#TheoreticalComputerScience",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Theoretical computer science",
+            "skos:notation": "16.30.00",
+            "skos:broader": "https://w3id.org/nwo-research-fields#ComputerScience",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+            
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#InformationSystemsDatabases",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Information systems, databases",
+            "skos:notation": "16.40.00",
+            "skos:broader": "https://w3id.org/nwo-research-fields#ComputerScience",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "13.5 Information systems, databases"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#UserInterfacesMultimedia",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "User interfaces, multimedia",
+            "skos:notation": "16.50.00",
+            "skos:broader": "https://w3id.org/nwo-research-fields#ComputerScience",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "13.9 User interfaces, multimedia"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ArtificialIntelligenceExpertSystems",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Artificial intelligence, export systems",
+            "skos:notation": "16.60.00",
+            "skos:broader": "https://w3id.org/nwo-research-fields#ComputerScience",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "13.1 Artificial intelligence, expert systems"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ComputerGraphics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Computer graphics",
+            "skos:notation": "16.70.00",
+            "skos:broader": "https://w3id.org/nwo-research-fields#ComputerScience",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "13.3 Computer graphics"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ComputerSimulationVirtualReality",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Computer simulation, virtual reality",
+            "skos:notation": "16.80.00",
+            "skos:broader": "https://w3id.org/nwo-research-fields#ComputerScience",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "13.6 Simulation, virtual reality"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ComputerScienceOther",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Computer science, other",
+            "skos:notation": "16.90.00",
+            "skos:broader": "https://w3id.org/nwo-research-fields#ComputerScience",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#BioInformaticsBiostatisticsBiomathematicsBiomechanics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Bioinformations/biostatistics, biomathematics, biomechanics",
+            "skos:notation": "21.10.00",
+            "skos:broader": "https://w3id.org/nwo-research-fields#LifeSciences",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "13.2 Bioinformatics/biostatistics, biomathematics, biomechanics"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ComputersAndTheHumanities",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Computers and the humanities",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "5 Computers and humanities"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#SoftwareForHumanities",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Software for humanities",
+            "skos:notation": "37.10.00",
+            "skos:broader": "https://w3id.org/nwo-research-fields#ComputersAndTheHumanities",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "5.3 Software for the humanities"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#TextualAndContentAnalysis",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Textual and content analysis",
+            "skos:notation": "37.20.00",
+            "skos:broader": "https://w3id.org/nwo-research-fields#ComputersAndTheHumanities",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "5.4 Text and content analysis"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#TextualAndLinguisticCorpora",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Textual and linguistic corpora",
+            "skos:notation": "37.30.00",
+            "skos:broader": "https://w3id.org/nwo-research-fields#ComputersAndTheHumanities",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "5.5 Text and linguistic corpora"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#DatabasesForHumanities",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Databases for humanities",
+            "skos:notation": "37.40.00",
+            "skos:broader": "https://w3id.org/nwo-research-fields#ComputersAndTheHumanities",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "5.1 Databases for the humanities"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HypertextsAndMultimedia",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "HypertextsAndMultimedia",
+            "skos:notation": "37.50.00",
+            "skos:broader": "https://w3id.org/nwo-research-fields#ComputersAndTheHumanities",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "5.2 Hypertexts and multimedia"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ComputersAndTheHumanitiesOther",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Computers and the humanities, other",
+            "skos:notation": "37.20.00",
+            "skos:broader": "https://w3id.org/nwo-research-fields#ComputersAndTheHumanities",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "5.6 Computers and humanities, other"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#CulturalAnthropology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "46.90.00",
+            "skos:prefLabel": "Cultural anthropology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "6 Cultural anthropology"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Demography",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "48.90.00",
+            "skos:prefLabel": "Demography",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "7 Demographics"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#DevelopmentStudies",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "51.90.00",
+            "skos:prefLabel": "Development studies",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+            
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#EarthSciences",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Earth sciences",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Economics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Economics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "8 Economics"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#MicroEconomics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "38.10.00",
+            "skos:prefLabel": "Microeconomics",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Economics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "8.3 Microeconomics"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#MacroEconomics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "38.20.00",
+            "skos:prefLabel": "Macroeconomics",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Economics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "8.2 Macro economy"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Econometrics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "38.30.00",
+            "skos:prefLabel": "Econometrics",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Economics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "8.1 Econometrics"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#EducationalSciences",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "41.90.00",
+            "skos:prefLabel": "Educational Sciences",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#EnvironmentalScience",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "50.90.00",
+            "skos:prefLabel": "Environmental science",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#GenderStudies",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "28.90.00",
+            "skos:prefLabel": "Gender studies",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "9 Gender studies"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#GeographyPlanning",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Geography / Planning",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "10 Geography and Planning"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Geography",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "49.10.00",
+            "skos:prefLabel": "Geography",
+            "skos:broader": "https://w3id.org/nwo-research-fields#GeographyPlanning",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "10.1 Geography"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Planning",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "49.11.00",
+            "skos:prefLabel": "Planning",
+            "skos:broader": "https://w3id.org/nwo-research-fields#GeographyPlanning",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "10.2 Planning"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#History",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "History",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "11 History"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#PreclassicalCivilizations",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "27.10.00",
+            "skos:prefLabel": "Pre-classical civilizations",
+            "skos:broader": "https://w3id.org/nwo-research-fields#History",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#AntiquityAndLateAntiquityHistory",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "27.20.00",
+            "skos:prefLabel": "Antiquity and late antiquity history",
+            "skos:broader": "https://w3id.org/nwo-research-fields#History",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "11.1 Antiquity and Late Antiquity (history)"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#MediaevalHistory",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "27.30.00",
+            "skos:prefLabel": "Mediaeval history",
+            "skos:broader": "https://w3id.org/nwo-research-fields#History",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "11.12 Medieval history"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ModernAndContemporaryHistory",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "27.40.00",
+            "skos:prefLabel": "Modern and contemporary history",
+            "skos:broader": "https://w3id.org/nwo-research-fields#History",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "11.13 Modern and contemporary history"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#SocialAndEconomicHistory",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "27.50.00",
+            "skos:prefLabel": "Social and economic history",
+            "skos:broader": "https://w3id.org/nwo-research-fields#History",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "11.16 Socio-economic history"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#CulturalHistory",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "27.60.00",
+            "skos:prefLabel": "Cultural history",
+            "skos:broader": "https://w3id.org/nwo-research-fields#History",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "11.3 Cultural history"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ComparativePoliticalHistory",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "27.70.00",
+            "skos:prefLabel": "Comparative political history",
+            "skos:broader": "https://w3id.org/nwo-research-fields#History",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "11.2 Comparative political history"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#LibrarianshipArchiveStudies",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "27.80.00",
+            "skos:prefLabel": "Librarianship, archive studies",
+            "skos:broader": "https://w3id.org/nwo-research-fields#History",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "11.11 Library science and archival science"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HistoryOther",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "27.90.00",
+            "skos:prefLabel": "History, other",
+            "skos:broader": "https://w3id.org/nwo-research-fields#History",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "11.18 History, other"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HistoryAndPhilosophyOfScienceAndTechnology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "10.10.00",
+            "skos:prefLabel": "History and philosophy of science and technology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#ScienceAndTechnology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "12.7 History and philosophy of natural sciences and technology"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HistoryofScience",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "History of science",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "12 History of science"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HistoryOfAncientScience",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "34.10.00",
+            "skos:prefLabel": "History of ancient science",
+            "skos:broader": "https://w3id.org/nwo-research-fields#HistoryOfScience",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "12.1 History of ancient science"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HistoryOfMediaevalScience",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "34.20.00",
+            "skos:prefLabel": "History of mediaeval science",
+            "skos:broader": "https://w3id.org/nwo-research-fields#HistoryOfScience",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "12.3 History of medieval science"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HistoryOfModernScience",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "34.30.00",
+            "skos:prefLabel": "History of modern science",
+            "skos:broader": "https://w3id.org/nwo-research-fields#HistoryOfScience",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "12.4 History of modern science"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HistoryOfContemporaryScience",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "34.40.00",
+            "skos:prefLabel": "History of contemporary science",
+            "skos:broader": "https://w3id.org/nwo-research-fields#HistoryOfScience",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "12.2 History of contemporary science"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HistoryOfTechnology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "34.45.00",
+            "skos:prefLabel": "History of technology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#HistoryOfScience",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "12.5 History of technology"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HistoryOfScienceOther",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "34.90.00",
+            "skos:prefLabel": "History of Science, other",
+            "skos:broader": "https://w3id.org/nwo-research-fields#HistoryOfScience",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "12.9 History of science, other"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HistoryOfReligions",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "35.10.00",
+            "skos:prefLabel": "History of religions",
+            "skos:broader": "https://w3id.org/nwo-research-fields#ReligiousStudiesAndTheology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "19.3 History of religion"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HistoryOfChristianity",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "35.20.00",
+            "skos:prefLabel": "History of Christianity",
+            "skos:broader": "https://w3id.org/nwo-research-fields#ReligiousStudiesAndTheology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "19.2 History of Christianity"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#TheologyAndHistoryOfTheology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "35.30.00",
+            "skos:prefLabel": "Theology and history of theology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#ReligiousStudiesAndTheology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "19.4 Theology and history of theology"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#LanguageAndLiterature",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Language and literature",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "14 Language and literature"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#PreclassicalPhilologyAndLiterature",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "31.10.00",
+            "skos:prefLabel": "Pre-classical philology and literature",
+            "skos:broader": "https://w3id.org/nwo-research-fields#LanguageAndLiterature",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "14.8 Pre-classical philology and literature"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#GreekAndLatinPhilologyAndLiterature",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "31.15.00",
+            "skos:prefLabel": "Greek and Latin philology and literature",
+            "skos:broader": "https://w3id.org/nwo-research-fields#LanguageAndLiterature",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "14.4 Greek and Latin language and culture"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#MediaevalAndNeoLatinLanguagesAndLiterature",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "31.20.00",
+            "skos:prefLabel": "Mediaeval and Neo-Latin languages and literature",
+            "skos:broader": "https://w3id.org/nwo-research-fields#LanguageAndLiterature",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "14.5 Medieval and neo-Latin languages and cultures"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#MediaevalEuropeanLanguagesAndLiterature",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "31.25.00",
+            "skos:prefLabel": "Mediaeval European languages and literature",
+            "skos:broader": "https://w3id.org/nwo-research-fields#LanguageAndLiterature",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "14.6 Medieval European languages and cultures"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ModernEuropeanLanguagesAndLiterature",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "31.30.00",
+            "skos:prefLabel": "Modern European languages and literature",
+            "skos:broader": "https://w3id.org/nwo-research-fields#LanguageAndLiterature",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "14.7 Modern European languages and cultures"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#AngloAmericanLiterature",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "31.35.00",
+            "skos:prefLabel": "Anglo-American Literature",
+            "skos:broader": "https://w3id.org/nwo-research-fields#LanguageAndLiterature",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "14.2 Anglo-American literature"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HispanicAndBrazilianLiterature",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "31.40.00",
+            "skos:prefLabel": "Hispanic and Brazilian literature",
+            "skos:broader": "https://w3id.org/nwo-research-fields#LanguageAndLiterature",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "14.9 Spanish and Brazilian literature"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#African language and literature",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "31.45.00",
+            "skos:prefLabel": "African languages and literature",
+            "skos:broader": "https://w3id.org/nwo-research-fields#LanguageAndLiterature",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "14.1 African languages and cultures"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ComparativeLiterature",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "31.50.00",
+            "skos:prefLabel": "Comparative literature",
+            "skos:broader": "https://w3id.org/nwo-research-fields#LanguageAndLiterature",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "14.3 Comparative literature"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#LanguageAndLiteratureOther",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "31.90.00",
+            "skos:prefLabel": "Language and literature, other",
+            "skos:broader": "https://w3id.org/nwo-research-fields#LanguageAndLiterature",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "14.10 Language and literature, other"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Law",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Law",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#PrivateLaw",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "43.10.00",
+            "skos:prefLabel": "Private law",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Law",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ConstitutionalAndAdministrativeLaw",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "43.20.00",
+            "skos:prefLabel": "Constitutinal and Administrative Law",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Law",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#InternationalAndEuropeanLaw",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "43.30.00",
+            "skos:prefLabel": "International and European law",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Law",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#CriminalLawAndCriminology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "43.40.00",
+            "skos:prefLabel": "Criminal law and Criminology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Law",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#LifeSciences",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Life sciences",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#LifeSciencesAndMedicine",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Life sciences and medicine",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Linguistics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Linguistics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "15 Linguistics"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#PhoneticsAndPhonology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "30.10.00",
+            "skos:prefLabel": "Phonetics and phonology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Linguistics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "15.8 Phonetics and phonology"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#MorphologyGrammarAndSyntax",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "30.15.00",
+            "skos:prefLabel": "Morphology, grammar and syntax",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Linguistics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "15.7 Morphology, grammar and syntax"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#SemanticsAndPhilosophyOfLanguage",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "30.20.00",
+            "skos:prefLabel": "Semantics and philosophy of language",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Linguistics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "15.10 Semantics and philosophy of language"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#LinguisticTypologyAndComparativeLinguistics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "30.25.00",
+            "skos:prefLabel": "Linguistic typology and comparative linguistics",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Linguistics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "15.4 Language typology and comparative linguistics"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#DialectologyLinguisticGeographySociolinguistics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "30.30.00",
+            "skos:prefLabel": "Dialetology, linguistic geography, sociolinguistics",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Linguistics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "15.2 Dialectology, linguistic geography, sociolinguistics"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#LexiconAndLexicography",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "30.35.00",
+            "skos:prefLabel": "Lexicon and lexicography",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Linguistics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "15.5 Lexica and lexicography"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#PsycholinguisticsAndNeurolinguistics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "30.40.00",
+            "skos:prefLabel": "Psycholinguistics and neurolinguistics",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Linguistics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "15.9 Psycholinguistics and neurolinguistics"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ComputationalLinguisticsAndPhilology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "30.45.00",
+            "skos:prefLabel": "Computational linguistics and philology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Linguistics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "15.1 Computational linguistics and philology"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#LinguisticStatistics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "30.50.00",
+            "skos:prefLabel": "Linguistic statistics",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Linguistics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "15.6 Linguistic statistics"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#LanguageTeachingAndAcquisition",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "30.55.00",
+            "skos:prefLabel": "Language teaching and acquisition",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Linguistics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "15.3 Language education and language acquisition"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#TranslationStudies",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "30.60.00",
+            "skos:prefLabel": "Translation studies",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Linguistics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "15.11 Translation studies"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#LinguisticsOthers",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "30.90.00",
+            "skos:prefLabel": "Linguistics, other",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Linguistics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "15.12 Linguistics, other"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Mathematics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Mathematics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#LogicSetTheoryAndArithmetic",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "11.10.00",
+            "skos:prefLabel": "Logic, set theory and arithmetic",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Mathematics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#AlgebraGroupTheory",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "11.20.00",
+            "skos:prefLabel": "AlgebraGroupTheory",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Mathematics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#FunctionsDifferentialEquations",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "11.30.00",
+            "skos:prefLabel": "Fucntions, differential equations",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Mathematics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#FourierAnalysisFunctionalAnalysis",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "11.40.00",
+            "skos:prefLabel": "Fourier analysis, functional analysis",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Mathematics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#GeometryTopology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "11.50.00",
+            "skos:prefLabel": "Geometry, topology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Mathematics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ProbabilityTheoryStatistisc",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "11.60.00",
+            "skos:prefLabel": "Probability theory, statistics",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Mathematics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#OperationsResearch",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "11.70.00",
+            "skos:prefLabel": "Operations research",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Mathematics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#NumericalAnalysis",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "11.80.00",
+            "skos:prefLabel": "Numerical analysis",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Mathematics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#MathematicsOther",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "11.90.00",
+            "skos:prefLabel": "Mathematics, other",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Mathematics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Medicine",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Medicine",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#PathologyPathologicalAnatomy",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "23.10.00",
+            "skos:prefLabel": "Pathology, pathological anatomy",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Medicine",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#OrgansAndOrganSystems",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "23.20.00",
+            "skos:prefLabel": "Organs and organ systems",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Medicine",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#MedicalSpecialisms",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "23.30.00",
+            "skos:prefLabel": "Medical specialisms",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Medicine",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HealthSciences",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "23.40.00",
+            "skos:prefLabel": "Health sciences",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Medicine",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Kinesiology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "23.50.00",
+            "skos:prefLabel": "Kinesiology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Medicine",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Gerontology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "23.60.00",
+            "skos:prefLabel": "Gerontology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Medicine",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Nutrition",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "23.70.00",
+            "skos:prefLabel": "Nutrition",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Medicine",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Epidemiology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "23.80.00",
+            "skos:prefLabel": "Epidemiology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Medicine",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "17.3 Epistemology"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HealthServicesResearch",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "23.48.00",
+            "skos:prefLabel": "Health Services Research",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Medicine",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HealthLaw",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "23.42.00",
+            "skos:prefLabel": "Health law",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Medicine",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HealthEconomics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "23.44.00",
+            "skos:prefLabel": "Health economics",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Medicine",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#MedicalSociology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "23.46.00",
+            "skos:prefLabel": "Medical sociology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Medicine",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#MedicineOther",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "23.90.00",
+            "skos:prefLabel": "Medicine, other",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Medicine",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#MusicTheatrePerformingArtsMedia",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Music, theatre, performing arts and media",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "16 Music, theater, performing arts and media"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Ethnomusicology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "32.10.00",
+            "skos:prefLabel": "Ethnomusicology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#MusicTheatrePerformingArtsMedia",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "16.1 Ethnomusicology"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HistoryOfMusicAndMusicalIconography",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "32.20.00",
+            "skos:prefLabel": "History of music and musical iconography",
+            "skos:broader": "https://w3id.org/nwo-research-fields#MusicTheatrePerformingArtsMedia",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "16.5 Music history and music iconography"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Musicology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "32.30.00",
+            "skos:prefLabel": "Musicology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#MusicTheatrePerformingArtsMedia",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "16.6 Musicology"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#OperaAndDance",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "32.40.00",
+            "skos:prefLabel": "Opera and dance",
+            "skos:broader": "https://w3id.org/nwo-research-fields#MusicTheatrePerformingArtsMedia",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "16.7 Opera and dance"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#TheatreStudiesAndIconography",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "32.50.00",
+            "skos:prefLabel": "Theatre studies and iconography",
+            "skos:broader": "https://w3id.org/nwo-research-fields#MusicTheatrePerformingArtsMedia",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "16.8 Theater studies and iconography"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#FilmPhotographyAndAudiovisualMedia",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "32.60.00",
+            "skos:prefLabel": "Film, photography and audio-visual media",
+            "skos:broader": "https://w3id.org/nwo-research-fields#MusicTheatrePerformingArtsMedia",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "16.2 Film, photography and audiovisual media"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#JournalismAndMassCommunications",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "32.10.00",
+            "skos:prefLabel": "Journalism and mass communications",
+            "skos:broader": "https://w3id.org/nwo-research-fields#MusicTheatrePerformingArtsMedia",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "16.3 Journalism and mass communication"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#MediaStudies",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "32.80.00",
+            "skos:prefLabel": "Media studies",
+            "skos:broader": "https://w3id.org/nwo-research-fields#MusicTheatrePerformingArtsMedia",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "16.4 Media studies"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#MusicTheatrePerformingArtsMediaOther",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "32.10.00",
+            "skos:prefLabel": "Music, theatre, performing arts and media, other",
+            "skos:broader": "https://w3id.org/nwo-research-fields#MusicTheatrePerformingArtsMedia",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "16.9 Music, theater, performing arts and media, other"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Pedagogics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "42.00.00",
+            "skos:prefLabel": "Pedagogics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Philosophy",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Philosophy",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "17 Philosophy"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#MetaphysicsTheoreticalPhilosophy",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "33.10.00",
+            "skos:prefLabel": "Metaphysics, theoretical philosophy",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Philosophy",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "17.7 Metaphysics, theoretical philosophy"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#EthicsMoralPhilosophy",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "33.25.00",
+            "skos:prefLabel": "Ethics, moral philosophy",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Philosophy",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "17.4 Ethics, moral philosophy"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#LogicAndHistoryOfLogic",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "33.30.00",
+            "skos:prefLabel": "Logic and history of logic",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Philosophy",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "17.6 Logic and history of logic"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#EpistemologyPhilosophyOfScience",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "33.35.00",
+            "skos:prefLabel": "Epistemology, philosophy of science",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Philosophy",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#AestheticsPhilosophyOfArt",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "33.40.00",
+            "skos:prefLabel": "Aesthetics, philosophy of art",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Philosophy",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "17.1 Aesthetics, philosophy of art"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#PhilosophyOfLanguageSemiotics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "33.45.00",
+            "skos:prefLabel": "Philosophy of language, semiotics",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Philosophy",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "17.9 Philosophy of language, semiotics"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HistoryOfIdeasAndIntellectualHistory",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "33.50.00",
+            "skos:prefLabel": "History of ideas and intellectual history",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Philosophy",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "17.5 History of ideas and intellectual history"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HistoryOfAncientAndMediaevalPhilosophy",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "33.55.00",
+            "skos:prefLabel": "History of ancient and mediaeval philosophy",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Philosophy",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HistoryOfModernAndContemporaryPhilosophy",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "33.60.00",
+            "skos:prefLabel": "History of modern and contemporary philosophy",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Philosophy",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+            
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#HistoryOfPoliticalAndEconomicTheory",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "33.65.00",
+            "skos:prefLabel": "History of political and economic theory",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Philosophy",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#PhilosophyOther",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "33.90.00",
+            "skos:prefLabel": "Philosophy, other",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Philosophy",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "17.11 Philosophy, other"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Physics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Physics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#SubatomicPhysics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "12.10.00",
+            "skos:prefLabel": "Subatomic physics",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Physics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#NanophysicsTechnology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "12.20.00",
+            "skos:prefLabel": "Nanophysics/technology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Physics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#CondensedMatterAndOpticalPhysics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "12.30.00",
+            "skos:prefLabel": "Condensed Matter and Optical Physics",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Physics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ProcessesInLivingSystems",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "12.40.00",
+            "skos:prefLabel": "Processes in living systems",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Physics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#FusionPhysics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "12.50.00",
+            "skos:prefLabel": "Fusion physics",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Physics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#PhenomenologicalPhysics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "12.60.00",
+            "skos:prefLabel": "Phenomenological physics",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Physics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#OtherPhysics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "12.70.00",
+            "skos:prefLabel": "Other physics",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Physics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#TheoreticalPhysics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "12.80.00",
+            "skos:prefLabel": "Theoretical Physics",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Physics",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Psychology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Psychology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ClinicalPsychology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "40.10.00",
+            "skos:prefLabel": "Clinical Psychology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Psychology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#BiologicalAndMedicalPsychology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "40.20.00",
+            "skos:prefLabel": "Biological and Medical Psychology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Psychology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#DevelopmentalPsychology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "40.30.00",
+            "skos:prefLabel": "Developmental Psychology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Psychology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#PsychonomicsAndCognitivePsychology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "40.40.00",
+            "skos:prefLabel": "Psychonomics and Cognitive Psychology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Psychology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#SocialAndOrganizationalPsychology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "40.50.00",
+            "skos:prefLabel": "Social and Organizational Psychology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Psychology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Psychometrics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "40.60.00",
+            "skos:prefLabel": "Psychometrics",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Psychology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#PublicAdministrationAndPoliticalScience",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Public administration and political science",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "18 Public administration and political science"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#PublicAdministration",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "44.10.00",
+            "skos:prefLabel": "Public administration",
+            "skos:broader": "https://w3id.org/nwo-research-fields#PublicAdministrationAndPoliticalScience",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "18.2 Public administration"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#PoliticalScience",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "44.20.00",
+            "skos:prefLabel": "Political science",
+            "skos:broader": "https://w3id.org/nwo-research-fields#PublicAdministrationAndPoliticalScience",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "18.1 Political science"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ReligiousStudiesAndTheology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Religious studies and theology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "19 Religious studies and theology"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#BibleStudies",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "35.40.00",
+            "skos:prefLabel": "Bible studies",
+            "skos:broader": "https://w3id.org/nwo-research-fields#ReligiousStudiesAndTheology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "19.1 Biblical sciences"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ReligiousStudiesAndTheologyOther",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "35.90.00",
+            "skos:prefLabel": "Religious studies and theology, other",
+            "skos:broader": "https://w3id.org/nwo-research-fields#ReligiousStudiesAndTheology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "19.5 Religious studies and theology, other"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ScienceAndTechnology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Science and technology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Sociology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "45.90.00",
+            "skos:prefLabel": "Sociology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:exactMatch": "20 Sociology"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Technology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:prefLabel": "Technology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#MaterialsTechnology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "14.10.00",
+            "skos:prefLabel": "Materials technology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Technology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#MechanicalEngineering",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "14.20.00",
+            "skos:prefLabel": "MechanicalEngineering",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Technology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ElectricalEngineering",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "14.30.00",
+            "skos:prefLabel": "ElectricalEngineering",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Technology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#CivilEngineering",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "14.40.00",
+            "skos:prefLabel": "Civil engineering",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Technology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#ChemicalTechnologyProcessTechnology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "14.50.00",
+            "skos:prefLabel": "Chemical technology, process technology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Technology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Geotechnics",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "14.60.00",
+            "skos:prefLabel": "Geotechnics",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Technology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#TechnologyAssessment",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "14.70.00",
+            "skos:prefLabel": "Technology assessment",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Technology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#Nanotechnology",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "14.80.00",
+            "skos:prefLabel": "Nanotechnology",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Technology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#TechnologyOther",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "14.90.00",
+            "skos:prefLabel": "Technology, other",
+            "skos:broader": "https://w3id.org/nwo-research-fields#Technology",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        },
+        {
+            "@id": "https://w3id.org/nwo-research-fields#VeterinaryMedicine",
+            "@type": [
+                "skos:Concept",
+                "ResearchField"
+            ],
+            "skos:notation": "24.00.90",
+            "skos:prefLabel": "Veterinary medicine",
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:manualMatch": "There is no match!"
+        }
+    ]
+}

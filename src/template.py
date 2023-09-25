@@ -288,20 +288,22 @@ def retrieve_info(info, ruc) -> list | str | None:
   
                 for val in info:
                     # expand the namespaces
-                    # TODO: use regex so we can do the replace only for ^nwo:
-                    val = val.replace("nwo:","https://w3id.org/nwo-research-fields#")
+                    # val = val.replace("nwo:","https://w3id.org/nwo-research-fields#")
+                    val = re.sub(r'^nwo:', 'https://w3id.org/nwo-research-fields#', val)
                     # more namespaces?
 
                     vocabs_list = []
                     if check_links(val):
-                        debug(vocab, val)
-                        # Iterate through the items in the "result" array of the vocabs (researchActivity.json loaded before)
+                        # e.g. ?DBG:researchActivity:https://vocabs.dariah.eu/tadirah/annotating
+                        debug(vocab, val) 
+                        # Iterate through the items in the "result" array of the vocabs
                         for vocabs_item in vocabs[vocab].get("result", []):
-                            # Comparing the link of the vocabs research activities ("link": "https://vocabs.dariah.eu/tadirah/structuralAnalysis") with the value in item (outcome of the jsoniq query)
-                            if vocabs_item.get("link") == val:
+                            # Comparing the link of the vocabs research activities ("nl_link": "https://vocabs.dariah.eu/tadirah/structuralAnalysis") with the value in item (outcome of the jsoniq query)
+                            if vocabs_item.get("nl_link") == val:
                                 title = vocabs_item.get("title") # Retrieving the "title" attribute from vocabs (e.g. "title": "Structural Analysis" )
                                 index = vocabs_item.get("index") # Retrieving the "index" attribute from vocabs (e.g. "index": "1.5")
                                 result = f"{index} {title}" # "1.5 Structural Analysis"
+
                                 vocabs_list.append(result)
                                 debug("vocabs", f"vocabs index and title':{result}")
 

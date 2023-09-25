@@ -1,60 +1,101 @@
 import json
+import copy
 from fuzzywuzzy import fuzz
 
-# Load the data from the nwo research fields 
-with open('nwo-research-fields.json', 'r') as research_fields_file:
-    nwo_data = json.load(research_fields_file)
+def load_json(file_path):
+    with open(file_path, 'r') as json_file:
+        return json.load(json_file)
 
-# Load the data from the research domains
-with open('researchDomain.json', 'r') as domains_file:
-    domains_data = json.load(domains_file)
+def save_json(data, file_path):
+    with open(file_path, 'w') as json_file:
+        json.dump(data, json_file, indent=4)
 
-# Extract the "skos:prefLabel" values from the nwo data
-nwo_field_labels = [entry['skos:prefLabel'] for entry in nwo_data['@graph'] if 'skos:prefLabel' in entry]
+def update_links(activity_data):
+    for item in activity_data["result"]:
+        old_link = item["link"]
+        new_link = old_link.replace("https://vocabs.dariah.eu/tadirah2/en/page/", "https://vocabs.dariah.eu/tadirah/")
+        item["nl_link"] = new_link
 
-# Initialize lists to store exact matches and partial matches
-exact_matches = []
-partial_matches = []
+def find_exact_match(nwo_data, nwo_field_labels, result_entry):
+    for entry in nwo_data['@graph']:
+        if 'skos:prefLabel' in entry and entry['skos:prefLabel'] == result_entry['title']:
+            entry['skos:exactMatch'] = f"{result_entry['index']} {result_entry['title']}"
+            return True
+    return False
 
-# Iterate through the "result" entries in domains_data
-for result_entry in domains_data['result']:
-    exact_match_found = False
+def find_partial_match(nwo_data, nwo_field_labels, result_entry):
+    best_match_score = 0
+    best_match_label = None
     
-    # Check if the "title" exists in the nwo
-    if result_entry['title'] in nwo_field_labels:
-        # If there is an exact match, find the corresponding entry in the nwo data
+    for label in nwo_field_labels:
+        match_score = fuzz.ratio(label.lower(), result_entry['title'].lower())
+        if match_score > best_match_score:
+            best_match_score = match_score
+            best_match_label = label
+    
+    if best_match_score > 80:
         for entry in nwo_data['@graph']:
-            if 'skos:prefLabel' in entry and entry['skos:prefLabel'] == result_entry['title']:
-                # Update the entry with the "skos:exactMatch" field in the desired format (e.g. "11.3 Cultural history")
-                entry['skos:exactMatch'] = f"{result_entry['index']} {result_entry['title']}"
-                exact_match_found = True
-                exact_matches.append(result_entry['title'])
-                break
-    
-    if not exact_match_found:
-        best_match_score = 0
-        best_match_label = None
-        
-        # If there's no exact match, find the best fuzzy match
-        for label in nwo_field_labels:
-            match_score = fuzz.ratio(label.lower(), result_entry['title'].lower())
-            if match_score > best_match_score:
-                best_match_score = match_score
-                best_match_label = label
-        
-        # Check for the best match score (set on > 80)
-        if best_match_score > 80:
-            partial_matches.append(result_entry['title'])
-            print(f'nwo data pref_label: {best_match_label}')
-            print(f'variations in the titles of domains_data: {result_entry["title"]}')
-            print()
+            if 'skos:prefLabel' in entry and entry['skos:prefLabel'] == best_match_label:
+                entry['skos:partialMatch'] = f"{result_entry['index']} {result_entry['title']}"
+                return True
+    return False
 
-            # Update the entry with the "skos:partialMatch" field (format: "skos:partialMatch": "13.7 Software, algorithms, operating systems")
-            for entry in nwo_data['@graph']:
-                if 'skos:prefLabel' in entry and entry['skos:prefLabel'] == best_match_label:
-                    entry['skos:partialMatch'] = f"{result_entry['index']} {result_entry['title']}"
-                    break
+def create_index_to_id_map(nwo_data, field):
+    index_to_id_map = {}
+    for entry in nwo_data['@graph']:
+        if field in entry and '@id' in entry:
+            match = entry[field]
+            index_to_id_map[match.split()[0]] = entry['@id']
+    return index_to_id_map
+
+
+def main():
+
+    # Load data
+    nwo_data = load_json('nwo-research-fields.json')
+    domains_data = load_json('researchDomains.json')
+    activity_data = load_json('researchActivity.json')
+    
+    # Update links in activity_data
+    update_links(activity_data)
+
+    # Extract "skos:prefLabel" values from nwo_data
+    nwo_field_labels = [entry['skos:prefLabel'] for entry in nwo_data['@graph'] if 'skos:prefLabel' in entry]
+
+    # Initialize lists to store exact matches and partial matches
+    exact_matches = []
+    partial_matches = []
+
+    # Iterate through "result" entries in domains_data
+    for result_entry in domains_data['result']:
+        exact_match_found = find_exact_match(nwo_data, nwo_field_labels, result_entry)
         
-# Save the updated research_fields_data back to the "now-research-fields.json" file
-with open('nwo-research-fields_template.json', 'w') as research_fields_file:
-    json.dump(nwo_data, research_fields_file, indent=4)
+        if not exact_match_found:
+            partial_match_found = find_partial_match(nwo_data, nwo_field_labels, result_entry)
+            if partial_match_found:
+                partial_matches.append(result_entry['title'])
+
+    # Create index-to-id mappings for "skos:exactMatch" and "skos:partialMatch"
+    exact_index_to_id_map = create_index_to_id_map(nwo_data, 'skos:exactMatch')
+    partial_index_to_id_map = create_index_to_id_map(nwo_data, 'skos:partialMatch')
+
+    # Update "link" and "partialLink" fields in domains_data
+    for result_entry in domains_data['result']:
+        index = result_entry['index']
+        
+        # Update "link" field
+        if index in exact_index_to_id_map:
+            result_entry['link'] = exact_index_to_id_map[index]
+        
+        # Update "partialLink" field
+        if index in partial_index_to_id_map:
+            result_entry['link'] = partial_index_to_id_map[index]
+
+    # Save updated data
+    save_json(nwo_data, 'nwo-research-fields_template.json')
+    save_json(domains_data, 'researchDomains_template.json')
+    save_json(activity_data, 'researchActivity_template.json')
+
+
+if __name__ == "__main__":
+    main()
