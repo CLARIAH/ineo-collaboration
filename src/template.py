@@ -5,10 +5,11 @@ import re
 import pretty_errors
 import jsonlines
 
-RUMBLEDB = "http://rumbledb:8001/jsoniq"
-# RUMBLEDB = "http://localhost:8001/jsoniq"
+#RUMBLEDB = "http://rumbledb:8001/jsoniq"
+RUMBLEDB = "http://localhost:8001/jsoniq"
 JSONL = "/data/data/codemeta.jsonl"
 
+# ID and TEMPLATE can be overridden by command-line arguments. Default value is "grlc"
 ID = "grlc"
 if len(sys.argv) > 1:
     ID = sys.argv[1]
@@ -17,7 +18,7 @@ TEMPLATE = "./template.json"
 if len(sys.argv) > 2:
     TEMPLATE = sys.argv[2]
 
-
+# Debug and error handling functions
 def debug(func, msg):
     print(f"?DBG:{func}:{msg}", file=sys.stderr)
     return None
@@ -29,7 +30,9 @@ def error(func, msg):
     else:
         print(f"!ERR:{func}:{msg}", file=sys.stderr)
 
-
+# Function to resolve a path within a nested dictionary
+# It splits the path into steps, and if a step starts with "$", 
+# it looks for a matching key in the dictionary to access the nested values.
 def resolve_path(ruc, path):
     debug("resolve_path", f"path[{path}]")
     steps = path.split("/")
@@ -61,7 +64,7 @@ def resolve_path(ruc, path):
                     debug("resolve_path", f"path is deeper, but dict not!")
                     return None
 
-
+# Function to traverse and process data based on rules
 def traverse_data(data, ruc):
     res = None
 
@@ -101,7 +104,7 @@ def traverse_data(data, ruc):
                     res.append(item)
     return res
 
-
+# Function to check if links contain "vocabs.dariah.eu"
 def check_links(links):
     if isinstance(links, str):
         # If 'links' is a single URL in vocabs
@@ -155,7 +158,7 @@ def retrieve_info(info, ruc) -> list | str | None:
 
             if len(info_parts) >= 2:
                 """
-                get the content of the key in the RUC and assign it to info
+                get the contents of the key in the RUC and assign it to info
                 """
                 template_key = info_parts[1].strip().lower()
                 if template_key.endswith("[]"):
@@ -218,10 +221,12 @@ def retrieve_info(info, ruc) -> list | str | None:
             res = info
             if res is not None:
                 break  # Exit the loop once a match is found
-
+    
+        # Checking if the info_value string begins with "md" (e.g. "<md:@queries/activities.rq,null")
         if info_value.startswith("md"):
             info = None
             debug("retrieve_info", f"Starting with {info_value}")
+            # Splitting the info_value string by the ":" character and selects the second part (index 1) using [1] (e.g. @queries/activities.rq)
             path = info_value.split(":")[1].strip()
 
             original_path = None
@@ -230,7 +235,10 @@ def retrieve_info(info, ruc) -> list | str | None:
                 path = path[:-2]  # Remove the '[]' suffix
 
             query = None
+            # Checking if the path starts with "@" character. If it does, it indicates that the path refers to a file path containing a query.
             if path.startswith("@"):
+                # If the path starts with "@", this line extracts the file path by removing the "@" character. 
+                # For example, if path is "@queries/activities.rq", file will be set to "queries/activities.rq". 
                 file = path[1:]
                 debug("path", f"path for the query[{file}]")
                 with open(file, "r") as file:
@@ -238,6 +246,7 @@ def retrieve_info(info, ruc) -> list | str | None:
             if query is not None:
                 query = query.replace("{JSONL}", JSONL)
                 query = query.replace("{ID}", ruc["identifier"].lower())
+            # This line generates a query string. It's a fallback query that is used when no external query is found in the file.
             else:
                 query = f'for $i in json-file("{JSONL}",10) where $i.identifier eq "{ruc["identifier"].lower()}" return $i.{path}'
 
@@ -267,17 +276,19 @@ def retrieve_info(info, ruc) -> list | str | None:
             if info is not None:
                 debug("retrieve_info", f"The value of '{path}' in the MD: {info}")
 
-                # Check if info contains "vocabs.dariah.eu"
+        
+               # Check if the outcome of the query (set to info, can be multiple links) contains "vocabs.dariah.eu" (e.g. "https://vocabs.dariah.eu/tadirah/structuralAnalysis)
                 vocabs_list = []
                 for item in info:
                     if check_links(item):
                         debug("research activity", item)
-                        # Iterate through the items in the "result" array of the vocabs
+                        # Iterate through the items in the "result" array of the vocabs (researchActivity.json loaded before)
                         for vocabs_item in vocabs.get("result", []):
+                            # Comparing the link of the vocabs research activities ("link": "https://vocabs.dariah.eu/tadirah/structuralAnalysis") with the value in item (outcome of the jsoniq query)
                             if vocabs_item.get("link") == item:
-                                title = vocabs_item.get("title")
-                                index = vocabs_item.get("index")
-                                result = f"{index} {title}"
+                                title = vocabs_item.get("title") # Retrieving the "title" attribute from vocabs (e.g. "title": "Structural Analysis" )
+                                index = vocabs_item.get("index") # Retrieving the "index" attribute from vocabs (e.g. "index": "1.5")
+                                result = f"{index} {title}" # "1.5 Structural Analysis"
                                 vocabs_list.append(result)
                                 debug("vocabs", f"vocabs index and title':{result}")
 
@@ -291,15 +302,20 @@ def retrieve_info(info, ruc) -> list | str | None:
                     info = vocabs_list
 
             debug("final result", info)
+            #TODO: return info directly
 
             res = info
             break  # Exit the loop once a match is found
+        
+        
 
+        # This line checks if info_value starts with the prefix "err" ("<ruc:learn,err:there is no learn!")
         if info_value.startswith("err"):
-            msg = info_value.split(":")[1].strip()
+            msg = info_value.split(":")[1].strip() # "there is no learn!"
             # Print the error message to stderr
             error(None, f"{msg}")
 
+        # checks if info_value starts with the prefix "null" and indicates that the result should be set to "null".
         if info_value.startswith("null"):
             debug("retrieve_info", f"Starting with 'null':{info_value}")
             res = "null"
@@ -310,15 +326,19 @@ def retrieve_info(info, ruc) -> list | str | None:
 def main():
     """
     Main function
-    This function starts the process of traversing the template and retrieving the information from the RUC and MD
-    then merge then info an INEO json file for feeding into INEO API
+    
+    This script processes JSON data using a template (template.json) and retrieving information from it based on a set of rules defined in template.py. 
+    This function starts the process of traversing the template and retrieving the information from the Rich User Contents (RUC) and codemeta files (MD)
+    then merge them into an INEO json file to ultimately feed into the INEO API. 
 
     TEMPLATE: the template file loaded as json, by default it is always a list of dictionaries as INEO supports multiple records
     RUC: the rich user contents file loaded as json, by default it is always a dictionary as it contains only one record
 
     return: None
+    
     """
     # DSL
+    global template
     with open(TEMPLATE, "r") as file:
         template = json.load(file)
 

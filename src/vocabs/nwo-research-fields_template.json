@@ -91,7 +91,8 @@
             "skos:notation": "26.60.00",
             "skos:prefLabel": "Preservation and restauration, museums",
             "skos:broader": "https://w3id.org/nwo-research-fields#Archaeology",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "1.3 Conservation and restoration, museums"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#MethodsAndTechniques",
@@ -114,7 +115,8 @@
             "skos:notation": "26.90.00",
             "skos:prefLabel": "Archaeology, other",
             "skos:broader": "https://w3id.org/nwo-research-fields#Archaeology",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "1.8 Archeology, other"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#AreaStudies",
@@ -135,7 +137,8 @@
             "skos:notation": "36.10.00",
             "skos:prefLabel": "Asian languages and literature",
             "skos:broader": "https://w3id.org/nwo-research-fields#AreaStudies",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "2.1 Asian languages and literatures"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#AsianReligionsAndPhilosophies",
@@ -261,7 +264,8 @@
                 "ResearchField"
             ],
             "skos:prefLabel": "Art and architecture",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "3.12 Art and architecture, other"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#AstronomyAstrophysics",
@@ -494,7 +498,8 @@
                 "ResearchField"
             ],
             "skos:prefLabel": "Communication science",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "4 Communication sciences"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#ComputerScience",
@@ -527,7 +532,8 @@
             "skos:prefLabel": "Software, algorithms, control systems",
             "skos:notation": "16.20.00",
             "skos:broader": "https://w3id.org/nwo-research-fields#ComputerScience",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "13.7 Software, algorithms, operating systems"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#TheoreticalComputerScience",
@@ -573,7 +579,8 @@
             "skos:prefLabel": "Artificial intelligence, export systems",
             "skos:notation": "16.60.00",
             "skos:broader": "https://w3id.org/nwo-research-fields#ComputerScience",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "13.1 Artificial intelligence, expert systems"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#ComputerGraphics",
@@ -596,7 +603,8 @@
             "skos:prefLabel": "Computer simulation, virtual reality",
             "skos:notation": "16.80.00",
             "skos:broader": "https://w3id.org/nwo-research-fields#ComputerScience",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "13.6 Simulation, virtual reality"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#ComputerScienceOther",
@@ -618,7 +626,8 @@
             "skos:prefLabel": "Bioinformations/biostatistics, biomathematics, biomechanics",
             "skos:notation": "21.10.00",
             "skos:broader": "https://w3id.org/nwo-research-fields#LifeSciences",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "13.2 Bioinformatics/biostatistics, biomathematics, biomechanics"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#ComputersAndTheHumanities",
@@ -627,7 +636,8 @@
                 "ResearchField"
             ],
             "skos:prefLabel": "Computers and the humanities",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "5 Computers and humanities"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#SoftwareForHumanities",
@@ -638,7 +648,8 @@
             "skos:prefLabel": "Software for humanities",
             "skos:notation": "37.10.00",
             "skos:broader": "https://w3id.org/nwo-research-fields#ComputersAndTheHumanities",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "5.3 Software for the humanities"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#TextualAndContentAnalysis",
@@ -649,7 +660,8 @@
             "skos:prefLabel": "Textual and content analysis",
             "skos:notation": "37.20.00",
             "skos:broader": "https://w3id.org/nwo-research-fields#ComputersAndTheHumanities",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "5.4 Text and content analysis"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#TextualAndLinguisticCorpora",
@@ -660,7 +672,8 @@
             "skos:prefLabel": "Textual and linguistic corpora",
             "skos:notation": "37.30.00",
             "skos:broader": "https://w3id.org/nwo-research-fields#ComputersAndTheHumanities",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "5.5 Text and linguistic corpora"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#DatabasesForHumanities",
@@ -671,7 +684,8 @@
             "skos:prefLabel": "Databases for humanities",
             "skos:notation": "37.40.00",
             "skos:broader": "https://w3id.org/nwo-research-fields#ComputersAndTheHumanities",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "5.1 Databases for the humanities"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#HypertextsAndMultimedia",
@@ -682,7 +696,8 @@
             "skos:prefLabel": "HypertextsAndMultimedia",
             "skos:notation": "37.50.00",
             "skos:broader": "https://w3id.org/nwo-research-fields#ComputersAndTheHumanities",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "5.2 Hypertexts and multimedia"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#ComputersAndTheHumanitiesOther",
@@ -693,7 +708,8 @@
             "skos:prefLabel": "Computers and the humanities, other",
             "skos:notation": "37.20.00",
             "skos:broader": "https://w3id.org/nwo-research-fields#ComputersAndTheHumanities",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "5.6 Computers and humanities, other"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#CulturalAnthropology",
@@ -714,7 +730,8 @@
             ],
             "skos:notation": "48.90.00",
             "skos:prefLabel": "Demography",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "7 Demographics"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#DevelopmentStudies",
@@ -766,7 +783,8 @@
             "skos:notation": "38.20.00",
             "skos:prefLabel": "Macroeconomics",
             "skos:broader": "https://w3id.org/nwo-research-fields#Economics",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "8.2 Macro economy"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#Econometrics",
@@ -818,7 +836,8 @@
                 "ResearchField"
             ],
             "skos:prefLabel": "Geography / Planning",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "10 Geography and Planning"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#Geography",
@@ -874,7 +893,8 @@
             "skos:notation": "27.20.00",
             "skos:prefLabel": "Antiquity and late antiquity history",
             "skos:broader": "https://w3id.org/nwo-research-fields#History",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "11.1 Antiquity and Late Antiquity (history)"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#MediaevalHistory",
@@ -885,7 +905,8 @@
             "skos:notation": "27.30.00",
             "skos:prefLabel": "Mediaeval history",
             "skos:broader": "https://w3id.org/nwo-research-fields#History",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "11.12 Medieval history"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#ModernAndContemporaryHistory",
@@ -897,6 +918,7 @@
             "skos:prefLabel": "Modern and contemporary history",
             "skos:broader": "https://w3id.org/nwo-research-fields#History",
             "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "17.8 Modern and contemporary philosophy",
             "skos:exactMatch": "11.13 Modern and contemporary history"
         },
         {
@@ -908,7 +930,8 @@
             "skos:notation": "27.50.00",
             "skos:prefLabel": "Social and economic history",
             "skos:broader": "https://w3id.org/nwo-research-fields#History",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "11.16 Socio-economic history"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#CulturalHistory",
@@ -966,7 +989,8 @@
             "skos:notation": "10.10.00",
             "skos:prefLabel": "History and philosophy of science and technology",
             "skos:broader": "https://w3id.org/nwo-research-fields#ScienceAndTechnology",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "12.7 History and philosophy of natural sciences and technology"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#HistoryofScience",
@@ -999,7 +1023,8 @@
             "skos:notation": "34.20.00",
             "skos:prefLabel": "History of mediaeval science",
             "skos:broader": "https://w3id.org/nwo-research-fields#HistoryOfScience",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "12.3 History of medieval science"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#HistoryOfModernScience",
@@ -1046,7 +1071,8 @@
             "skos:notation": "34.90.00",
             "skos:prefLabel": "History of Science, other",
             "skos:broader": "https://w3id.org/nwo-research-fields#HistoryOfScience",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "12.9 History of science, other"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#HistoryOfReligions",
@@ -1057,7 +1083,8 @@
             "skos:notation": "35.10.00",
             "skos:prefLabel": "History of religions",
             "skos:broader": "https://w3id.org/nwo-research-fields#ReligiousStudiesAndTheology",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "19.3 History of religion"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#HistoryOfChristianity",
@@ -1125,7 +1152,8 @@
             "skos:notation": "31.20.00",
             "skos:prefLabel": "Mediaeval and Neo-Latin languages and literature",
             "skos:broader": "https://w3id.org/nwo-research-fields#LanguageAndLiterature",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "14.5 Medieval and neo-Latin languages and cultures"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#MediaevalEuropeanLanguagesAndLiterature",
@@ -1136,7 +1164,8 @@
             "skos:notation": "31.25.00",
             "skos:prefLabel": "Mediaeval European languages and literature",
             "skos:broader": "https://w3id.org/nwo-research-fields#LanguageAndLiterature",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "14.6 Medieval European languages and cultures"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#ModernEuropeanLanguagesAndLiterature",
@@ -1147,7 +1176,8 @@
             "skos:notation": "31.30.00",
             "skos:prefLabel": "Modern European languages and literature",
             "skos:broader": "https://w3id.org/nwo-research-fields#LanguageAndLiterature",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "14.7 Modern European languages and cultures"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#AngloAmericanLiterature",
@@ -1158,7 +1188,8 @@
             "skos:notation": "31.35.00",
             "skos:prefLabel": "Anglo-American Literature",
             "skos:broader": "https://w3id.org/nwo-research-fields#LanguageAndLiterature",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "14.2 Anglo-American literature"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#HispanicAndBrazilianLiterature",
@@ -1169,7 +1200,8 @@
             "skos:notation": "31.40.00",
             "skos:prefLabel": "Hispanic and Brazilian literature",
             "skos:broader": "https://w3id.org/nwo-research-fields#LanguageAndLiterature",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "14.9 Spanish and Brazilian literature"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#African language and literature",
@@ -1180,7 +1212,8 @@
             "skos:notation": "31.45.00",
             "skos:prefLabel": "African languages and literature",
             "skos:broader": "https://w3id.org/nwo-research-fields#LanguageAndLiterature",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "14.1 African languages and cultures"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#ComparativeLiterature",
@@ -1332,7 +1365,8 @@
             "skos:notation": "30.25.00",
             "skos:prefLabel": "Linguistic typology and comparative linguistics",
             "skos:broader": "https://w3id.org/nwo-research-fields#Linguistics",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "15.4 Language typology and comparative linguistics"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#DialectologyLinguisticGeographySociolinguistics",
@@ -1343,7 +1377,8 @@
             "skos:notation": "30.30.00",
             "skos:prefLabel": "Dialetology, linguistic geography, sociolinguistics",
             "skos:broader": "https://w3id.org/nwo-research-fields#Linguistics",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "15.2 Dialectology, linguistic geography, sociolinguistics"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#LexiconAndLexicography",
@@ -1354,7 +1389,8 @@
             "skos:notation": "30.35.00",
             "skos:prefLabel": "Lexicon and lexicography",
             "skos:broader": "https://w3id.org/nwo-research-fields#Linguistics",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "15.5 Lexica and lexicography"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#PsycholinguisticsAndNeurolinguistics",
@@ -1630,7 +1666,8 @@
             "skos:notation": "23.80.00",
             "skos:prefLabel": "Epidemiology",
             "skos:broader": "https://w3id.org/nwo-research-fields#Medicine",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "17.3 Epistemology"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#HealthServicesResearch",
@@ -1694,7 +1731,8 @@
                 "ResearchField"
             ],
             "skos:prefLabel": "Music, theatre, performing arts and media",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "16 Music, theater, performing arts and media"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#Ethnomusicology",
@@ -1752,7 +1790,8 @@
             "skos:notation": "32.50.00",
             "skos:prefLabel": "Theatre studies and iconography",
             "skos:broader": "https://w3id.org/nwo-research-fields#MusicTheatrePerformingArtsMedia",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "16.8 Theater studies and iconography"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#FilmPhotographyAndAudiovisualMedia",
@@ -1763,7 +1802,8 @@
             "skos:notation": "32.60.00",
             "skos:prefLabel": "Film, photography and audio-visual media",
             "skos:broader": "https://w3id.org/nwo-research-fields#MusicTheatrePerformingArtsMedia",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "16.2 Film, photography and audiovisual media"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#JournalismAndMassCommunications",
@@ -1774,7 +1814,8 @@
             "skos:notation": "32.10.00",
             "skos:prefLabel": "Journalism and mass communications",
             "skos:broader": "https://w3id.org/nwo-research-fields#MusicTheatrePerformingArtsMedia",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "16.3 Journalism and mass communication"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#MediaStudies",
@@ -1797,7 +1838,8 @@
             "skos:notation": "32.10.00",
             "skos:prefLabel": "Music, theatre, performing arts and media, other",
             "skos:broader": "https://w3id.org/nwo-research-fields#MusicTheatrePerformingArtsMedia",
-            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme"
+            "skos:inScheme": "https://w3id.org/nwo-research-fields#Scheme",
+            "skos:partialMatch": "16.9 Music, theater, performing arts and media, other"
         },
         {
             "@id": "https://w3id.org/nwo-research-fields#Pedagogics",
