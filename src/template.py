@@ -130,6 +130,8 @@ def check_links(links):
         )
         return False
 
+# global cache for vocabularies
+vocabs = {}
 
 def retrieve_info(info, ruc) -> list | str | None:
     """
@@ -144,9 +146,7 @@ def retrieve_info(info, ruc) -> list | str | None:
     # res is the final return value of the function
     res = None
 
-    # Load the vocabs file to be used later for research activity
-    with open(f"./vocabs/researchActivity.json", "r") as vocabs_file:
-        vocabs = json.load(vocabs_file)
+    global vocabs
 
     debug("retrieve_info", f"info[{info}]")
     info_values = info.split(",")
@@ -226,88 +226,101 @@ def retrieve_info(info, ruc) -> list | str | None:
         if info_value.startswith("md"):
             info = None
             debug("retrieve_info", f"Starting with {info_value}")
-            # Splitting the info_value string by the ":" character and selects the second part (index 1) using [1] (e.g. @queries/activities.rq)
-            path = info_value.split(":")[1].strip()
 
-            original_path = None
-            if path.endswith("[]"):
-                original_path = path
-                path = path[:-2]  # Remove the '[]' suffix
+            info_parts = info_value.split(":")
+            debug("retrieve_info", f"info_parts[{info_parts}]")
 
-            query = None
-            # Checking if the path starts with "@" character. If it does, it indicates that the path refers to a file path containing a query.
-            if path.startswith("@"):
-                # If the path starts with "@", this line extracts the file path by removing the "@" character. 
-                # For example, if path is "@queries/activities.rq", file will be set to "queries/activities.rq". 
-                file = path[1:]
-                debug("path", f"path for the query[{file}]")
-                with open(file, "r") as file:
-                    query = file.read()
-            if query is not None:
-                query = query.replace("{JSONL}", JSONL)
-                query = query.replace("{ID}", ruc["identifier"].lower())
-            # This line generates a query string. It's a fallback query that is used when no external query is found in the file.
-            else:
-                query = f'for $i in json-file("{JSONL}",10) where $i.identifier eq "{ruc["identifier"].lower()}" return $i.{path}'
+            if len(info_parts) >= 2:
+                path = info_parts[1]
 
-            debug("retrieve_info", f"rumbledb query[{query}]")
-            response = requests.post(RUMBLEDB, data=query)
-            assert (
-                response.status_code == 200
-            ), f"Error running {query} on rumbledb: {response.text}"
+                original_path = None
+                if path.endswith("[]"):
+                    original_path = path
+                    path = path[:-2]  # Remove the '[]' suffix
 
-            # check whether the query run was successful
-            resp = json.loads(response.text)
-            if ("error-code" in resp) or ("error-message" in resp):
-                error(
-                    "retrieve_info",
-                    f"Error running {query} on rumbledb: {response.text}",
-                )
-                exit()
-
-            if len(resp["values"]) > 0:
-                if original_path:
-                    info = resp["values"]
+                query = None
+                # Checking if the path starts with "@" character. If it does, it indicates that the path refers to a file path containing a query.
+                if path.startswith("@"):
+                    # If the path starts with "@", this line extracts the file path by removing the "@" character. 
+                    # For example, if path is "@queries/activities.rq", file will be set to "queries/activities.rq". 
+                    file = path[1:]
+                    debug("path", f"path for the query[{file}]")
+                    with open(file, "r") as file:
+                        query = file.read()
+                if query is not None:
+                    query = query.replace("{JSONL}", JSONL)
+                    query = query.replace("{ID}", ruc["identifier"].lower())
+                # This line generates a query string. It's a fallback query that is used when no external query is found in the file.
                 else:
-                    info = resp["values"][0]
-            else:
-                info = None
+                    query = f'for $i in json-file("{JSONL}",10) where $i.identifier eq "{ruc["identifier"].lower()}" return $i.{path}'
 
-            if info is not None:
-                debug("retrieve_info", f"The value of '{path}' in the MD: {info}")
+                debug("retrieve_info", f"rumbledb query[{query}]")
+                response = requests.post(RUMBLEDB, data=query)
+                assert (
+                    response.status_code == 200
+                ), f"Error running {query} on rumbledb: {response.text}"
 
-        
-               # Check if the outcome of the query (set to info, can be multiple links) contains "vocabs.dariah.eu" (e.g. "https://vocabs.dariah.eu/tadirah/structuralAnalysis)
-                vocabs_list = []
-                for item in info:
-                    if check_links(item):
-                        debug("research activity", item)
+                # check whether the query run was successful
+                resp = json.loads(response.text)
+                if ("error-code" in resp) or ("error-message" in resp):
+                    error(
+                        "retrieve_info",
+                        f"Error running {query} on rumbledb: {response.text}",
+                    )
+                    exit()
+
+                if len(resp["values"]) > 0:
+                    if original_path:
+                        info = resp["values"]
+                    else:
+                        info = resp["values"][0]
+                else:
+                    info = None
+
+            if info is not None and len(info_parts) > 2:
+                vocab = info_parts[2].strip()
+                debug("retrieve_info", f"filter on vocab[{vocab}]")
+                
+                if vocab not in vocabs.keys():
+                     # Load the vocabs file to be used later
+                    with open(f"./vocabs/{vocab}.json", "r") as vocabs_file:
+                        vocabs[vocab] = json.load(vocabs_file)
+  
+                for val in info:
+                    # expand the namespaces
+                    # TODO: use regex so we can do the replace only for ^nwo:
+                    val = val.replace("nwo:","https://w3id.org/nwo-research-fields#")
+                    # more namespaces?
+
+                    vocabs_list = []
+                    if check_links(val):
+                        debug(vocab, val)
                         # Iterate through the items in the "result" array of the vocabs (researchActivity.json loaded before)
-                        for vocabs_item in vocabs.get("result", []):
+                        for vocabs_item in vocabs[vocab].get("result", []):
                             # Comparing the link of the vocabs research activities ("link": "https://vocabs.dariah.eu/tadirah/structuralAnalysis") with the value in item (outcome of the jsoniq query)
-                            if vocabs_item.get("link") == item:
+                            if vocabs_item.get("link") == val:
                                 title = vocabs_item.get("title") # Retrieving the "title" attribute from vocabs (e.g. "title": "Structural Analysis" )
                                 index = vocabs_item.get("index") # Retrieving the "index" attribute from vocabs (e.g. "index": "1.5")
                                 result = f"{index} {title}" # "1.5 Structural Analysis"
                                 vocabs_list.append(result)
                                 debug("vocabs", f"vocabs index and title':{result}")
 
-                """
-                TODO: fix this tricky code below
-                It is now checking whether vocabs_list is empty or not to determine 
-                whether it is the generic use case or use case of Research Activity
-                Better solution would be getting the key value from the template, i.e, if keyvalue == "researchActivity": ...
-                """
-                if len(vocabs_list) > 0:
-                    info = vocabs_list
+                    if len(vocabs_list) > 0:
+                        info = vocabs_list
+                    else:
+                        info = None
 
-            debug("final result", info)
-            #TODO: return info directly
+                debug(
+                    "retrieve_info",
+                    f"The vocab value from '{info_parts[2].strip()}': {info}",
+                )
+
+            if info is not None:
+                debug("retrieve_info", f"The value of '{path}' in the MD: {info}")
 
             res = info
-            break  # Exit the loop once a match is found
-        
-        
+            if res is not None:
+                break  # Exit the loop once a match is found
 
         # This line checks if info_value starts with the prefix "err" ("<ruc:learn,err:there is no learn!")
         if info_value.startswith("err"):

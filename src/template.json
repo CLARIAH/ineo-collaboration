@@ -63,11 +63,8 @@
             "resourceOwner": "<md:@queries/producer.rq,null",
             "link": "<md:@queries/url.rq,null",
             "intro": "<md:description,null",
-            "researchActivities": "<md:@queries/activities.rq,null",
-            "researchDomains": [
-                "5 Computers and humanities",
-                "11 History"
-            ],
+            "researchActivities": "<md:@queries/activities.rq:researchActivity,null",
+            "researchDomains": "<md:@queries/activities.rq:researchDomains,null",
             "mediaTypes": [null],
             "provenance": null,
             "community": [

@@ -8,6 +8,7 @@
             "_rev": "CWsyyYqdkoep4pGoYwayCk",
             "_type": "resource.researchDomain",
             "_updatedAt": "2021-08-19T09:18:57Z",
+            "link": "https://w3id.org/nwo-research-fields#Archaeology",
             "index": "1",
             "slug": {"current": "archeology"},
             "title": "Archeology"
