@@ -5,8 +5,8 @@ import re
 import pretty_errors
 import jsonlines
 
-#RUMBLEDB = "http://rumbledb:8001/jsoniq"
-RUMBLEDB = "http://localhost:8001/jsoniq"
+RUMBLEDB = "http://rumbledb:8001/jsoniq"
+#RUMBLEDB = "http://localhost:8001/jsoniq"
 JSONL = "/data/data/codemeta.jsonl"
 
 # ID and TEMPLATE can be overridden by command-line arguments. Default value is "grlc"
@@ -104,31 +104,37 @@ def traverse_data(data, ruc):
                     res.append(item)
     return res
 
-# Function to check if links contain "vocabs.dariah.eu"
-def check_links(links):
-    if isinstance(links, str):
-        # If 'links' is a single URL in vocabs
-        if "vocabs.dariah.eu" in links:
-            debug("info", "The link contains 'vocabs.dariah.eu'")
-            return True
-        else:
-            debug("info", "The link does not contain 'vocabs.dariah.eu'")
-            return False
-    elif isinstance(links, list):
-        # If 'links' is a list of strings
-        matching_links = [link for link in links if "vocabs.dariah.eu" in link]
-        if matching_links:
-            debug("info", "Multiple links contain 'vocabs.dariah.eu'")
-            return True
-        else:
-            debug("info", "None of the links in the API contain 'vocabs.dariah.eu'")
-            return False
+def checking_vocabs(value):
+    if "nwo" in value:
+        return re.sub(r'^nwo:', 'https://w3id.org/nwo-research-fields#', value)
+    elif "w3id.org" in value:
+        return value
+    elif "vocabs.dariah.eu" in value:
+        debug("info", "The value contains 'vocabs.dariah.eu'")
+        return value
     else:
-        debug(
-            "info",
-            "Invalid input. 'links' should be either a string or a list of strings",
-        )
-        return False
+        return value
+
+
+def process_vocabs(vocabs_item, val, vocabs_list):
+    """
+    This function compares the links of the vocabs (e.g. research domains and activities) with the outcome of the jsoniq query (val) on the codemeta files.
+    To make the comparisons case-insensitive, both vocab links and val are converted to lowercase (or uppercase). This is because in the vocabs data there are examples 
+    like "https://w3id.org/nwo-research-fields#ComputationalLinguisticsAndPhilology", whereas this is "https://w3id.org/nwo-research-fields#ComputationalLinguisticsandPhilology" in the codemeta files.
+    
+    """
+    
+    link = vocabs_item.get("link")
+    
+    if link is not None and val is not None and link.lower() == val.lower():
+        title = vocabs_item.get("title")  # Retrieving the "title" attribute from vocabs (e.g. "title": "Structural Analysis" )
+        index = vocabs_item.get("index") # Retrieving the "index" attribute from vocabs (e.g. "index": "1.5")
+        result = f"{index} {title}" # Merging them together: "1.5 Structural Analysis"
+        vocabs_list.append(result)
+        debug("vocabs", f"vocabs index and title: {result}")
+    else:
+        "There is no match"
+
 
 # global cache for vocabularies
 vocabs = {}
@@ -282,35 +288,24 @@ def retrieve_info(info, ruc) -> list | str | None:
                 debug("retrieve_info", f"filter on vocab[{vocab}]")
                 
                 if vocab not in vocabs.keys():
-                     # Load the vocabs file to be used later
+                    # Load the vocabs file to be used later
                     with open(f"./vocabs/{vocab}.json", "r") as vocabs_file:
                         vocabs[vocab] = json.load(vocabs_file)
-  
+                
+                vocabs_list = []
                 for val in info:
-                    # expand the namespaces
-                    # val = val.replace("nwo:","https://w3id.org/nwo-research-fields#")
-                    val = re.sub(r'^nwo:', 'https://w3id.org/nwo-research-fields#', val)
-                    # more namespaces?
-
-                    vocabs_list = []
-                    if check_links(val):
-                        # e.g. ?DBG:researchActivity:https://vocabs.dariah.eu/tadirah/annotating
-                        debug(vocab, val) 
-                        # Iterate through the items in the "result" array of the vocabs
-                        for vocabs_item in vocabs[vocab].get("result", []):
-                            # Comparing the link of the vocabs research activities ("nl_link": "https://vocabs.dariah.eu/tadirah/structuralAnalysis") with the value in item (outcome of the jsoniq query)
-                            if vocabs_item.get("nl_link") == val:
-                                title = vocabs_item.get("title") # Retrieving the "title" attribute from vocabs (e.g. "title": "Structural Analysis" )
-                                index = vocabs_item.get("index") # Retrieving the "index" attribute from vocabs (e.g. "index": "1.5")
-                                result = f"{index} {title}" # "1.5 Structural Analysis"
-
-                                vocabs_list.append(result)
-                                debug("vocabs", f"vocabs index and title':{result}")
-
-                    if len(vocabs_list) > 0:
-                        info = vocabs_list
-                    else:
-                        info = None
+                    val = checking_vocabs(val)
+                    debug(vocab, val) 
+                    
+                    # Iterate through the items in the "result" array of the vocabs
+                    for vocabs_item in vocabs[vocab].get("result", []):
+                        # Comparing the link of the vocabs with val
+                        process_vocabs(vocabs_item, val, vocabs_list)
+                
+                if len(vocabs_list) > 0:
+                    info = vocabs_list
+                else:
+                    info = None
 
                 debug(
                     "retrieve_info",

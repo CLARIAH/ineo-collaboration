@@ -4,3 +4,5 @@ jsonlines
 jsondiff
 pyyaml
 pretty-errors
+fuzzy-wuzzy
+python-Levenshtein

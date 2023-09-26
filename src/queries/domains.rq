@@ -1,0 +1,8 @@
+for $i in json-file("{JSONL}", 10)
+where $i.identifier eq "{ID}"
+return
+  if ($i.applicationCategory instance of array) then
+    for $item in $i.applicationCategory[[1]]
+    where starts-with($item, "nwo:") or starts-with($item, "http")
+    return ([$item])
+  else ()

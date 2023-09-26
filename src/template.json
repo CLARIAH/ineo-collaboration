@@ -64,7 +64,7 @@
             "link": "<md:@queries/url.rq,null",
             "intro": "<md:description,null",
             "researchActivities": "<md:@queries/activities.rq:researchActivity,null",
-            "researchDomains": "<md:@queries/activities.rq:researchDomains,null",
+            "researchDomains": "<md:@queries/domains.rq:researchDomains,null",
             "mediaTypes": [null],
             "provenance": null,
             "community": [
