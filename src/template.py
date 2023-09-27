@@ -4,6 +4,11 @@ import requests
 import re
 import pretty_errors
 import jsonlines
+import os
+
+"""
+This script is designed to process JSON data using a template and retrieve information based on a set of rules defined in the template. 
+"""
 
 RUMBLEDB = "http://rumbledb:8001/jsoniq"
 #RUMBLEDB = "http://localhost:8001/jsoniq"
@@ -15,6 +20,7 @@ if len(sys.argv) > 1:
     ID = sys.argv[1]
 
 TEMPLATE = "./template.json"
+
 if len(sys.argv) > 2:
     TEMPLATE = sys.argv[2]
 
@@ -23,17 +29,17 @@ def debug(func, msg):
     print(f"?DBG:{func}:{msg}", file=sys.stderr)
     return None
 
-
 def error(func, msg):
     if func is None:
         print(f"!ERR:{msg}", file=sys.stderr)
     else:
         print(f"!ERR:{func}:{msg}", file=sys.stderr)
 
-# Function to resolve a path within a nested dictionary
-# It splits the path into steps, and if a step starts with "$", 
-# it looks for a matching key in the dictionary to access the nested values.
 def resolve_path(ruc, path):
+    """
+    Function to resolve a path within a nested dictionary. It splits the path into steps, and if a step starts with "$", 
+    it looks for a matching key in the dictionary to access the nested values.
+    """
     debug("resolve_path", f"path[{path}]")
     steps = path.split("/")
     step = steps[0]
@@ -64,14 +70,22 @@ def resolve_path(ruc, path):
                     debug("resolve_path", f"path is deeper, but dict not!")
                     return None
 
-# Function to traverse and process data based on rules
-def traverse_data(data, ruc):
+
+def traverse_data(template, ruc):
+    """
+    This function traverses and processes the template. 
+    
+    value: type = 'str', value of the template.json (e.g. "<md:@queries/plangs.rq,null")
+    key: type = 'str', key of the template.json (e.g. "programmingLanguages")
+    info: type = 'str', extracted information after "<" if the value starts with "<" (e.g. "<md:@queries/plangs.rq,null" > md:@queries/plangs.rq,null) 
+    """
+    
     res = None
 
     # Check if the data is a dictionary
-    if isinstance(data, dict):
+    if isinstance(template, dict):
         res = {}
-        for key, value in data.items():
+        for key, value in template.items():
             # value is a string starting with <
             if isinstance(value, str) and value.startswith("<"):
                 # Extract the information after the '<'
@@ -87,9 +101,9 @@ def traverse_data(data, ruc):
                     res[key] = value
 
     # If the data is a list
-    elif isinstance(data, list):
+    elif isinstance(template, list):
         res = []
-        for item in data:
+        for item in template:
             if isinstance(item, str) and item.startswith("<"):
                 # Extract the information after the '<'
                 info = item.split("<")[1]
@@ -103,8 +117,17 @@ def traverse_data(data, ruc):
                 else:
                     res.append(item)
     return res
+    
+def checking_vocabs(value): 
+    """
+    This function is used to modify and standardize the query results of the research activities and domains (activities.rq and domains.rq) in order to be mapped against nwo-research-fields.json
+    research domains: Some namespaces in "applicationCategory" in the codemeta files need to be expanded with the correct URL (e.g. nwo:ComputationalLinguisticsandPhilology > https://w3id.org/nwo-research-fields#ComputationalLinguisticsandPhilology)
+    research domains: Some values in "applicationCategory in the codemeta files contain the correct URL with "w3id.org"
+    research activities: Checking if the URL contains vocabs.dariah.eu in order to be mapped to nwo-research-fields.json. 
 
-def checking_vocabs(value):
+    value: type = 'str', the jsoniq query result of activities.rq or domains.rq. 
+    
+    """
     if "nwo" in value:
         return re.sub(r'^nwo:', 'https://w3id.org/nwo-research-fields#', value)
     elif "w3id.org" in value:
@@ -115,13 +138,16 @@ def checking_vocabs(value):
     else:
         return value
 
-
 def process_vocabs(vocabs_item, val, vocabs_list):
     """
-    This function compares the links of the vocabs (e.g. research domains and activities) with the outcome of the jsoniq query (val) on the codemeta files.
-    To make the comparisons case-insensitive, both vocab links and val are converted to lowercase (or uppercase). This is because in the vocabs data there are examples 
+    This function compares the links of the vocabularies (e.g. research domains and activities) with the outcome of the jsoniq query on the codemeta files.
+    To make the comparisons case-insensitive, both vocab links and val are converted to lowercase (or uppercase). This is because in the vocabularies data there are examples 
     like "https://w3id.org/nwo-research-fields#ComputationalLinguisticsAndPhilology", whereas this is "https://w3id.org/nwo-research-fields#ComputationalLinguisticsandPhilology" in the codemeta files.
-    
+
+    The vocabularies are processed in a different script, named vocabs.py, that matches research domains in the vocabularies with nwo research fields. 
+
+    link: type = 'str, key "link' of researchDomains.json or researchActivity.json (e.g. link": "https://vocabs.dariah.eu/tadirah/contentAnalysis")
+    result: type = 'str, merged index number and title of the vocabularies (researchActivity.json, researchDomains.json). E.g. "1.5 Structural Analysis"
     """
     
     link = vocabs_item.get("link")
@@ -129,7 +155,7 @@ def process_vocabs(vocabs_item, val, vocabs_list):
     if link is not None and val is not None and link.lower() == val.lower():
         title = vocabs_item.get("title")  # Retrieving the "title" attribute from vocabs (e.g. "title": "Structural Analysis" )
         index = vocabs_item.get("index") # Retrieving the "index" attribute from vocabs (e.g. "index": "1.5")
-        result = f"{index} {title}" # Merging them together: "1.5 Structural Analysis"
+        result = f"{index} {title}" # Merging them together in the right format
         vocabs_list.append(result)
         debug("vocabs", f"vocabs index and title: {result}")
     else:
@@ -228,6 +254,10 @@ def retrieve_info(info, ruc) -> list | str | None:
             if res is not None:
                 break  # Exit the loop once a match is found
     
+        # With the http request method POST, you can perform three operations: create, update and delete.
+        if info_value.startswith("api"):
+            res = "create"
+        
         # Checking if the info_value string begins with "md" (e.g. "<md:@queries/activities.rq,null")
         if info_value.startswith("md"):
             info = None
@@ -341,10 +371,10 @@ def main():
     This function starts the process of traversing the template and retrieving the information from the Rich User Contents (RUC) and codemeta files (MD)
     then merge them into an INEO json file to ultimately feed into the INEO API. 
 
-    TEMPLATE: the template file loaded as json, by default it is always a list of dictionaries as INEO supports multiple records
-    RUC: the rich user contents file loaded as json, by default it is always a dictionary as it contains only one record
-
-    return: None
+    template: type = 'dict', the template file loaded as json, by default it is always a list of dictionaries as INEO supports multiple records
+    ruc: type = 'dict', the rich user contents file loaded as json, by default it is always a dictionary as it contains only one record
+    res: type = 'list', the result of combining the RUC and the MD based on the rules set out in template.py. 
+    
     
     """
     # DSL
@@ -356,13 +386,17 @@ def main():
     ruc = None
     with open(f"./data/{ID}.json", "r") as json_file:
         ruc = json.load(json_file)
-
     debug("main", f"RUC contents of grlc: {ruc}")
 
     res = traverse_data(template, ruc)
 
-    json.dump(res, sys.stdout, indent=2)
+    folder_name = 'processed_jsonfiles'
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
 
+    with open(os.path.join(folder_name, f"{ID}_processed.json"), 'w') as json_file:
+        json.dump(res, json_file, indent=2)
 
+        
 if __name__ == "__main__":
     main()

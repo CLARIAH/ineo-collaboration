@@ -1,8 +1,8 @@
 for $i in json-file("{JSONL}", 10)
 where $i.identifier eq "{ID}"
 for $item in $i.programmingLanguage
-return if ($item instance of string) then [{"title": $i.programmingLanguage, "link": "null"}] 
-else if ($item instance of object) then [{"title": $i.programmingLanguage."name", "link": "null"}]
+return if ($item instance of string) then [{"title": $i.programmingLanguage, "link": null}] 
+else if ($item instance of object) then [{"title": $i.programmingLanguage."name", "link": null}]
 else if ($item instance of array) then [
 for $l in $item[]
 return {"title": [$l."name",$l][[1]]}]

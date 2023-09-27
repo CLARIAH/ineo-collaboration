@@ -5,7 +5,6 @@ return
     for $item in $i."applicationCategory"[]
     where starts-with($item."@id", "http")
     return ([
-      $item."@id",
-      $item."skos:broader"."@id"]
+      $item."@id"]
     )
   else ()
