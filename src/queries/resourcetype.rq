@@ -1,0 +1,4 @@
+for $i in json-file("{JSONL}", 10)
+where $i.identifier eq "{ID}"
+let $id := $i."@id"
+return if (contains($id, "https://tools.clariah.nl")) then ["Tools"] else ()

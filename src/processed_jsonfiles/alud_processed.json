@@ -67,7 +67,9 @@
         "generalContact": [
           {}
         ],
-        "resourceTypes": [],
+        "resourceTypes": [
+          "Tools"
+        ],
         "status": [
           "Active",
           "Complete"
@@ -75,7 +77,7 @@
         "versions": [
           {
             "title": "2.13.0",
-            "link": "null"
+            "link": null
           }
         ],
         "standards": [

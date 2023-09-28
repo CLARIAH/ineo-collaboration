@@ -10,8 +10,8 @@ import os
 This script is designed to process JSON data using a template and retrieve information based on a set of rules defined in the template. 
 """
 
-RUMBLEDB = "http://rumbledb:8001/jsoniq"
-#RUMBLEDB = "http://localhost:8001/jsoniq"
+#RUMBLEDB = "http://rumbledb:8001/jsoniq"
+RUMBLEDB = "http://localhost:8001/jsoniq"
 JSONL = "/data/data/codemeta.jsonl"
 
 # ID and TEMPLATE can be overridden by command-line arguments. Default value is "grlc"
@@ -167,13 +167,32 @@ vocabs = {}
 
 def retrieve_info(info, ruc) -> list | str | None:
     """
-    TODO: put some documentation here **with** examples preferably
+    
+    This scripts parses and processes a set of input instructions from the template.json (info, e.g. md:@queries/domains.rq:researchDomains,null) 
+    The function returns the result of processing these instructions (res), which could be a list, a string, or None.
+    
+    The input instruction is further split using commas as delimiters (info_values), and different components of the instruction are processed. 
+    This means that the order of the instruction is important: the loop is exited if a result is found. 
+        
+    The instructions in the template include:
+        ruc: if an instruction starts with "ruc", it indicates that the function should extract information from the Rich User Contents
+            - if it starts with "ruc", the instruction is further split using colons as delimiters (info_parts), and different components of the instruction are processed.
+            - such a component can include a regular expression (e.g. "<ruc:overview:^.*(### Data.*) > "^.*(### Data.*)") which further transforms the extracted data.
+        md: if an instruction starts with "md", it indicates that the function should retrieve information from the codemeta.json files, potentially using a jsoniq query. 
+            the codemeta.json files are converted to a jsonl file that is stored in RumbleDB (done by script FAIRdatasets_tools_harvester.py)
+            - if an instruction starts with "md" the info is further split into components. If a component start with "@" it indicates that there is a path to a file path containing a jsoniq query ("@queries/author.rq" > "queries/author.rq").
+            - if is does not start with "@" (e.g. md:description > description) a query string is created. 
+            - if a query is found, the function sends a POST request to RUMBLEDB with the query and processes and filters the response.
+            - component "researchactivity" or "researchdomain" ("<md:@queries/activities.rq:researchActivity > researchActivity). Extra filter to further process the response of the jsoniq query (see functions "process_vocabs" and "checking_vocabs")
+        api: if an instruction starts with "api", it sets the res variable to the string "create".
+        err: if an instruction starts with "err", it indicates that an error message should be printed to the standard error stream (err:there is no learn!" > there is no learn!)
+        null: if an instruction starts with "null", it sets the res variable to the string "null".
 
     docstring
-    info: [type], [description]
-    ruc: [type], [description]
-
-    return: [type], [description]
+    info: type  = 'str', input instruction from template.json (information after "<" in def traverse_data, e.g. md:@queries/domains.rq:researchDomains)
+    ruc: type = 'dict', Rich User Contents (from Github Repository ineo-content). The ruc is processed and created in script FAIRdatasets_tools_harvester.py.
+    res: type = 'str' | 'list' | None, the function returns the value stored in the res variable, which represents the result of processing the instructions in the template.
+    
     """
     # res is the final return value of the function
     res = None
@@ -181,7 +200,7 @@ def retrieve_info(info, ruc) -> list | str | None:
     global vocabs
 
     debug("retrieve_info", f"info[{info}]")
-    info_values = info.split(",")
+    info_values = info.split(",") 
     for info_value in info_values:
         debug("retrieve_info", f"info_value[{info_value}]")
         if info_value.startswith("ruc"):
@@ -254,7 +273,7 @@ def retrieve_info(info, ruc) -> list | str | None:
             if res is not None:
                 break  # Exit the loop once a match is found
     
-        # With the http request method POST, you can perform three operations: create, update and delete.
+        # With the http request method POST, the INEO api can perform three operations: create, update and delete.
         if info_value.startswith("api"):
             res = "create"
         
@@ -278,7 +297,7 @@ def retrieve_info(info, ruc) -> list | str | None:
                 # Checking if the path starts with "@" character. If it does, it indicates that the path refers to a file path containing a query.
                 if path.startswith("@"):
                     # If the path starts with "@", this line extracts the file path by removing the "@" character. 
-                    # For example, if path is "@queries/activities.rq", file will be set to "queries/activities.rq". 
+                    # For example, if path is "@queries/activities.rq", the path will be set to "queries/activities.rq". 
                     file = path[1:]
                     debug("path", f"path for the query[{file}]")
                     with open(file, "r") as file:
@@ -286,7 +305,7 @@ def retrieve_info(info, ruc) -> list | str | None:
                 if query is not None:
                     query = query.replace("{JSONL}", JSONL)
                     query = query.replace("{ID}", ruc["identifier"].lower())
-                # This line generates a query string. It's a fallback query that is used when no external query is found in the file.
+                # This line generates a query string. It's a fallback query that is used when there is no external query file.
                 else:
                     query = f'for $i in json-file("{JSONL}",10) where $i.identifier eq "{ruc["identifier"].lower()}" return $i.{path}'
 
@@ -367,14 +386,13 @@ def main():
     """
     Main function
     
-    This script processes JSON data using a template (template.json) and retrieving information from it based on a set of rules defined in template.py. 
+    This script processes JSON data using a template (template.json) and retrieving information from it based on a set of instructions defined in template.py. 
     This function starts the process of traversing the template and retrieving the information from the Rich User Contents (RUC) and codemeta files (MD)
     then merge them into an INEO json file to ultimately feed into the INEO API. 
 
     template: type = 'dict', the template file loaded as json, by default it is always a list of dictionaries as INEO supports multiple records
     ruc: type = 'dict', the rich user contents file loaded as json, by default it is always a dictionary as it contains only one record
-    res: type = 'list', the result of combining the RUC and the MD based on the rules set out in template.py. 
-    
+    res: type = 'list', the result of combining the RUC and the MD based on the instructions set out in template.py. 
     
     """
     # DSL
@@ -388,8 +406,10 @@ def main():
         ruc = json.load(json_file)
     debug("main", f"RUC contents of grlc: {ruc}")
 
+    # The result!
     res = traverse_data(template, ruc)
 
+    # file directory ready to be feed into the INEO api
     folder_name = 'processed_jsonfiles'
     if not os.path.exists(folder_name):
         os.makedirs(folder_name)

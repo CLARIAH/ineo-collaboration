@@ -62,9 +62,7 @@
                         "link": "url"
                     }
                 ],
-                "resourceTypes": [
-                    "Tools"
-                ],
+                "resourceTypes": "<md:@queries/resourcetype.rq,null",
                 "status": "<md:@queries/status.rq,null",
                 "versions": "<md:@queries/version.rq,null",
                 "standards": [
