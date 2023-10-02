@@ -1,6 +1,8 @@
 import json
 import shutil
 from fuzzywuzzy import fuzz
+import requests
+from datetime import datetime
 
 def load_json(file_path):
     with open(file_path, 'r') as json_file:
@@ -16,6 +18,7 @@ def update_links(activity_data):
         new_link = old_link.replace("https://vocabs.dariah.eu/tadirah2/en/page/", "https://vocabs.dariah.eu/tadirah/")
         item['link_en'] = item['link']
         item["link"] = new_link
+        del item["link_en"]
 
 # Function to find an exact match in nwo_data (e.g. "skos:prefLabel": "Modern and contemporary history") based on the "title" of research domains (e.g. "title": "Modern and contemporary history")
 def find_exact_match(nwo_data, nwo_field_labels, result_entry):
@@ -80,6 +83,16 @@ def main():
     # Update links in activity_data
     update_links(activity_data)
 
+    # Check and print the tadirah links to see if they work
+    for item in activity_data["result"]:
+        link = item["link"]
+        response = requests.get(link)
+        if response.status_code == 200:
+            print(f"Link: {link} - Status: Working")
+        else:
+            print(f"Link: {link} - Status: Not Working")
+
+
     # Extract "skos:prefLabel" values from nwo_data
     nwo_field_labels = [entry['skos:prefLabel'] for entry in nwo_data['@graph'] if 'skos:prefLabel' in entry]
 
@@ -116,8 +129,7 @@ def main():
         # Update "link" field based on the manual matches
         if index in manual_index_to_id_map:
             result_entry['link'] = manual_index_to_id_map[index]
-        
-        
+
     # Save updated data
     save_json(nwo_data, 'nwo-research-fields_template.json')
     save_json(domains_data, 'researchDomains.json')

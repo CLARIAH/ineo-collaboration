@@ -14,8 +14,7 @@
             "slug": {
                 "current": "analyzing"
             },
-            "title": "Analyzing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/analyzing"
+            "title": "Analyzing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -29,8 +28,7 @@
             "slug": {
                 "current": "content-analysis"
             },
-            "title": "Content Analysis",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/contentAnalysis"
+            "title": "Content Analysis"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -44,8 +42,7 @@
             "slug": {
                 "current": "discourse-analysis"
             },
-            "title": "Discourse Analysis",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/discourseAnalysis"
+            "title": "Discourse Analysis"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -59,8 +56,7 @@
             "slug": {
                 "current": "identifying"
             },
-            "title": "Identifying",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/identifying"
+            "title": "Identifying"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -74,8 +70,7 @@
             "slug": {
                 "current": "digital-object-identifier"
             },
-            "title": "Digital Object Identifier",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/digitalObjectIdentifier"
+            "title": "Digital Object Identifier"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -89,8 +84,7 @@
             "slug": {
                 "current": "identifier"
             },
-            "title": "Identifier",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/identifier"
+            "title": "Identifier"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -104,8 +98,7 @@
             "slug": {
                 "current": "naming-convention"
             },
-            "title": "Naming Convention",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/namingConvention"
+            "title": "Naming Convention"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -119,8 +112,7 @@
             "slug": {
                 "current": "persistent-identifier"
             },
-            "title": "Persistent Identifier",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/persistentIdentifier"
+            "title": "Persistent Identifier"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -134,8 +126,7 @@
             "slug": {
                 "current": "uniform-resource-identifier"
             },
-            "title": "Uniform Resource Identifier",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/uniformResourceIdentifier"
+            "title": "Uniform Resource Identifier"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -149,8 +140,7 @@
             "slug": {
                 "current": "information-retrieval"
             },
-            "title": "Information Retrieval",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/informationRetrieval"
+            "title": "Information Retrieval"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -164,8 +154,7 @@
             "slug": {
                 "current": "machine-learning"
             },
-            "title": "Machine Learning",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/machineLearning"
+            "title": "Machine Learning"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -179,8 +168,7 @@
             "slug": {
                 "current": "named-entity-recognition"
             },
-            "title": "Named Entity Recognition",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/namedEntityRecognition"
+            "title": "Named Entity Recognition"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -194,8 +182,7 @@
             "slug": {
                 "current": "sentiment-analysis"
             },
-            "title": "Sentiment Analysis",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/sentimentAnalysis"
+            "title": "Sentiment Analysis"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -209,8 +196,7 @@
             "slug": {
                 "current": "tagging"
             },
-            "title": "Tagging",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/tagging"
+            "title": "Tagging"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -224,8 +210,7 @@
             "slug": {
                 "current": "topic-modeling"
             },
-            "title": "Topic Modeling",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/topicModeling"
+            "title": "Topic Modeling"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -239,8 +224,7 @@
             "slug": {
                 "current": "network-analysis"
             },
-            "title": "Network Analysis",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/networkAnalysis"
+            "title": "Network Analysis"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -254,8 +238,7 @@
             "slug": {
                 "current": "identifying"
             },
-            "title": "Identifying",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/identifying"
+            "title": "Identifying"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -269,8 +252,7 @@
             "slug": {
                 "current": "digital-object-identifier"
             },
-            "title": "Digital Object Identifier",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/digitalObjectIdentifier"
+            "title": "Digital Object Identifier"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -284,8 +266,7 @@
             "slug": {
                 "current": "identifier"
             },
-            "title": "Identifier",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/identifier"
+            "title": "Identifier"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -299,8 +280,7 @@
             "slug": {
                 "current": "naming-convention"
             },
-            "title": "Naming Convention",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/namingConvention"
+            "title": "Naming Convention"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -314,8 +294,7 @@
             "slug": {
                 "current": "persistent-identifier"
             },
-            "title": "Persistent Identifier",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/persistentIdentifier"
+            "title": "Persistent Identifier"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -329,8 +308,7 @@
             "slug": {
                 "current": "uniform-resource-identifier"
             },
-            "title": "Uniform Resource Identifier",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/uniformResourceIdentifier"
+            "title": "Uniform Resource Identifier"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -344,8 +322,7 @@
             "slug": {
                 "current": "named-entity-recognition"
             },
-            "title": "Named Entity Recognition",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/namedEntityRecognition"
+            "title": "Named Entity Recognition"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -359,8 +336,7 @@
             "slug": {
                 "current": "relational-analysis"
             },
-            "title": "Relational Analysis",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/relationalAnalysis"
+            "title": "Relational Analysis"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -374,8 +350,7 @@
             "slug": {
                 "current": "cluster-analysis"
             },
-            "title": "Cluster Analysis",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/clusterAnalysis"
+            "title": "Cluster Analysis"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -389,8 +364,7 @@
             "slug": {
                 "current": "collating"
             },
-            "title": "Collating",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/collating"
+            "title": "Collating"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -404,8 +378,7 @@
             "slug": {
                 "current": "comparing"
             },
-            "title": "Comparing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/comparing"
+            "title": "Comparing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -419,8 +392,7 @@
             "slug": {
                 "current": "identifying"
             },
-            "title": "Identifying",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/identifying"
+            "title": "Identifying"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -434,8 +406,7 @@
             "slug": {
                 "current": "digital-object-identifier"
             },
-            "title": "Digital Object Identifier",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/digitalObjectIdentifier"
+            "title": "Digital Object Identifier"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -449,8 +420,7 @@
             "slug": {
                 "current": "identifier"
             },
-            "title": "Identifier",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/identifier"
+            "title": "Identifier"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -464,8 +434,7 @@
             "slug": {
                 "current": "naming-convention"
             },
-            "title": "Naming Convention",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/namingConvention"
+            "title": "Naming Convention"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -479,8 +448,7 @@
             "slug": {
                 "current": "persistent-identifier"
             },
-            "title": "Persistent Identifier",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/persistentIdentifier"
+            "title": "Persistent Identifier"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -494,8 +462,7 @@
             "slug": {
                 "current": "uniform-resource-identifier"
             },
-            "title": "Uniform Resource Identifier",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/uniformResourceIdentifier"
+            "title": "Uniform Resource Identifier"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -509,8 +476,7 @@
             "slug": {
                 "current": "machine-learning"
             },
-            "title": "Machine Learning",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/machineLearning"
+            "title": "Machine Learning"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -524,8 +490,7 @@
             "slug": {
                 "current": "pattern-recognition"
             },
-            "title": "Pattern Recognition",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/patternRecognition"
+            "title": "Pattern Recognition"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -539,8 +504,7 @@
             "slug": {
                 "current": "principal-component-analysis"
             },
-            "title": "Principal Component Analysis",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/principalComponentAnalysis"
+            "title": "Principal Component Analysis"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -554,8 +518,7 @@
             "slug": {
                 "current": "sequence-alignment"
             },
-            "title": "Sequence Alignment",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/sequenceAlignment"
+            "title": "Sequence Alignment"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -569,8 +532,7 @@
             "slug": {
                 "current": "stylometry"
             },
-            "title": "Stylometry",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/stylometry"
+            "title": "Stylometry"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -584,8 +546,7 @@
             "slug": {
                 "current": "spatial-analysis"
             },
-            "title": "Spatial Analysis",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/spatialAnalysis"
+            "title": "Spatial Analysis"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -599,8 +560,7 @@
             "slug": {
                 "current": "georeferencing"
             },
-            "title": "Georeferencing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/georeferencing"
+            "title": "Georeferencing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -614,8 +574,7 @@
             "slug": {
                 "current": "named-entity-recognition"
             },
-            "title": "Named Entity Recognition",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/namedEntityRecognition"
+            "title": "Named Entity Recognition"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -629,8 +588,7 @@
             "slug": {
                 "current": "structural-analysis"
             },
-            "title": "Structural Analysis",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/structuralAnalysis"
+            "title": "Structural Analysis"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -644,8 +602,7 @@
             "slug": {
                 "current": "collocation-analysis"
             },
-            "title": "Collocation Analysis",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/collocationAnalysis"
+            "title": "Collocation Analysis"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -659,8 +616,7 @@
             "slug": {
                 "current": "concordance"
             },
-            "title": "Concordance",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/concordance"
+            "title": "Concordance"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -674,8 +630,7 @@
             "slug": {
                 "current": "machine-learning"
             },
-            "title": "Machine Learning",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/machineLearning"
+            "title": "Machine Learning"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -689,8 +644,7 @@
             "slug": {
                 "current": "pos-tagging"
             },
-            "title": "POS-Tagging",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/posTagging"
+            "title": "POS-Tagging"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -704,8 +658,7 @@
             "slug": {
                 "current": "tree-tagging"
             },
-            "title": "Tree-Tagging",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/treeTagging"
+            "title": "Tree-Tagging"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -719,8 +672,7 @@
             "slug": {
                 "current": "stylistic-analysis"
             },
-            "title": "Stylistic Analysis",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/stylisticAnalysis"
+            "title": "Stylistic Analysis"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -734,8 +686,7 @@
             "slug": {
                 "current": "authorship-attribution"
             },
-            "title": "Authorship Attribution",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/authorshipAttribution"
+            "title": "Authorship Attribution"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -749,8 +700,7 @@
             "slug": {
                 "current": "cluster-analysis"
             },
-            "title": "Cluster Analysis",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/clusterAnalysis"
+            "title": "Cluster Analysis"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -764,8 +714,7 @@
             "slug": {
                 "current": "contrastive-analysis"
             },
-            "title": "Contrastive Analysis",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/contrastiveAnalysis"
+            "title": "Contrastive Analysis"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -779,8 +728,7 @@
             "slug": {
                 "current": "distance-measures"
             },
-            "title": "Distance Measures",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/distanceMeasures"
+            "title": "Distance Measures"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -794,8 +742,7 @@
             "slug": {
                 "current": "genre-recognition"
             },
-            "title": "Genre Recognition",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/genreRecognition"
+            "title": "Genre Recognition"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -809,8 +756,7 @@
             "slug": {
                 "current": "machine-learning"
             },
-            "title": "Machine Learning",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/machineLearning"
+            "title": "Machine Learning"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -824,8 +770,7 @@
             "slug": {
                 "current": "principal-component-analysis"
             },
-            "title": "Principal Component Analysis",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/principalComponentAnalysis"
+            "title": "Principal Component Analysis"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -839,8 +784,7 @@
             "slug": {
                 "current": "rhetorical-analysis"
             },
-            "title": "Rhetorical Analysis",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/rhetoricalAnalysis"
+            "title": "Rhetorical Analysis"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -854,8 +798,7 @@
             "slug": {
                 "current": "stylometry"
             },
-            "title": "Stylometry",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/stylometry"
+            "title": "Stylometry"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -869,8 +812,7 @@
             "slug": {
                 "current": "text-categorization"
             },
-            "title": "Text Categorization",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/textCategorization"
+            "title": "Text Categorization"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -884,8 +826,7 @@
             "slug": {
                 "current": "visual-analysis"
             },
-            "title": "Visual Analysis",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/visualAnalysis"
+            "title": "Visual Analysis"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -899,8 +840,7 @@
             "slug": {
                 "current": "data-visualization"
             },
-            "title": "Data Visualization",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/dataVisualization"
+            "title": "Data Visualization"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -914,8 +854,7 @@
             "slug": {
                 "current": "mapping"
             },
-            "title": "Mapping",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/mapping"
+            "title": "Mapping"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -929,8 +868,7 @@
             "slug": {
                 "current": "mind-mapping"
             },
-            "title": "Mind Mapping",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/mindMapping"
+            "title": "Mind Mapping"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -944,8 +882,7 @@
             "slug": {
                 "current": "plotting"
             },
-            "title": "Plotting",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/plotting"
+            "title": "Plotting"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -959,8 +896,7 @@
             "slug": {
                 "current": "capturing"
             },
-            "title": "Capturing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/capturing"
+            "title": "Capturing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -974,8 +910,7 @@
             "slug": {
                 "current": "converting"
             },
-            "title": "Converting",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/converting"
+            "title": "Converting"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -989,8 +924,7 @@
             "slug": {
                 "current": "compiling"
             },
-            "title": "Compiling",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/compiling"
+            "title": "Compiling"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1004,8 +938,7 @@
             "slug": {
                 "current": "lemmatizing"
             },
-            "title": "Lemmatizing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/lemmatizing"
+            "title": "Lemmatizing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1019,8 +952,7 @@
             "slug": {
                 "current": "natural-language-processing"
             },
-            "title": "Natural Language Processing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/naturalLanguageProcessing"
+            "title": "Natural Language Processing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1034,8 +966,7 @@
             "slug": {
                 "current": "parsing"
             },
-            "title": "Parsing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/parsing"
+            "title": "Parsing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1049,8 +980,7 @@
             "slug": {
                 "current": "transcoding"
             },
-            "title": "Transcoding",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/transcoding"
+            "title": "Transcoding"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1064,8 +994,7 @@
             "slug": {
                 "current": "data-recognition"
             },
-            "title": "Data Recognition",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/dataRecognition"
+            "title": "Data Recognition"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1079,8 +1008,7 @@
             "slug": {
                 "current": "encoding"
             },
-            "title": "Encoding",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/encoding"
+            "title": "Encoding"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1094,8 +1022,7 @@
             "slug": {
                 "current": "optical-character-recognition"
             },
-            "title": "Optical Character Recognition",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/opticalCharacterRecognition"
+            "title": "Optical Character Recognition"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1109,8 +1036,7 @@
             "slug": {
                 "current": "optical-music-recognition"
             },
-            "title": "Optical Music Recognition",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/opticalMusicRecognition"
+            "title": "Optical Music Recognition"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1124,8 +1050,7 @@
             "slug": {
                 "current": "preprocessing"
             },
-            "title": "Preprocessing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/preprocessing"
+            "title": "Preprocessing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1139,8 +1064,7 @@
             "slug": {
                 "current": "discovering"
             },
-            "title": "Discovering",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/discovering"
+            "title": "Discovering"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1154,8 +1078,7 @@
             "slug": {
                 "current": "browsing"
             },
-            "title": "Browsing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/browsing"
+            "title": "Browsing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1169,8 +1092,7 @@
             "slug": {
                 "current": "exploration"
             },
-            "title": "Exploration",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/exploration"
+            "title": "Exploration"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1184,8 +1106,7 @@
             "slug": {
                 "current": "information-retrieval"
             },
-            "title": "Information Retrieval",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/informationRetrieval"
+            "title": "Information Retrieval"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1199,8 +1120,7 @@
             "slug": {
                 "current": "querying"
             },
-            "title": "Querying",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/querying"
+            "title": "Querying"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1214,8 +1134,7 @@
             "slug": {
                 "current": "searching"
             },
-            "title": "Searching",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/searching"
+            "title": "Searching"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1229,8 +1148,7 @@
             "slug": {
                 "current": "extracting"
             },
-            "title": "Extracting",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/extracting"
+            "title": "Extracting"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1244,8 +1162,7 @@
             "slug": {
                 "current": "data-mining"
             },
-            "title": "Data Mining",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/dataMining"
+            "title": "Data Mining"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1259,8 +1176,7 @@
             "slug": {
                 "current": "information-mining"
             },
-            "title": "Information Mining",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/informationMining"
+            "title": "Information Mining"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1274,8 +1190,7 @@
             "slug": {
                 "current": "knowledge-discovery"
             },
-            "title": "Knowledge Discovery",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/knowledgeDiscovery"
+            "title": "Knowledge Discovery"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1289,8 +1204,7 @@
             "slug": {
                 "current": "knowledge-extraction"
             },
-            "title": "Knowledge Extraction",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/knowledgeExtraction"
+            "title": "Knowledge Extraction"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1304,8 +1218,7 @@
             "slug": {
                 "current": "gathering"
             },
-            "title": "Gathering",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/gathering"
+            "title": "Gathering"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1319,8 +1232,7 @@
             "slug": {
                 "current": "aggregating"
             },
-            "title": "Aggregating",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/aggregating"
+            "title": "Aggregating"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1334,8 +1246,7 @@
             "slug": {
                 "current": "archiving"
             },
-            "title": "Archiving",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/archiving"
+            "title": "Archiving"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1349,8 +1260,7 @@
             "slug": {
                 "current": "cataloging"
             },
-            "title": "Cataloging",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/cataloging"
+            "title": "Cataloging"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1364,8 +1274,7 @@
             "slug": {
                 "current": "collecting"
             },
-            "title": "Collecting",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/collecting"
+            "title": "Collecting"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1379,8 +1288,7 @@
             "slug": {
                 "current": "data-ingestion"
             },
-            "title": "Data Ingestion",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/dataIngestion"
+            "title": "Data Ingestion"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1394,8 +1302,7 @@
             "slug": {
                 "current": "scanning"
             },
-            "title": "Scanning",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/scanning"
+            "title": "Scanning"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1409,8 +1316,7 @@
             "slug": {
                 "current": "web-scraping"
             },
-            "title": "Web Scraping",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/webScraping"
+            "title": "Web Scraping"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1424,8 +1330,7 @@
             "slug": {
                 "current": "cataloging"
             },
-            "title": "Cataloging",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/cataloging"
+            "title": "Cataloging"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1439,8 +1344,7 @@
             "slug": {
                 "current": "collating"
             },
-            "title": "Collating",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/collating"
+            "title": "Collating"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1454,8 +1358,7 @@
             "slug": {
                 "current": "collecting"
             },
-            "title": "Collecting",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/collecting"
+            "title": "Collecting"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1469,8 +1372,7 @@
             "slug": {
                 "current": "preserving"
             },
-            "title": "Preserving",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/preserving"
+            "title": "Preserving"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1484,8 +1386,7 @@
             "slug": {
                 "current": "bit-stream-preservation"
             },
-            "title": "Bit Stream Preservation",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/bitStreamPreservation"
+            "title": "Bit Stream Preservation"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1499,8 +1400,7 @@
             "slug": {
                 "current": "description"
             },
-            "title": "Description",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/description"
+            "title": "Description"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1514,8 +1414,7 @@
             "slug": {
                 "current": "emulation"
             },
-            "title": "Emulation",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/emulation"
+            "title": "Emulation"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1529,8 +1428,7 @@
             "slug": {
                 "current": "migration"
             },
-            "title": "Migration",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/migration"
+            "title": "Migration"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1544,8 +1442,7 @@
             "slug": {
                 "current": "preservation-metadata"
             },
-            "title": "Preservation Metadata",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/preservationMetadata"
+            "title": "Preservation Metadata"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1559,8 +1456,7 @@
             "slug": {
                 "current": "replication"
             },
-            "title": "Replication",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/replication"
+            "title": "Replication"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1574,8 +1470,7 @@
             "slug": {
                 "current": "versioning"
             },
-            "title": "Versioning",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/versioning"
+            "title": "Versioning"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1589,8 +1484,7 @@
             "slug": {
                 "current": "web-crawling"
             },
-            "title": "Web Crawling",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/webCrawling"
+            "title": "Web Crawling"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1604,8 +1498,7 @@
             "slug": {
                 "current": "web-scraping"
             },
-            "title": "Web Scraping",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/webScraping"
+            "title": "Web Scraping"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1619,8 +1512,7 @@
             "slug": {
                 "current": "imaging"
             },
-            "title": "Imaging",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/imaging"
+            "title": "Imaging"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1634,8 +1526,7 @@
             "slug": {
                 "current": "photographing"
             },
-            "title": "Photographing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/photographing"
+            "title": "Photographing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1649,8 +1540,7 @@
             "slug": {
                 "current": "scanning"
             },
-            "title": "Scanning",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/scanning"
+            "title": "Scanning"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1664,8 +1554,7 @@
             "slug": {
                 "current": "recording"
             },
-            "title": "Recording",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/recording"
+            "title": "Recording"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1679,8 +1568,7 @@
             "slug": {
                 "current": "audio-recording"
             },
-            "title": "Audio Recording",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/audioRecording"
+            "title": "Audio Recording"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1694,8 +1582,7 @@
             "slug": {
                 "current": "screencast"
             },
-            "title": "Screencast",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/screencast"
+            "title": "Screencast"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1709,8 +1596,7 @@
             "slug": {
                 "current": "video-capture"
             },
-            "title": "Video Capture",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/videoCapture"
+            "title": "Video Capture"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1724,8 +1610,7 @@
             "slug": {
                 "current": "transcribing"
             },
-            "title": "Transcribing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/transcribing"
+            "title": "Transcribing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1739,8 +1624,7 @@
             "slug": {
                 "current": "speech-recognizing"
             },
-            "title": "Speech Recognizing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/speechRecognizing"
+            "title": "Speech Recognizing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1754,8 +1638,7 @@
             "slug": {
                 "current": "creating"
             },
-            "title": "Creating",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/creating"
+            "title": "Creating"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1769,8 +1652,7 @@
             "slug": {
                 "current": "designing"
             },
-            "title": "Designing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/designing"
+            "title": "Designing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1784,8 +1666,7 @@
             "slug": {
                 "current": "diagramming"
             },
-            "title": "Diagramming",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/diagramming"
+            "title": "Diagramming"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1799,8 +1680,7 @@
             "slug": {
                 "current": "drawing"
             },
-            "title": "Drawing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/drawing"
+            "title": "Drawing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1814,8 +1694,7 @@
             "slug": {
                 "current": "wireframing"
             },
-            "title": "Wireframing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/wireframing"
+            "title": "Wireframing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1829,8 +1708,7 @@
             "slug": {
                 "current": "programming"
             },
-            "title": "Programming",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/programming"
+            "title": "Programming"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1844,8 +1722,7 @@
             "slug": {
                 "current": "encoding"
             },
-            "title": "Encoding",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/encoding"
+            "title": "Encoding"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1859,8 +1736,7 @@
             "slug": {
                 "current": "graphics-programming"
             },
-            "title": "Graphics Programming",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/graphicsProgramming"
+            "title": "Graphics Programming"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1874,8 +1750,7 @@
             "slug": {
                 "current": "pseudo-coding"
             },
-            "title": "Pseudo Coding",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/pseudoCoding"
+            "title": "Pseudo Coding"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1889,8 +1764,7 @@
             "slug": {
                 "current": "translating"
             },
-            "title": "Translating",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/translating"
+            "title": "Translating"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1904,8 +1778,7 @@
             "slug": {
                 "current": "web-development"
             },
-            "title": "Web Development",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/webDevelopment"
+            "title": "Web Development"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1919,8 +1792,7 @@
             "slug": {
                 "current": "writing"
             },
-            "title": "Writing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/writing"
+            "title": "Writing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1934,8 +1806,7 @@
             "slug": {
                 "current": "lettering"
             },
-            "title": "Lettering",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/lettering"
+            "title": "Lettering"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1949,8 +1820,7 @@
             "slug": {
                 "current": "disseminating"
             },
-            "title": "Disseminating",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/disseminating"
+            "title": "Disseminating"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1964,8 +1834,7 @@
             "slug": {
                 "current": "collaborating"
             },
-            "title": "Collaborating",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/collaborating"
+            "title": "Collaborating"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1979,8 +1848,7 @@
             "slug": {
                 "current": "discussing"
             },
-            "title": "Discussing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/discussing"
+            "title": "Discussing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -1994,8 +1862,7 @@
             "slug": {
                 "current": "organizing"
             },
-            "title": "Organizing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/organizing"
+            "title": "Organizing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2009,8 +1876,7 @@
             "slug": {
                 "current": "finding"
             },
-            "title": "Finding",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/finding"
+            "title": "Finding"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2024,8 +1890,7 @@
             "slug": {
                 "current": "managing"
             },
-            "title": "Managing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/managing"
+            "title": "Managing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2039,8 +1904,7 @@
             "slug": {
                 "current": "sharing"
             },
-            "title": "Sharing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/sharing"
+            "title": "Sharing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2054,8 +1918,7 @@
             "slug": {
                 "current": "posting"
             },
-            "title": "Posting",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/posting"
+            "title": "Posting"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2069,8 +1932,7 @@
             "slug": {
                 "current": "upload"
             },
-            "title": "Upload",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/upload"
+            "title": "Upload"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2084,8 +1946,7 @@
             "slug": {
                 "current": "social-networking"
             },
-            "title": "Social Networking",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/socialNetworking"
+            "title": "Social Networking"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2099,8 +1960,7 @@
             "slug": {
                 "current": "commenting"
             },
-            "title": "Commenting",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/commenting"
+            "title": "Commenting"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2114,8 +1974,7 @@
             "slug": {
                 "current": "contextualizing"
             },
-            "title": "Contextualizing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/contextualizing"
+            "title": "Contextualizing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2129,8 +1988,7 @@
             "slug": {
                 "current": "associate"
             },
-            "title": "Associate",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/associate"
+            "title": "Associate"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2144,8 +2002,7 @@
             "slug": {
                 "current": "co-occurrence"
             },
-            "title": "Co-Occurrence",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/coOccurrence"
+            "title": "Co-Occurrence"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2159,8 +2016,7 @@
             "slug": {
                 "current": "integrating"
             },
-            "title": "Integrating",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/integrating"
+            "title": "Integrating"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2174,8 +2030,7 @@
             "slug": {
                 "current": "mapping"
             },
-            "title": "Mapping",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/mapping"
+            "title": "Mapping"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2189,8 +2044,7 @@
             "slug": {
                 "current": "semantification"
             },
-            "title": "Semantification",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/semantification"
+            "title": "Semantification"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2204,8 +2058,7 @@
             "slug": {
                 "current": "expressing-opinion"
             },
-            "title": "Expressing Opinion",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/expressingOpinion"
+            "title": "Expressing Opinion"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2219,8 +2072,7 @@
             "slug": {
                 "current": "communicating"
             },
-            "title": "Communicating",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/communicating"
+            "title": "Communicating"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2234,8 +2086,7 @@
             "slug": {
                 "current": "audio-conferencing"
             },
-            "title": "Audio Conferencing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/audioConferencing"
+            "title": "Audio Conferencing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2249,8 +2100,7 @@
             "slug": {
                 "current": "e-mailing"
             },
-            "title": "E-mailing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/eMailing"
+            "title": "E-mailing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2264,8 +2114,7 @@
             "slug": {
                 "current": "instant-messaging"
             },
-            "title": "Instant Messaging",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/instantMessaging"
+            "title": "Instant Messaging"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2279,8 +2128,7 @@
             "slug": {
                 "current": "microblogging"
             },
-            "title": "Microblogging",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/microblogging"
+            "title": "Microblogging"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2294,8 +2142,7 @@
             "slug": {
                 "current": "text-messaging"
             },
-            "title": "Text Messaging",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/textMessaging"
+            "title": "Text Messaging"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2309,8 +2156,7 @@
             "slug": {
                 "current": "video-conference"
             },
-            "title": "Video Conference",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/videoConference"
+            "title": "Video Conference"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2324,8 +2170,7 @@
             "slug": {
                 "current": "crowdsourcing"
             },
-            "title": "Crowdsourcing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/crowdsourcing"
+            "title": "Crowdsourcing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2339,8 +2184,7 @@
             "slug": {
                 "current": "gamification"
             },
-            "title": "Gamification",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/gamification"
+            "title": "Gamification"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2354,8 +2198,7 @@
             "slug": {
                 "current": "user-generated-content"
             },
-            "title": "User Generated Content",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/userGeneratedContent"
+            "title": "User Generated Content"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2369,8 +2212,7 @@
             "slug": {
                 "current": "publishing"
             },
-            "title": "Publishing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/publishing"
+            "title": "Publishing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2384,8 +2226,7 @@
             "slug": {
                 "current": "academic-publishing"
             },
-            "title": "Academic Publishing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/academicPublishing"
+            "title": "Academic Publishing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2399,8 +2240,7 @@
             "slug": {
                 "current": "blogging"
             },
-            "title": "Blogging",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/blogging"
+            "title": "Blogging"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2414,8 +2254,7 @@
             "slug": {
                 "current": "digital-publishing"
             },
-            "title": "Digital Publishing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/digitalPublishing"
+            "title": "Digital Publishing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2429,8 +2268,7 @@
             "slug": {
                 "current": "linked-open-data"
             },
-            "title": "Linked Open Data",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/linkedOpenData"
+            "title": "Linked Open Data"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2444,8 +2282,7 @@
             "slug": {
                 "current": "tweet"
             },
-            "title": "Tweet",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/tweet"
+            "title": "Tweet"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2459,8 +2296,7 @@
             "slug": {
                 "current": "sharing"
             },
-            "title": "Sharing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/sharing"
+            "title": "Sharing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2474,8 +2310,7 @@
             "slug": {
                 "current": "posting"
             },
-            "title": "Posting",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/posting"
+            "title": "Posting"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2489,8 +2324,7 @@
             "slug": {
                 "current": "upload"
             },
-            "title": "Upload",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/upload"
+            "title": "Upload"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2504,8 +2338,7 @@
             "slug": {
                 "current": "teaching"
             },
-            "title": "Teaching",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/teaching"
+            "title": "Teaching"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2519,8 +2352,7 @@
             "slug": {
                 "current": "enriching"
             },
-            "title": "Enriching",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/enriching"
+            "title": "Enriching"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2534,8 +2366,7 @@
             "slug": {
                 "current": "annotating"
             },
-            "title": "Annotating",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/annotating"
+            "title": "Annotating"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2549,8 +2380,7 @@
             "slug": {
                 "current": "associating"
             },
-            "title": "Associating",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/associating"
+            "title": "Associating"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2564,8 +2394,7 @@
             "slug": {
                 "current": "audio-annotation"
             },
-            "title": "Audio Annotation",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/audioAnnotation"
+            "title": "Audio Annotation"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2579,8 +2408,7 @@
             "slug": {
                 "current": "contextualizing"
             },
-            "title": "Contextualizing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/contextualizing"
+            "title": "Contextualizing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2594,8 +2422,7 @@
             "slug": {
                 "current": "associate"
             },
-            "title": "Associate",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/associate"
+            "title": "Associate"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2609,8 +2436,7 @@
             "slug": {
                 "current": "co-occurrence"
             },
-            "title": "Co-Occurrence",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/coOccurrence"
+            "title": "Co-Occurrence"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2624,8 +2450,7 @@
             "slug": {
                 "current": "integrating"
             },
-            "title": "Integrating",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/integrating"
+            "title": "Integrating"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2639,8 +2464,7 @@
             "slug": {
                 "current": "mapping"
             },
-            "title": "Mapping",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/mapping"
+            "title": "Mapping"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2654,8 +2478,7 @@
             "slug": {
                 "current": "semantification"
             },
-            "title": "Semantification",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/semantification"
+            "title": "Semantification"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2669,8 +2492,7 @@
             "slug": {
                 "current": "encoding"
             },
-            "title": "Encoding",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/encoding"
+            "title": "Encoding"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2684,8 +2506,7 @@
             "slug": {
                 "current": "georeferencing"
             },
-            "title": "Georeferencing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/georeferencing"
+            "title": "Georeferencing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2699,8 +2520,7 @@
             "slug": {
                 "current": "highlighting"
             },
-            "title": "Highlighting",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/highlighting"
+            "title": "Highlighting"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2714,8 +2534,7 @@
             "slug": {
                 "current": "linked-open-data"
             },
-            "title": "Linked Open Data",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/linkedOpenData"
+            "title": "Linked Open Data"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2729,8 +2548,7 @@
             "slug": {
                 "current": "named-entity-recognition"
             },
-            "title": "Named Entity Recognition",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/namedEntityRecognition"
+            "title": "Named Entity Recognition"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2744,8 +2562,7 @@
             "slug": {
                 "current": "pos-tagging"
             },
-            "title": "POS-Tagging",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/posTagging"
+            "title": "POS-Tagging"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2759,8 +2576,7 @@
             "slug": {
                 "current": "segmenting"
             },
-            "title": "Segmenting",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/segmenting"
+            "title": "Segmenting"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2774,8 +2590,7 @@
             "slug": {
                 "current": "tagging"
             },
-            "title": "Tagging",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/tagging"
+            "title": "Tagging"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2789,8 +2604,7 @@
             "slug": {
                 "current": "visual-annotation"
             },
-            "title": "Visual Annotation",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/visualAnnotation"
+            "title": "Visual Annotation"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2804,8 +2618,7 @@
             "slug": {
                 "current": "data-cleansing"
             },
-            "title": "Data Cleansing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/dataCleansing"
+            "title": "Data Cleansing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2819,8 +2632,7 @@
             "slug": {
                 "current": "correcting"
             },
-            "title": "Correcting",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/correcting"
+            "title": "Correcting"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2834,8 +2646,7 @@
             "slug": {
                 "current": "debugging"
             },
-            "title": "Debugging",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/debugging"
+            "title": "Debugging"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2849,8 +2660,7 @@
             "slug": {
                 "current": "improving"
             },
-            "title": "Improving",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/improving"
+            "title": "Improving"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2864,8 +2674,7 @@
             "slug": {
                 "current": "removing"
             },
-            "title": "Removing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/removing"
+            "title": "Removing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2879,8 +2688,7 @@
             "slug": {
                 "current": "editing"
             },
-            "title": "Editing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/editing"
+            "title": "Editing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2894,8 +2702,7 @@
             "slug": {
                 "current": "adding"
             },
-            "title": "Adding",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/adding"
+            "title": "Adding"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2909,8 +2716,7 @@
             "slug": {
                 "current": "correcting"
             },
-            "title": "Correcting",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/correcting"
+            "title": "Correcting"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2924,8 +2730,7 @@
             "slug": {
                 "current": "cropping"
             },
-            "title": "Cropping",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/cropping"
+            "title": "Cropping"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2939,8 +2744,7 @@
             "slug": {
                 "current": "formatting"
             },
-            "title": "Formatting",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/formatting"
+            "title": "Formatting"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2954,8 +2758,7 @@
             "slug": {
                 "current": "merging"
             },
-            "title": "Merging",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/merging"
+            "title": "Merging"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2969,8 +2772,7 @@
             "slug": {
                 "current": "modifying"
             },
-            "title": "Modifying",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/modifying"
+            "title": "Modifying"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2984,8 +2786,7 @@
             "slug": {
                 "current": "subtracting"
             },
-            "title": "Subtracting",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/subtracting"
+            "title": "Subtracting"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -2999,8 +2800,7 @@
             "slug": {
                 "current": "supplementing"
             },
-            "title": "Supplementing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/supplementing"
+            "title": "Supplementing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3014,8 +2814,7 @@
             "slug": {
                 "current": "video-editing"
             },
-            "title": "Video Editing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/videoEditing"
+            "title": "Video Editing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3029,8 +2828,7 @@
             "slug": {
                 "current": "interpreting"
             },
-            "title": "Interpreting",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/interpreting"
+            "title": "Interpreting"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3044,8 +2842,7 @@
             "slug": {
                 "current": "contextualizing"
             },
-            "title": "Contextualizing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/contextualizing"
+            "title": "Contextualizing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3059,8 +2856,7 @@
             "slug": {
                 "current": "associate"
             },
-            "title": "Associate",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/associate"
+            "title": "Associate"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3074,8 +2870,7 @@
             "slug": {
                 "current": "co-occurrence"
             },
-            "title": "Co-Occurrence",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/coOccurrence"
+            "title": "Co-Occurrence"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3089,8 +2884,7 @@
             "slug": {
                 "current": "integrating"
             },
-            "title": "Integrating",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/integrating"
+            "title": "Integrating"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3104,8 +2898,7 @@
             "slug": {
                 "current": "mapping"
             },
-            "title": "Mapping",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/mapping"
+            "title": "Mapping"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3119,8 +2912,7 @@
             "slug": {
                 "current": "semantification"
             },
-            "title": "Semantification",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/semantification"
+            "title": "Semantification"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3134,8 +2926,7 @@
             "slug": {
                 "current": "modeling"
             },
-            "title": "Modeling",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/modeling"
+            "title": "Modeling"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3149,8 +2940,7 @@
             "slug": {
                 "current": "data-mapping"
             },
-            "title": "Data Mapping",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/dataMapping"
+            "title": "Data Mapping"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3164,8 +2954,7 @@
             "slug": {
                 "current": "transformation"
             },
-            "title": "Transformation",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/transformation"
+            "title": "Transformation"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3179,8 +2968,7 @@
             "slug": {
                 "current": "theorizing"
             },
-            "title": "Theorizing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/theorizing"
+            "title": "Theorizing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3194,8 +2982,7 @@
             "slug": {
                 "current": "abstract-thinking"
             },
-            "title": "Abstract Thinking",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/abstractThinking"
+            "title": "Abstract Thinking"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3209,8 +2996,7 @@
             "slug": {
                 "current": "conceptualizing"
             },
-            "title": "Conceptualizing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/conceptualizing"
+            "title": "Conceptualizing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3224,8 +3010,7 @@
             "slug": {
                 "current": "defining"
             },
-            "title": "Defining",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/defining"
+            "title": "Defining"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3239,8 +3024,7 @@
             "slug": {
                 "current": "explanation"
             },
-            "title": "Explanation",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/explanation"
+            "title": "Explanation"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3254,8 +3038,7 @@
             "slug": {
                 "current": "reasoning"
             },
-            "title": "Reasoning",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/reasoning"
+            "title": "Reasoning"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3269,8 +3052,7 @@
             "slug": {
                 "current": "storing"
             },
-            "title": "Storing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/storing"
+            "title": "Storing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3284,8 +3066,7 @@
             "slug": {
                 "current": "archiving"
             },
-            "title": "Archiving",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/archiving"
+            "title": "Archiving"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3299,8 +3080,7 @@
             "slug": {
                 "current": "cataloging"
             },
-            "title": "Cataloging",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/cataloging"
+            "title": "Cataloging"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3314,8 +3094,7 @@
             "slug": {
                 "current": "collecting"
             },
-            "title": "Collecting",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/collecting"
+            "title": "Collecting"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3329,8 +3108,7 @@
             "slug": {
                 "current": "data-ingestion"
             },
-            "title": "Data Ingestion",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/dataIngestion"
+            "title": "Data Ingestion"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3344,8 +3122,7 @@
             "slug": {
                 "current": "scanning"
             },
-            "title": "Scanning",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/scanning"
+            "title": "Scanning"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3359,8 +3136,7 @@
             "slug": {
                 "current": "web-scraping"
             },
-            "title": "Web Scraping",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/webScraping"
+            "title": "Web Scraping"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3374,8 +3150,7 @@
             "slug": {
                 "current": "identifying"
             },
-            "title": "Identifying",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/identifying"
+            "title": "Identifying"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3389,8 +3164,7 @@
             "slug": {
                 "current": "digital-object-identifier"
             },
-            "title": "Digital Object Identifier",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/digitalObjectIdentifier"
+            "title": "Digital Object Identifier"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3404,8 +3178,7 @@
             "slug": {
                 "current": "identifier"
             },
-            "title": "Identifier",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/identifier"
+            "title": "Identifier"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3419,8 +3192,7 @@
             "slug": {
                 "current": "naming-convention"
             },
-            "title": "Naming Convention",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/namingConvention"
+            "title": "Naming Convention"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3434,8 +3206,7 @@
             "slug": {
                 "current": "persistent-identifier"
             },
-            "title": "Persistent Identifier",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/persistentIdentifier"
+            "title": "Persistent Identifier"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3449,8 +3220,7 @@
             "slug": {
                 "current": "uniform-resource-identifier"
             },
-            "title": "Uniform Resource Identifier",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/uniformResourceIdentifier"
+            "title": "Uniform Resource Identifier"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3464,8 +3234,7 @@
             "slug": {
                 "current": "organizing"
             },
-            "title": "Organizing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/organizing"
+            "title": "Organizing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3479,8 +3248,7 @@
             "slug": {
                 "current": "finding"
             },
-            "title": "Finding",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/finding"
+            "title": "Finding"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3494,8 +3262,7 @@
             "slug": {
                 "current": "managing"
             },
-            "title": "Managing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/managing"
+            "title": "Managing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3509,8 +3276,7 @@
             "slug": {
                 "current": "sharing"
             },
-            "title": "Sharing",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/sharing"
+            "title": "Sharing"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3524,8 +3290,7 @@
             "slug": {
                 "current": "posting"
             },
-            "title": "Posting",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/posting"
+            "title": "Posting"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3539,8 +3304,7 @@
             "slug": {
                 "current": "upload"
             },
-            "title": "Upload",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/upload"
+            "title": "Upload"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3554,8 +3318,7 @@
             "slug": {
                 "current": "preserving"
             },
-            "title": "Preserving",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/preserving"
+            "title": "Preserving"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3569,8 +3332,7 @@
             "slug": {
                 "current": "bit-stream-preservation"
             },
-            "title": "Bit Stream Preservation",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/bitStreamPreservation"
+            "title": "Bit Stream Preservation"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3584,8 +3346,7 @@
             "slug": {
                 "current": "description"
             },
-            "title": "Description",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/description"
+            "title": "Description"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3599,8 +3360,7 @@
             "slug": {
                 "current": "emulation"
             },
-            "title": "Emulation",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/emulation"
+            "title": "Emulation"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3614,8 +3374,7 @@
             "slug": {
                 "current": "migration"
             },
-            "title": "Migration",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/migration"
+            "title": "Migration"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3629,8 +3388,7 @@
             "slug": {
                 "current": "preservation-metadata"
             },
-            "title": "Preservation Metadata",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/preservationMetadata"
+            "title": "Preservation Metadata"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3644,8 +3402,7 @@
             "slug": {
                 "current": "replication"
             },
-            "title": "Replication",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/replication"
+            "title": "Replication"
         },
         {
             "_createdAt": "2021-08-19T09:18:43Z",
@@ -3659,8 +3416,7 @@
             "slug": {
                 "current": "versioning"
             },
-            "title": "Versioning",
-            "link_en": "https://vocabs.dariah.eu/tadirah2/en/page/versioning"
+            "title": "Versioning"
         }
     ]
 }

@@ -23,27 +23,12 @@
         "metadata": {}
       },
       "properties": {
-        "programmingLanguages": [
-          {
-            "title": "Go",
-            "link": null
-          }
-        ],
-        "learn": [
-          {
-            "title": "alud package - github.com/rug-compling/alud/v2 - Go Packages",
-            "link": "https://pkg.go.dev/github.com/rug-compling/alud/v2"
-          }
-        ],
+        "programmingLanguages": null,
+        "learn": null,
         "resourceHost": [
           {}
         ],
-        "funding": [
-          {
-            "title": "Projectnummer CP-WP3-19-004, PaQuUd, Parse and Query with Universal Dependencies",
-            "link": "https://www.clariah.nl/wp3-linguistics"
-          }
-        ],
+        "funding": null,
         "problemContact": [
           {}
         ],
@@ -52,51 +37,22 @@
         "access": [
           {}
         ],
-        "sourceCodeLocation": [
-          {
-            "title": "Github repository of alud",
-            "link": "https://github.com/rug-compling/alud"
-          }
-        ],
-        "researchContact": [
-          {
-            "title": "Gosse Bouma",
-            "link": "mailto:g.bouma@rug.nl"
-          }
-        ],
+        "sourceCodeLocation": null,
+        "researchContact": null,
         "generalContact": [
           {}
         ],
-        "resourceTypes": [
-          "Tools"
-        ],
-        "status": [
-          "Active",
-          "Complete"
-        ],
-        "versions": [
-          {
-            "title": "2.13.0",
-            "link": null
-          }
-        ],
+        "resourceTypes": null,
+        "status": null,
+        "versions": null,
         "standards": [
           {}
         ],
-        "resourceOwner": [
-          {
-            "title": "Computational Linguistics, Faculty of Arts, Groningen University",
-            "link": "https://www.rug.nl/research/clcg/research/cl/"
-          }
-        ],
+        "resourceOwner": null,
         "link": null,
-        "intro": "A Go package for deriving Universal Dependencies from Dutch sentences parsed with Alpino",
-        "researchActivities": [
-          "1.5 Structural Analysis"
-        ],
-        "researchDomains": [
-          "15.1 Computational linguistics and philology"
-        ],
+        "intro": null,
+        "researchActivities": null,
+        "researchDomains": null,
         "mediaTypes": [],
         "provenance": [
           {}

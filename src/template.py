@@ -10,9 +10,10 @@ import os
 This script is designed to process JSON data using a template and retrieve information based on a set of rules defined in the template. 
 """
 
-#RUMBLEDB = "http://rumbledb:8001/jsoniq"
-RUMBLEDB = "http://localhost:8001/jsoniq"
+RUMBLEDB = "http://rumbledb:8001/jsoniq"
+#RUMBLEDB = "http://localhost:8001/jsoniq"
 JSONL = "/data/data/codemeta.jsonl"
+PROCESSED_FILES = "./processed_jsonfiles"
 
 # ID and TEMPLATE can be overridden by command-line arguments. Default value is "grlc"
 ID = "grlc"
@@ -409,7 +410,7 @@ def main():
     # The result!
     res = traverse_data(template, ruc)
 
-    # file directory ready to be feed into the INEO api
+    # file directory ready to be fed into the INEO api
     folder_name = 'processed_jsonfiles'
     if not os.path.exists(folder_name):
         os.makedirs(folder_name)
