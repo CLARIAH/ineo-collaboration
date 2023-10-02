@@ -391,11 +391,13 @@ if __name__ == '__main__':
         file.write(rumble_query)
     
     #make a jsonlines file of the INEO vocabs
+    """
+    
     with open('./vocabs/researchActivity.json', 'r') as json_file:
         vocabs = json.load(json_file)
 
     with jsonlines.open('vocabs.jsonl', 'w') as writer:
         writer.write(vocabs)
-    
+    """
     print("Done!")
 

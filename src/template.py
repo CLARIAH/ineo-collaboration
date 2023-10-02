@@ -279,95 +279,101 @@ def retrieve_info(info, ruc) -> list | str | None:
             res = "create"
         
         # Checking if the info_value string begins with "md" (e.g. "<md:@queries/activities.rq,null")
-        if info_value.startswith("md"):
-            info = None
-            debug("retrieve_info", f"Starting with {info_value}")
+        # First check if the JSONL file is not empty   
+        if os.path.getsize("./data/codemeta.jsonl") > 0:
+            if info_value.startswith("md"):
+                info = None
+                debug("retrieve_info", f"Starting with {info_value}")
 
-            info_parts = info_value.split(":")
-            debug("retrieve_info", f"info_parts[{info_parts}]")
+                info_parts = info_value.split(":")
+                debug("retrieve_info", f"info_parts[{info_parts}]")
+                
+                if len(info_parts) >= 2:
+                    path = info_parts[1]
 
-            if len(info_parts) >= 2:
-                path = info_parts[1]
+                    original_path = None
+                    if path.endswith("[]"):
+                        original_path = path
+                        path = path[:-2]  # Remove the '[]' suffix
 
-                original_path = None
-                if path.endswith("[]"):
-                    original_path = path
-                    path = path[:-2]  # Remove the '[]' suffix
-
-                query = None
-                # Checking if the path starts with "@" character. If it does, it indicates that the path refers to a file path containing a query.
-                if path.startswith("@"):
-                    # If the path starts with "@", this line extracts the file path by removing the "@" character. 
-                    # For example, if path is "@queries/activities.rq", the path will be set to "queries/activities.rq". 
-                    file = path[1:]
-                    debug("path", f"path for the query[{file}]")
-                    with open(file, "r") as file:
-                        query = file.read()
-                if query is not None:
-                    query = query.replace("{JSONL}", JSONL)
-                    query = query.replace("{ID}", ruc["identifier"].lower())
-                # This line generates a query string. It's a fallback query that is used when there is no external query file.
-                else:
-                    query = f'for $i in json-file("{JSONL}",10) where $i.identifier eq "{ruc["identifier"].lower()}" return $i.{path}'
-
-                debug("retrieve_info", f"rumbledb query[{query}]")
-                response = requests.post(RUMBLEDB, data=query)
-                assert (
-                    response.status_code == 200
-                ), f"Error running {query} on rumbledb: {response.text}"
-
-                # check whether the query run was successful
-                resp = json.loads(response.text)
-                if ("error-code" in resp) or ("error-message" in resp):
-                    error(
-                        "retrieve_info",
-                        f"Error running {query} on rumbledb: {response.text}",
-                    )
-                    exit()
-
-                if len(resp["values"]) > 0:
-                    if original_path:
-                        info = resp["values"]
+                    query = None
+                    # Checking if the path starts with "@" character. If it does, it indicates that the path refers to a file path containing a query.
+                    if path.startswith("@"):
+                        # If the path starts with "@", this line extracts the file path by removing the "@" character. 
+                        # For example, if path is "@queries/activities.rq", the path will be set to "queries/activities.rq". 
+                        file = path[1:]
+                        debug("path", f"path for the query[{file}]")
+                        with open(file, "r") as file:
+                            query = file.read()
+                    if query is not None:
+                        query = query.replace("{JSONL}", JSONL)
+                        query = query.replace("{ID}", ruc["identifier"].lower())
+                    # This line generates a query string. It's a fallback query that is used when there is no external query file.
                     else:
-                        info = resp["values"][0]
-                else:
-                    info = None
+                        query = f'for $i in json-file("{JSONL}",10) where $i.identifier eq "{ruc["identifier"].lower()}" return $i.{path}'
 
-            if info is not None and len(info_parts) > 2:
-                vocab = info_parts[2].strip()
-                debug("retrieve_info", f"filter on vocab[{vocab}]")
-                
-                if vocab not in vocabs.keys():
-                    # Load the vocabs file to be used later
-                    with open(f"./vocabs/{vocab}.json", "r") as vocabs_file:
-                        vocabs[vocab] = json.load(vocabs_file)
-                
-                vocabs_list = []
-                for val in info:
-                    val = checking_vocabs(val)
-                    debug(vocab, val) 
+                    debug("retrieve_info", f"rumbledb query[{query}]")
+                    response = requests.post(RUMBLEDB, data=query)
+                    assert (
+                        response.status_code == 200
+                    ), f"Error running {query} on rumbledb: {response.text}"
+
+                    # check whether the query run was successful
+                    resp = json.loads(response.text)
+                    if ("error-code" in resp) or ("error-message" in resp):
+                        error(
+                            "retrieve_info",
+                            f"Error running {query} on rumbledb: {response.text}",
+                        )
+                        exit()
+
+                    if len(resp["values"]) > 0:
+                        if original_path:
+                            info = resp["values"]
+                        else:
+                            info = resp["values"][0]
+                    else:
+                        info = None
+
+                if info is not None and len(info_parts) > 2:
+                    vocab = info_parts[2].strip()
+                    debug("retrieve_info", f"filter on vocab[{vocab}]")
                     
-                    # Iterate through the items in the "result" array of the vocabs
-                    for vocabs_item in vocabs[vocab].get("result", []):
-                        # Comparing the link of the vocabs with val
-                        process_vocabs(vocabs_item, val, vocabs_list)
-                
-                if len(vocabs_list) > 0:
-                    info = vocabs_list
-                else:
-                    info = None
+                    if vocab not in vocabs.keys():
+                        # Load the vocabs file to be used later
+                        with open(f"./vocabs/{vocab}.json", "r") as vocabs_file:
+                            vocabs[vocab] = json.load(vocabs_file)
+                    
+                    vocabs_list = []
+                    for val in info:
+                        val = checking_vocabs(val)
+                        debug(vocab, val) 
+                        
+                        # Iterate through the items in the "result" array of the vocabs
+                        for vocabs_item in vocabs[vocab].get("result", []):
+                            # Comparing the link of the vocabs with val
+                            process_vocabs(vocabs_item, val, vocabs_list)
+                    
+                    if len(vocabs_list) > 0:
+                        info = vocabs_list
+                    else:
+                        info = None
 
-                debug(
-                    "retrieve_info",
-                    f"The vocab value from '{info_parts[2].strip()}': {info}",
-                )
+                    debug(
+                        "retrieve_info",
+                        f"The vocab value from '{info_parts[2].strip()}': {info}",
+                    )
 
-            if info is not None:
-                debug("retrieve_info", f"The value of '{path}' in the MD: {info}")
+                if info is not None:
+                    debug("retrieve_info", f"The value of '{path}' in the MD: {info}")
 
-            res = info
-            if res is not None:
-                break  # Exit the loop once a match is found
+                res = info
+                if res is not None:
+                    break  # Exit the loop once a match is found
+        
+        else:
+            print("JSONL file is empty. No updates to perform. Keeping the content of the info as is.")
+            # TODO: Load the existing template.json values here
 
         # This line checks if info_value starts with the prefix "err" ("<ruc:learn,err:there is no learn!")
         if info_value.startswith("err"):
@@ -396,6 +402,7 @@ def main():
     res: type = 'list', the result of combining the RUC and the MD based on the instructions set out in template.py. 
     
     """
+    
     # DSL
     global template
     with open(TEMPLATE, "r") as file:
