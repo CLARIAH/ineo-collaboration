@@ -1,25 +1,20 @@
 version: "3"
 
-volumes:
-  ineo-sync:
-      
-
 services:
   python-run:
     build: .
     image: ineo-sync:latest
     container_name: ineo-sync
     volumes:
-      # - ineo-sync:/src/data
-      - ./:/src
+      - ./data_swap:/data
+#      - ./:/src
     restart: unless-stopped
 
   rumbledb:
     image: rumbledb/rumble:latest
     container_name: rumbledb
     volumes:
-      # - ineo-sync:/data
-      - ./:/data
+      - ./data_swap:/data
     restart: unless-stopped
     command: ["serve", "-p", "8001", "-h", "0.0.0.0"]
     ports:

@@ -8,11 +8,13 @@ ADD harvester.py ./harvester.py
 ADD template.py ./template.py
 ADD template.json ./template.json
 ADD ineo_sync.py ./ineo_sync.py
+ADD queries ./queries
+ADD vocabs ./vocabs
 ADD .env ./.env
 
 ADD requirements.txt ./
 
 RUN pip install --no-cache-dir -r requirements.txt
-RUN crontab -l | { cat; echo "*/2 * * * * cd /src && /usr/local/bin/python /src/main.py"; } | crontab -
+#RUN crontab -l | { cat; echo "*/2 * * * * cd /src && /usr/local/bin/python /src/main.py"; } | crontab -
 #ENTRYPOINT [ "cron", "-f" ]
 ENTRYPOINT [ "tail","-f","/dev/null"]

@@ -13,7 +13,7 @@ from typing import List, Optional, AnyStr
 from bs4 import BeautifulSoup
 from datetime import datetime
 
-output_path_data = "./data"
+output_path_data = "/data"
 output_path_queries = "./queries"
 
 
@@ -56,7 +56,7 @@ def get_db_cursor(db_file_name= os.path.join(output_path_data, "tools_metadata.d
         exit(1)
     # create a cursor
     c = conn.cursor()
-    return (c, conn)
+    return c, conn
 
 
 def get_canonical(file_name):
@@ -198,17 +198,19 @@ def compare_lists(list1: Optional[List[str]], list2: Optional[List[str]]) -> Lis
     # getting elements in l1 not in l2
     diff = []
     if list1 is not None and len(list1) > 0:
-        list1_path = list1[0].split("/")[0]
+        # list1_path = list1[0].split("/")[:-1]
         list1_list2 = list(set(list1_copy) - set(list2_copy))
-        diff = [f"{list1_path}/{x}" for x in list1_list2]
+        # diff = [f"{list1_path}/{x}" for x in list1_list2]
+        diff = [x for x in list1_list2]
     print(f"list1 diff is {diff}")
 
     # getting elements in l2 not in l1
     diff2 = []
     if list2 is not None and len(list2) > 0:
-        list2_path = list2[0].split("/")[0]
+        # list2_path = list2[0].split("/")[:-1]
         list2_list1 = list(set(list2_copy) - set(list1_copy))
-        diff2 = [f"{list2_path}/{x}" for x in list2_list1]
+        # diff2 = [f"{list2_path}/{x}" for x in list2_list1]
+        diff2 = [x for x in list2_list1]
     print(f"list2 diff is {diff2}")
     return diff + diff2
 
@@ -243,10 +245,10 @@ def process_list(diff_list, jsonlines_file, current_timestamp, previous_batch_di
     if previous batch dict is none, then it will always add the file to the jsonlines file
     if previous batch dict is not none, then it will compare the md5 of the current file with the md5 of the previous batch
     """
-
-    dir = os.path.join(output_path_data, "tools_metadata")
+    c, conn = get_db_cursor()
+    toolmeta_dir = os.path.join(output_path_data, "tools_metadata")
     for file in diff_list:
-        file = os.path.normpath(os.path.join(dir, file))
+        file = os.path.normpath(os.path.join(toolmeta_dir, file))
         #canon_file = get_canonical(file)
         md5 = get_md5(file)
         previous_md5 = previous_batch_dict.get(file, None) if previous_batch_dict is not None else None

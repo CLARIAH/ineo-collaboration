@@ -12,7 +12,7 @@ This script is designed to process JSON data using a template and retrieve infor
 
 RUMBLEDB = "http://rumbledb:8001/jsoniq"
 #RUMBLEDB = "http://localhost:8001/jsoniq"
-JSONL = "/data/data/codemeta.jsonl"
+JSONL = "/data/codemeta.jsonl"
 PROCESSED_FILES = "./processed_jsonfiles"
 
 # ID and TEMPLATE can be overridden by command-line arguments. Default value is "grlc"
@@ -280,7 +280,7 @@ def retrieve_info(info, ruc) -> list | str | None:
         
         # Checking if the info_value string begins with "md" (e.g. "<md:@queries/activities.rq,null")
         # First check if the JSONL file is not empty   
-        if os.path.getsize("./data/codemeta.jsonl") > 0:
+        if os.path.getsize(JSONL) > 0:
             if info_value.startswith("md"):
                 info = None
                 debug("retrieve_info", f"Starting with {info_value}")
@@ -341,7 +341,7 @@ def retrieve_info(info, ruc) -> list | str | None:
                     
                     if vocab not in vocabs.keys():
                         # Load the vocabs file to be used later
-                        with open(f"./vocabs/{vocab}.json", "r") as vocabs_file:
+                        with open(f"/src/vocabs/{vocab}.json", "r") as vocabs_file:
                             vocabs[vocab] = json.load(vocabs_file)
                     
                     vocabs_list = []
@@ -389,7 +389,7 @@ def retrieve_info(info, ruc) -> list | str | None:
     return res
 
 
-def main():
+def main(current_id: str = ID):
     """
     Main function
     
@@ -410,7 +410,7 @@ def main():
 
     # Rich User Contents
     ruc = None
-    with open(f"./data/{ID}.json", "r") as json_file:
+    with open(f"./data/{current_id}.json", "r") as json_file:
         ruc = json.load(json_file)
     debug("main", f"RUC contents of grlc: {ruc}")
 
@@ -422,7 +422,7 @@ def main():
     if not os.path.exists(folder_name):
         os.makedirs(folder_name)
 
-    with open(os.path.join(folder_name, f"{ID}_processed.json"), 'w') as json_file:
+    with open(os.path.join(folder_name, f"{current_id}_processed.json"), 'w') as json_file:
         json.dump(res, json_file, indent=2)
 
         
