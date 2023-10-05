@@ -1,18 +1,48 @@
 import os
+import re
+import logging
 import requests
-from typing import List, Optional
-from bs4 import BeautifulSoup
 import hashlib
 import sqlite3
-from datetime import datetime
 import jsonlines
 import json
 import shutil
 import subprocess
-import regex as regex
+import yaml
+from typing import List, Optional, AnyStr
+from bs4 import BeautifulSoup
+from datetime import datetime
 
 output_path_data = "./data"
 output_path_queries = "./queries"
+
+
+def extract_ruc(ruc_content: AnyStr) -> dict:
+    re_fields = re.compile(r'^---(.*)---', flags=re.DOTALL)
+    re_descriptions = re.compile(r'---\n+#(.*?)\n\n(.*?)\n\n##', flags=re.DOTALL)
+    re_sections = re.compile(r'(?m)^(##\s+.*?)$(.*?)(?=^##\s|\Z)', flags=re.DOTALL | re.MULTILINE)
+    re_name = re.compile(r'[^a-zA-Z]', flags=re.DOTALL)
+
+    fields = re_fields.search(ruc_content).group(1)
+    dictionary: dict = yaml.load(fields, Loader=yaml.SafeLoader)
+
+    descriptions = re.findall(re_descriptions, ruc_content)
+
+    for description in descriptions:
+        section_name = description[0].strip()
+        section_content = description[1].strip()
+        dictionary[section_name] = section_content
+
+    sections = re.finditer(re_sections, ruc_content)
+
+    for section in sections:
+        section_name = section.group(1)
+        section_name = re_name.sub("", section_name)
+        section_content = section.group(2)
+        dictionary[section_name] = section_content.strip()
+
+    return dictionary
+
 
 def get_db_cursor(db_file_name= os.path.join(output_path_data, "tools_metadata.db"), table_name="tools_metadata"):
     """
@@ -287,8 +317,8 @@ def get_ruc_contents():
     for filename in os.listdir(folder_path):
         file_path = os.path.join(folder_path, filename)
         with open(file_path, 'r') as file:
-            contents = file.read()
-            ruc_contents = regex.extract_ruc(contents)
+            contents: AnyStr = file.read()
+            ruc_contents: dict = extract_ruc(contents)
             print(f"Rich User Contents of {file_path} is:\n{ruc_contents}\n")
             all_ruc_contents[filename] = ruc_contents
             
@@ -299,9 +329,8 @@ def get_ruc_contents():
 main function
 """
 
-if __name__ == '__main__':
 
-
+def main():
     # Create the "data" folder if it doesn't exist
     data_folder = "data"
     if not os.path.exists(data_folder):
@@ -389,15 +418,7 @@ if __name__ == '__main__':
     with open(os.path.join(output_path_queries, "rumbledb.rq"), "w") as file:
     #with open("rumble_query.rq", "w") as file:    
         file.write(rumble_query)
-    
-    #make a jsonlines file of the INEO vocabs
-    """
-    
-    with open('./vocabs/researchActivity.json', 'r') as json_file:
-        vocabs = json.load(json_file)
 
-    with jsonlines.open('vocabs.jsonl', 'w') as writer:
-        writer.write(vocabs)
-    """
-    print("Done!")
 
+if __name__ == '__main__':
+    main()
