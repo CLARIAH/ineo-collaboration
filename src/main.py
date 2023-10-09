@@ -7,7 +7,6 @@ import json
 
 jsonl_file: str = "/data/codemeta.jsonl"
 
-
 def call_harvester():
     # TODO: call harvester
     harvester.main()
@@ -38,7 +37,6 @@ def call_ineo_sync():
 if "__main__" == __name__:
     # TODO: call_harvester() needs more work to handle new RUC without codemeta as well as how to get new RUC only
     call_harvester()
-    call_template()
-    # TODO: test ineo_sync, code should be in ineoPost.py???
-    call_ineo_sync()
+    #call_template()
+    #call_ineo_sync()
     logging.info("All done")

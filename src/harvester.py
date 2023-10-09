@@ -44,7 +44,7 @@ def extract_ruc(ruc_content: AnyStr) -> dict:
     return dictionary
 
 
-def get_db_cursor(db_file_name= os.path.join(output_path_data, "tools_metadata.db"), table_name="tools_metadata"):
+def get_db_cursor(db_file_name=os.path.join(output_path_data, "tools_metadata.db"), table_name="tools_metadata"):
     """
     Get a cursor to the database
     """
@@ -56,7 +56,7 @@ def get_db_cursor(db_file_name= os.path.join(output_path_data, "tools_metadata.d
         exit(1)
     # create a cursor
     c = conn.cursor()
-    return c, conn
+    return (c, conn)
 
 
 def get_canonical(file_name):
@@ -83,6 +83,8 @@ def get_md5(file_name):
     """
     md5_file = file_name
     if file_name.endswith('.json'):
+        print(file_name)
+        exit()
         md5_file = get_canonical(file_name)
     
     hash_md5 = hashlib.md5()
@@ -337,15 +339,15 @@ def main():
     data_folder = "data"
     if not os.path.exists(data_folder):
         os.makedirs(data_folder)
-    
-    ruc_contents_dict = get_ruc_contents()
 
-    # Serialize the dictionary into a JSON string and write to a file for each tool
+    # Serialize the RUC dictionary into JSON
+    ruc_contents_dict = get_ruc_contents()
     for filename, ruc_contents in ruc_contents_dict.items():
         json_file_path = os.path.join("./data", os.path.splitext(filename)[0] + ".json")
         with open(json_file_path, "w") as json_file:
             json.dump(ruc_contents, json_file)
     
+    # Initialize the database connection and create the table if it doesn't exist
     c, conn = get_db_cursor()
     
     # get all the json files
@@ -418,7 +420,6 @@ def main():
         """
     
     with open(os.path.join(output_path_queries, "rumbledb.rq"), "w") as file:
-    #with open("rumble_query.rq", "w") as file:    
         file.write(rumble_query)
 
 

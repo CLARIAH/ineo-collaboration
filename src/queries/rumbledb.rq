@@ -1,0 +1,5 @@
+
+        for $i in json-file("/data/codemeta.jsonl",10)
+        where $i.review.reviewRating ge 3
+        return $i.identifier
+        

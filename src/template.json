@@ -2,9 +2,9 @@
     {
         "operation": "<api",
         "document": {
-            "id": "<ruc:identifier,err:there is no identifier!",
+            "id": "<md:identifier,ruc:identifier,err:there is no identifier!",
             "title": "<ruc:title",
-            "intro": "<ruc:$title",
+            "intro": "<ruc:$title,md:description,null",
             "publishedAt": "yyyy-mm-dd",
             "media": {
                 "thumbnail": "<md:thumbnailUrl,null",
