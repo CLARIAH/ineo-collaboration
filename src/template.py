@@ -12,6 +12,10 @@ This script is designed to process JSON data using a template and retrieve infor
 
 RUMBLEDB = "http://rumbledb:8001/jsoniq"
 #RUMBLEDB = "http://localhost:8001/jsoniq"
+
+# location of the JSONL file within container ineo-sync
+JSONL_ineo = "./data/codemeta.jsonl"
+# location of the (same) JSONL file within container rumbledb
 JSONL = "/data/codemeta.jsonl"
 PROCESSED_FILES = "./processed_jsonfiles"
 
@@ -280,7 +284,7 @@ def retrieve_info(info, ruc) -> list | str | None:
         
         # Checking if the info_value string begins with "md" (e.g. "<md:@queries/activities.rq,null")
         # First check if the JSONL file is not empty   
-        if os.path.getsize(JSONL) > 0:
+        if os.path.getsize(JSONL_ineo) > 0:
             if info_value.startswith("md"):
                 info = None
                 debug("retrieve_info", f"Starting with {info_value}")
