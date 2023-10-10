@@ -13,7 +13,7 @@ from typing import List, Optional, AnyStr
 from bs4 import BeautifulSoup
 from datetime import datetime
 
-output_path_data = "/data"
+output_path_data = "./data"
 output_path_queries = "./queries"
 
 
@@ -48,7 +48,6 @@ def get_db_cursor(db_file_name=os.path.join(output_path_data, "tools_metadata.db
     """
     Get a cursor to the database
     """
-    
     # init db and check if the table exists
     conn = init_check_db(db_file_name, table_name)
     if conn is None:
@@ -83,8 +82,6 @@ def get_md5(file_name):
     """
     md5_file = file_name
     if file_name.endswith('.json'):
-        print(file_name)
-        exit()
         md5_file = get_canonical(file_name)
     
     hash_md5 = hashlib.md5()
@@ -227,7 +224,7 @@ def create_db_table(conn: sqlite3.Connection, table_name: str = "tools_metadata"
 
 def db_table_exists(conn: sqlite3.Connection, table_name: str = "tools_metadata") -> bool:
     """
-    check if the table exists in the database
+    check if the table exists in the data 
     """
     c = conn.cursor()
     c.execute(f"SELECT count(name) FROM sqlite_master WHERE type='table' AND name='{table_name}'")
@@ -262,7 +259,7 @@ def process_list(diff_list, jsonlines_file, current_timestamp, previous_batch_di
         else:
             print(f"File {file} has not changed.")
         c.execute("INSERT INTO tools_metadata (file_name, md5, timestamp) VALUES (?, ?, ?)", (file, md5, current_timestamp))
-
+        conn.commit()
 
 def init_check_db(db_file_name: str, table_name: str) -> Optional[sqlite3.Connection]:
     """
