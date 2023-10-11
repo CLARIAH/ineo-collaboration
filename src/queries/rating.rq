@@ -1,0 +1,4 @@
+for $i in json-file("{JSONL}",10)
+where $i.review.reviewRating ge 3
+return $i.identifier
+        

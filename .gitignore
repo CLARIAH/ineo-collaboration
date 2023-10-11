@@ -9,7 +9,8 @@ src/codemeta.jsonl
 **/venv
 src/ineo-content
 src/data
-src/processed_json
+src/processed_jsonfiles
 src/vocabs
-
-
+src/properties
+src/ineo_get.py
+src/template_delete.json

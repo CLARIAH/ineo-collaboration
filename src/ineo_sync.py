@@ -49,8 +49,8 @@ def get_id() -> set:
 def get_document(ids) -> list:
     """
     This code first checks if a tool with the given identifier exists by performing a GET request. 
-    If it exists (status code 200), it returns a list with the retrieved resources. 
-    The api always sends an array of objects
+    If it exists (status code 200), it returns a list with the processed resources. 
+    
     """
     document_list = []
     for id in ids:
@@ -63,7 +63,7 @@ def get_document(ids) -> list:
                 document_list.append(json_data)
     return document_list
 
-def handle_404(id, header):
+def handle_empty(id, header):
     """
     In case a resources does not exists in API (404), it will be created with a POST request.
     The default operation in a document is "create". 
@@ -97,7 +97,7 @@ def update_api(documents, ids):
             print(update_response.text)
         elif update_response.status_code == 404:
             # The resource does not exist
-            handle_404(id, header)
+            handle_empty(id, header)
         else:
             print('Error checking the tool')
             print(update_response.text)

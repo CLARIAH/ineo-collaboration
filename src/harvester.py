@@ -402,23 +402,5 @@ def main():
 
         conn.commit()
 
-    # RumbleDB query (rating >= 3 stars)
-    print("Generating RumbleDB query...")
-    
-    # Create the "queries" folder if it doesn't exist
-    query_folder = "queries"
-    if not os.path.exists(query_folder):
-        os.makedirs(query_folder)
-    
-    rumble_query = """
-        for $i in json-file("/data/codemeta.jsonl",10)
-        where $i.review.reviewRating ge 3
-        return $i.identifier
-        """
-    
-    with open(os.path.join(output_path_queries, "rumbledb.rq"), "w") as file:
-        file.write(rumble_query)
-
-
 if __name__ == '__main__':
     main()
