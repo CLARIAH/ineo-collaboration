@@ -13,4 +13,5 @@ src/processed_jsonfiles
 src/vocabs
 src/properties
 src/ineo_get.py
-src/template_delete.json
+src/deleted_documents
+src/from_api
