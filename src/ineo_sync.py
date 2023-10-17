@@ -3,6 +3,7 @@ import json
 import requests
 from dotenv import load_dotenv
 import dotenv
+import template
 
 
 """
@@ -129,7 +130,7 @@ def update_document(documents, ids):
         else:
             print(f"Update of {id} canceled.")
 
-def delete_document(delete_list, ids_to_update, ids_to_create):
+def delete_document(delete_list):
     """
     If a document contains a delete operation, with a post request we can delete resources in INEO. 
     Only the id is needed to delete a resource.
@@ -142,30 +143,28 @@ def delete_document(delete_list, ids_to_update, ids_to_create):
     file_path = os.path.join(deleted_documents_folder, delete_template)   
     
     for id in delete_list:
-        if id in ids_to_update:
-            # Read the delete template and insert the id of the tool to be deleted
-            with open(file_path, 'r') as delete_file:
-                delete_template = json.load(delete_file)
-            delete_template[0]["document"]["id"] = id
+        # Read the delete template and insert the id of the tool to be deleted
+        with open(file_path, 'r') as delete_file:
+            delete_template = json.load(delete_file)
+        delete_template[0]["document"]["id"] = id
 
-            # Save the modified template with the id of the tool to be deleted
-            output_file_path = os.path.join(deleted_documents_folder, f"{id}_delete.json")
-            with open(output_file_path, 'w') as file:
-                json.dump(delete_template, file, indent=4) 
+        # Save the modified template with the id of the tool to be deleted
+        output_file_path = os.path.join(deleted_documents_folder, f"{id}_delete.json")
+        with open(output_file_path, 'w') as file:
+            json.dump(delete_template, file, indent=4) 
 
-            confirmation = input(f"Are you sure you want to delete {id}? (y/n): ")
-            if confirmation.lower() == 'y':
-                print(f"Deleting tool {id}")
-                update_response = requests.post(api_url, json=delete_template, headers=header)
-                if update_response.status_code == 200:
-                    print(f"Tool with id {id} deleted successfully.")
-                else:
-                    print(f"ERROR: cannot delete {id}")
-                    print(update_response.text)
+        confirmation = input(f"Are you sure you want to delete {id}? (y/n): ")
+        if confirmation.lower() == 'y':
+            print(f"Deleting tool {id}")
+            update_response = requests.post(api_url, json=delete_template, headers=header)
+            if update_response.status_code == 200:
+                print(f"Tool with id {id} deleted successfully.")
             else:
-                print(f"Deletion of tool with id {id} canceled.")
+                print(f"ERROR: cannot delete {id}")
+                print(update_response.text)
         else:
-            print(f"ERROR: Cannot delete this tool because it does not exists in INEO: {id}")
+            print(f"Deletion of tool with id {id} canceled.")
+
 
 def main():
     processed_document_ids = get_id()
@@ -174,8 +173,8 @@ def main():
     update_document(processed_documents, ids_to_update)
     handle_empty(ids_to_create)
     
-    #delete_list = ["test3", "test2", "test1"]
-    #delete_document(delete_list, ids_to_update, ids_to_create)
+    #delete_list = ["test3", "test2", "test"]
+    #delete_document(delete_list)
 
 if __name__ == "__main__":
     main()
