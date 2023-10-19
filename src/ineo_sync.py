@@ -1,9 +1,11 @@
 import os
 import json
 import requests
+import sys
 from dotenv import load_dotenv
 import dotenv
 import template
+
 
 
 """
@@ -48,11 +50,17 @@ def get_id() -> list:
     # The unique "id" values from all JSON files to be fed or updated into INEO
     return ids
 
+def load_processed_document(id, folder_path):
+    file_path = os.path.join(folder_path, f"{id}_processed.json")
+    with open(file_path, 'r') as json_file:
+        return json.load(json_file)
+
+
 def get_document(ids) -> list:
     """
     This code first checks if a tool with the given identifier exists in INEO by performing a GET request. 
     If a resource exists (status code 200) and does not return an empty list, it returns a list with the processed resources. 
-    If the resource does not exist the API returns an emtpy list [] (not a status code 404). 
+    If the resource does not exist the API returns an empty list [] (not a status code 404). 
 
     """
     processed_document = []
@@ -62,25 +70,30 @@ def get_document(ids) -> list:
         get_url = f"{api_url}{id}"
         get_response = requests.get(get_url, headers=header)
         if get_response.status_code == 200:
-            if get_response.text != '[]':
-                print()
+            if get_response.text == '[]':
+                resource_exists(get_response, id, ids_to_create)
+            else:
                 print(f"{id} is present in INEO")
                 print(get_response.text)
-                file_path = os.path.join(folder_path, f"{id}_processed.json")
-                with open(file_path, 'r') as json_file:
-                    json_data = json.load(json_file)
-                    processed_document.append(json_data)
-                    # the ids of the resource that needs to get updated
-                    ids_to_update.append(id)
-            else:
-                print()
-                print(f"{id} does not exist in INEO.")
-                # the ids of the resource that does not exist
-                ids_to_create.append(id)
+                json_data = load_processed_document(id, folder_path)
+                processed_document.append(json_data)
+                ids_to_update.append(id)
         else:
             print("Error retrieving the resource from INEO")
             print(get_response.text)
+    
     return processed_document, ids_to_create, ids_to_update
+
+
+def resource_exists(get_response, id, ids_to_create):
+    """
+    Checks if a resource exists in INEO based on the GET response and appends the ID to the ids_to_create list
+    if the resource does not exist.
+    """
+    if get_response.text == '[]':
+        print(f"{id} does not exist in INEO.")
+        # Append the ID to the list of resources to create in INEO
+        ids_to_create.append(id)
 
 def handle_empty(ids):
     """
@@ -106,6 +119,7 @@ def handle_empty(ids):
         else:
             print(f"Creation of {id} canceled.")
 
+
 def update_document(documents, ids):
     """
     When the http request method is POST we can send resources to the INEO API. 
@@ -130,8 +144,13 @@ def update_document(documents, ids):
         else:
             print(f"Update of {id} canceled.")
 
+class ToolStillPresentError(Exception):
+    pass
+
+
 def delete_document(delete_list):
     """
+    #TODO: boolean check whether it is deleted in INEO with a GET!
     If a document contains a delete operation, with a post request we can delete resources in INEO. 
     Only the id is needed to delete a resource.
     """
@@ -155,10 +174,15 @@ def delete_document(delete_list):
 
         confirmation = input(f"Are you sure you want to delete {id}? (y/n): ")
         if confirmation.lower() == 'y':
-            print(f"Deleting tool {id}")
+            print(f"Deleting tool {id}...")
             update_response = requests.post(api_url, json=delete_template, headers=header)
             if update_response.status_code == 200:
-                print(f"Tool with id {id} deleted successfully.")
+                get_url = f"{api_url}{id}"
+                get_response = requests.get(get_url, headers=header)
+                if get_response.status_code == 200 and get_response.text == '[]':
+                    print(f"Tool with id {id} deleted successfully.")
+                else:
+                    raise ToolStillPresentError(f"ERROR: {id} is still present in INEO")
             else:
                 print(f"ERROR: cannot delete {id}")
                 print(update_response.text)
@@ -173,8 +197,13 @@ def main():
     update_document(processed_documents, ids_to_update)
     handle_empty(ids_to_create)
     
-    #delete_list = ["test3", "test2", "test"]
-    #delete_document(delete_list)
+    delete_list = ["test3"]
+    try:
+        delete_document(delete_list)
+    except ToolStillPresentError as e:
+        print(str(e))
+        sys.exit(1) 
 
 if __name__ == "__main__":
     main()
+    

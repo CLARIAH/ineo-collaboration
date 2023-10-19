@@ -2,8 +2,8 @@
     {
         "operation": "<api",
         "document": {
-            "id": "<md:identifier,ruc:identifier,err:there is no identifier!",
-            "title": "<ruc:title",
+            "id": "<ruc:identifier,md:identifier,err:there is no identifier!",
+            "title": "<ruc:title,md:name",
             "intro": "<ruc:$title,md:description,null",
             "publishedAt": "yyyy-mm-dd",
             "media": {

@@ -403,7 +403,7 @@ def main(current_id: str = ID):
     
     """
     
-    # DSL
+    # DSL template
     global template
     with open(TEMPLATE, "r") as file:
         template = json.load(file)
@@ -414,18 +414,17 @@ def main(current_id: str = ID):
         ruc = json.load(json_file)
     debug("main", f"RUC contents of grlc: {ruc}")
 
-    # The result!
+    # Combine codemeta and RUC using the DSL template
     res = traverse_data(template, ruc)
 
-    #combined json files ready to be fed into the INEO api
+    # Save res as json files ready to be fed into the INEO api    
     folder_name = 'processed_jsonfiles'
     if not os.path.exists(folder_name):
         os.makedirs(folder_name)
 
     with open(os.path.join(folder_name, f"{current_id}_processed.json"), 'w') as json_file:
         json.dump(res, json_file, indent=2)
-
-
+    
 if __name__ == "__main__":
     main()
 

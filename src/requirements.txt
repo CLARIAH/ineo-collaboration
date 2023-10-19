@@ -6,3 +6,5 @@ pyyaml
 pretty-errors
 python-dotenv
 pytest 
+pandas
+

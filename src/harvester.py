@@ -424,7 +424,7 @@ def main():
     # download the codemeta files
     jsonfiles = download_json_files()
     
-    # check if previous batch exists
+    # check if previous batch exists in the "tools_metadata" table
     c.execute("SELECT * FROM tools_metadata ORDER BY timestamp DESC LIMIT 1")
     has_previous_batch = c.fetchone()
     if has_previous_batch is None:
@@ -511,5 +511,6 @@ def main():
 
 
         conn.commit()
+
 if __name__ == '__main__':
     main()

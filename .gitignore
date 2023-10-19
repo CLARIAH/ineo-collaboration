@@ -15,3 +15,5 @@ src/properties
 src/ineo_get.py
 src/deleted_documents
 src/from_api
+src/researchdomains
+src/backup_processed_jsonfiles
