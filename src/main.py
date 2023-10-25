@@ -11,7 +11,7 @@ from datetime import datetime
 
 def call_harvester():
     harvester.main()
-    print("Harvester called...")
+    logging.info("Harvester called...")
     
 def get_tool_counts_from_jsonl(jsonl_files: list[str]) -> dict:
     tool_counts = defaultdict(int) 
@@ -80,13 +80,12 @@ def is_empty_jsonl_file(file_path):
     except FileNotFoundError:
         return True 
 
-# TODO: call ineo_sync
 def call_ineo_sync():
     ineo_sync.main()
 
 if "__main__" == __name__:
     # Define the maximum number of runs to keep backups of the files fed to INEO
-    max_backup_runs = 2  
+    max_backup_runs = 3  
     
     # Create the main backup folder if it doesn't exist
     main_backup_folder = "./backup_processed_jsonfiles"
@@ -116,6 +115,7 @@ if "__main__" == __name__:
     else:
         # the jsonl line files are not empty, merge them into a template for INEO
         call_template(jsonl_files)
+        
         call_ineo_sync()
 
         # Generate a timestamp for the backup folder name
@@ -142,6 +142,4 @@ if "__main__" == __name__:
         
         logging.info("All done")
     
-    # TODO: the processed files are generated from the RUC. Without RUC no template to send to INEO. (check with MENZO ) 
-    # TODO: DELETE. compare timestamp. If there is an entry of today, nothing to delete. If not, then there might be a tool that needs to be 
-    # deleted. In thase case, compare date_now with e.g. the latest runs. 
+

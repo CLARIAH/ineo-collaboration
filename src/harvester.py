@@ -270,13 +270,14 @@ def db_table_exists(conn: sqlite3.Connection, table_name: str) -> bool:
 
 def process_list(folder_name, db_file_name, table_name, diff_list, jsonlines_file, current_timestamp, previous_batch_dict=None):
     """
-    process the list of files and add to jsonlines file
+    This function tracks changes in json files, get a canon file form it, and records those changes in a JSON Lines file, and maintains a record of the changes in a database. 
+    The function compares MD5 hashes between the current batch and the previous batch.
+    
     diff_list: list of files to process
     jsonlines_file: jsonlines file to write to
     current_timestamp: timestamp of the current batch
     previous_batch_dict: Optional dictionary of previous batch
 
-    This function takes a list of files, get a canon file from it, get the md5 of the canon file, and compare it with the previous batch md5
     if previous batch dict is none, then it will always add the file to the jsonlines file
     if previous batch dict is not none, then it will compare the md5 of the current file with the md5 of the previous batch
     """
@@ -296,6 +297,54 @@ def process_list(folder_name, db_file_name, table_name, diff_list, jsonlines_fil
             print(f"File {file} has not changed.")
         c.execute(f"INSERT INTO {table_name} (file_name, md5, timestamp) VALUES (?, ?, ?)", (file, md5, current_timestamp))
         conn.commit()
+
+
+def delete_tools_metadata(db_file_name, table_name):
+    """
+    Search the 'tools_metadata' table in the database.
+    db_file_name: The name of the SQLite database file.
+    table_name: The name of the table to query.
+    Returns a list of matching records with a flag indicating if the date matches the current date.
+    If the date does not match, it also includes the time elapsed in days.
+    """
+
+    c, conn = get_db_cursor(db_file_name, table_name)
+
+    # Get a list of distinct filenames
+    c.execute("SELECT DISTINCT file_name FROM tools_metadata")
+    distinct_filenames = [row[0] for row in c.fetchall()]
+
+    results = []
+
+    # Iterate through distinct filenames and retrieve the top 3 records for each
+    for file_name in distinct_filenames:
+        c.execute("SELECT * FROM tools_metadata WHERE file_name = ? ORDER BY timestamp DESC LIMIT 1", (file_name,))
+        records = c.fetchall()
+
+        if records:
+            current_date = datetime.now().strftime('%Y%m%d')
+
+            # Check if the date part of the latest timestamp matches the current date
+            for record in records:
+                record_list = list(record)  
+                timestamp = record_list[2] #the timestamp is in the third columsn on the table
+                matches_date = current_date == timestamp[:8] # compare %Y%m%d
+                record_list.append(matches_date)
+
+                if not matches_date:
+                    # Calculate the time elapsed between the current date and the timestamp
+                    timestamp_date = datetime.strptime(timestamp, '%Y%m%d%H%M%S')
+                    current_date_date = datetime.strptime(current_date, '%Y%m%d')
+                    time_elapsed = current_date_date - timestamp_date
+                    record_list.append(time_elapsed)
+
+                results.append(record_list)
+
+    # Close the cursor and connection
+    c.close()
+    conn.close()
+
+    return results
 
 def init_check_db(db_file_name: str, table_name: str) -> Optional[sqlite3.Connection]:
     """
@@ -395,8 +444,9 @@ def serialize_ruc_to_json(ruc_contents_dict, output_dir="./data") -> Union[dict,
 main function
 """
 
-
 def main():
+
+    
     # Create the "data" folder if it doesn't exist
     data_folder = "data"
     if not os.path.exists(data_folder):
@@ -405,12 +455,13 @@ def main():
     # Serialize the RUC dictionary into JSON
     ruc_contents_dict = get_ruc_contents()
     serialize_ruc_to_json(ruc_contents_dict)
-
-    table_name_ruc = "rich_user_contents"
+    
     db_file_name = os.path.join(output_path_data, "ineo.db")
-    (c_ruc, conn_ruc) = get_db_cursor(db_file_name=db_file_name, table_name=table_name_ruc)
     
     # Initialize the database connection and create the table if it doesn't exist
+    table_name_ruc = "rich_user_contents"
+    (c_ruc, conn_ruc) = get_db_cursor(db_file_name=db_file_name, table_name=table_name_ruc)
+    
     table_name_tools = "tools_metadata"
     (c, conn) = get_db_cursor(db_file_name=db_file_name, table_name=table_name_tools)
     
@@ -418,6 +469,7 @@ def main():
     download_url = ""
     codemeta_download_dir = os.path.join(output_path_data, "tools_metadata")
     ruc_download_dir = os.path.join(output_path_data, "rich_user_contents")
+    
     # get the current timestamp to be used in the database and make sure all the files in the same batch have the same timestamp
     current_timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
 
@@ -511,6 +563,24 @@ def main():
 
 
         conn.commit()
+
+
+    absent_records = delete_tools_metadata(db_file_name, table_name_tools)
+    
+    for record in absent_records:
+            inactive_records = []
+            if record[-2]:  # Check the second-to-last element (True/False, True if the current date matches the timestamp of the latest record)
+                print(f"Record {record} matches the current date")
+            else:
+                time_elapsed = record[-1]
+                time_elapsed_in_days = time_elapsed.days
+                if time_elapsed_in_days > 10:
+                    print(f"Record {record} is absent for more than {time_elapsed_in_days} days.")
+                    inactive_records.append(record[0])
+                else:
+                    print(f"Record {record} does not match the current date. Time elapsed (days): {time_elapsed_in_days}")
+
+
 
 if __name__ == '__main__':
     main()

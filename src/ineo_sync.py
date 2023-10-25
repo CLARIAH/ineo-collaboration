@@ -150,7 +150,6 @@ class ToolStillPresentError(Exception):
 
 def delete_document(delete_list):
     """
-    #TODO: boolean check whether it is deleted in INEO with a GET!
     If a document contains a delete operation, with a post request we can delete resources in INEO. 
     Only the id is needed to delete a resource.
     """
