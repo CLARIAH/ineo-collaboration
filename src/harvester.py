@@ -13,6 +13,9 @@ from typing import List, Optional, AnyStr, Union
 from bs4 import BeautifulSoup
 from datetime import datetime
 
+log = logging.getLogger(__name__)
+log.level = logging.DEBUG
+
 output_path_data = "./data"
 output_path_queries = "./queries"
 
@@ -22,7 +25,7 @@ def extract_ruc(ruc_content: AnyStr) -> dict:
     Extracts Rich User Content (RUC) data from a given content string.
 
     This function parses the input content string to extract metadata fields, descriptions, and sections,
-    organizing them into a dictionary. 
+    organizing them into a dictionary.
 
     Args:
         ruc_content (AnyStr): The content string containing RUC data in markdown from Github
@@ -43,19 +46,19 @@ def extract_ruc(ruc_content: AnyStr) -> dict:
     ---
     descriptions with titles, e.g.:
     ---
-    # Frog  
-    
+    # Frog
+
     and content and headings under '##' headings, e.g.:
     ## Overview
-    
+
     """
     re_fields = re.compile(r'^---(.*)---', flags=re.DOTALL)
     re_descriptions = re.compile(r'---\n+#(.*?)\n\n(.*?)\n\n##', flags=re.DOTALL)
     re_sections = re.compile(r'(?m)^(##\s+.*?)$(.*?)(?=^##\s|\Z)', flags=re.DOTALL | re.MULTILINE)
     re_name = re.compile(r'[^a-zA-Z]', flags=re.DOTALL)
 
-    # Extract metadata fields enclosed between '---' lines. 
-    
+    # Extract metadata fields enclosed between '---' lines.
+
     fields = re_fields.search(ruc_content).group(1)
     dictionary: dict = yaml.load(fields, Loader=yaml.SafeLoader)
 
@@ -86,7 +89,7 @@ def get_db_cursor(db_file_name=os.path.join(output_path_data, "ineo.db"), table_
     # init db and check if the table exists
     conn = init_check_db(db_file_name, table_name)
     if conn is None:
-        print("Error in creating the database connection!")
+        log.error("Error in creating the database connection!")
         exit(1)
     # create a cursor
     c = conn.cursor()
@@ -94,11 +97,10 @@ def get_db_cursor(db_file_name=os.path.join(output_path_data, "ineo.db"), table_
 
 
 def get_canonical(file_name):
-    
     """
     Create a canonical version of the json file
     """
-    print(f"making canon file for {file_name}")
+    log.info(f"making canon file for {file_name}")
     canon_file = f"{file_name}.canon"
     with open(file_name, 'r') as json_file:
         data = json.load(json_file)
@@ -106,10 +108,11 @@ def get_canonical(file_name):
             data['review']['@id'] = '__canon_purge__'
             data['review']['datePublished'] = '__canon_purge__'
         else:
-            print("no review!")
+            log.info("no review!")
     with open(canon_file, 'w') as json_file:
         json.dump(data, json_file, indent=2)
     return canon_file
+
 
 def get_md5(file_name):
     """
@@ -124,6 +127,7 @@ def get_md5(file_name):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
+
 def download_json_files(
         url: str = "https://tools.clariah.nl/files/",
         save_directory: str = os.path.join(output_path_data, "tools_metadata")) -> List[str]:
@@ -134,7 +138,7 @@ def download_json_files(
     # first backup previous JSON files
     backup_directory = os.path.join(output_path_data, "tools_metadata_backup")
     backup_json_files(save_directory, backup_directory)
-    
+
     files_list = []
 
     if not os.path.exists(save_directory):
@@ -150,7 +154,7 @@ def download_json_files(
         href = link.get('href')
         if href.endswith('.codemeta.json'):
             file_url = url + href
-            print(f"Downloading {file_url}")
+            log.info(f"Downloading {file_url}")
             response = requests.get(file_url)
             file_name = os.path.join(save_directory, href)
             files_list.append(file_name)
@@ -158,7 +162,7 @@ def download_json_files(
                 file.write(response.content)
             count += 1
 
-    print(f"Downloaded all the tools metadata! Total JSON files: {count}")
+    log.info(f"Downloaded all the tools metadata! Total JSON files: {count}")
     return files_list
 
 
@@ -177,7 +181,8 @@ def backup_json_files(source_directory: str, backup_directory: str) -> None:
         backup_file = os.path.join(backup_directory, file_name)
         shutil.copyfile(source_file, backup_file)
 
-    print("Backup of previous JSON files created.")
+    log.info("Backup of previous JSON files created.")
+
 
 def get_files(folder_name: str) -> Optional[List[str]]:
     """
@@ -192,6 +197,7 @@ def get_files(folder_name: str) -> Optional[List[str]]:
             results.append(f"{folder_name}/{f}")
     return results
 
+
 def make_jsonline(jsonfile):
     """
     Write the contents of multiple JSON files to a single JSONlines file.
@@ -200,16 +206,18 @@ def make_jsonline(jsonfile):
     return data
 
 
-def add_to_jsonlines(file, file_handle):
+def add_to_jsonlines(read_from_file, write_to_file):
     """
     Add a single JSON file to a JSONlines file.
-    file: path to JSON file
-    file_handle: handle to JSONlines file
+    read_from_id: path to read JSON file from
+    write_to_file: handle to JSONlines file
     returns: None
     """
-    with open(file, 'r') as json_file:
+    with open(read_from_file, 'r') as json_file:
         data = make_jsonline(json_file)
-        file_handle.write(data)
+        log.debug(f"writing {data} to {write_to_file}")
+        with jsonlines.open(write_to_file, 'a') as jsonlines_file:
+            jsonlines_file.write(data)
 
 
 def compare_lists(list1: Optional[List[str]], list2: Optional[List[str]]) -> List[str]:
@@ -220,13 +228,12 @@ def compare_lists(list1: Optional[List[str]], list2: Optional[List[str]]) -> Lis
         list1 = []
     if list2 is None:
         list2 = []
-    
+
     # list1 - list2 but with path stripped
 
     list1_copy = [x.split("/")[-1] for x in list1]
-    #print(list2)
     list2_copy = [x.split("/")[-1] for x in list2]
-    
+
     # getting elements in l1 not in l2
     diff = []
     if list1 is not None and len(list1) > 0:
@@ -234,7 +241,7 @@ def compare_lists(list1: Optional[List[str]], list2: Optional[List[str]]) -> Lis
         list1_list2 = list(set(list1_copy) - set(list2_copy))
         # diff = [f"{list1_path}/{x}" for x in list1_list2]
         diff = [x for x in list1_list2]
-    print(f"list1 diff is {diff}")
+    log.debug(f"list1 diff is {diff}")
 
     # getting elements in l2 not in l1
     diff2 = []
@@ -243,8 +250,9 @@ def compare_lists(list1: Optional[List[str]], list2: Optional[List[str]]) -> Lis
         list2_list1 = list(set(list2_copy) - set(list1_copy))
         # diff2 = [f"{list2_path}/{x}" for x in list2_list1]
         diff2 = [x for x in list2_list1]
-    print(f"list2 diff is {diff2}")
+    log.debug(f"list2 diff is {diff2}")
     return diff + diff2
+
 
 def create_db_table(conn: sqlite3.Connection, table_name: str) -> None:
     """
@@ -260,7 +268,7 @@ def create_db_table(conn: sqlite3.Connection, table_name: str) -> None:
 
 def db_table_exists(conn: sqlite3.Connection, table_name: str) -> bool:
     """
-    check if the table exists in the data 
+    check if the table exists in the data
     """
     c = conn.cursor()
     c.execute(f"SELECT count(name) FROM sqlite_master WHERE type='table' AND name='{table_name}'")
@@ -268,11 +276,17 @@ def db_table_exists(conn: sqlite3.Connection, table_name: str) -> bool:
         return True
     return False
 
-def process_list(folder_name, db_file_name, table_name, diff_list, jsonlines_file, current_timestamp, previous_batch_dict=None):
+
+def get_id_from_file_name(file_name: str) -> str:
+    return file_name.split(".")[0].split("/")[-1]
+
+
+def process_list(ids: list, folder_name, db_file_name, table_name, diff_list, current_timestamp,
+                 previous_batch_dict=None):
     """
-    This function tracks changes in json files, get a canon file form it, and records those changes in a JSON Lines file, and maintains a record of the changes in a database. 
+    This function tracks changes in json files, get a canon file form it, and records those changes in a JSON Lines file, and maintains a record of the changes in a database.
     The function compares MD5 hashes between the current batch and the previous batch.
-    
+
     diff_list: list of files to process
     jsonlines_file: jsonlines file to write to
     current_timestamp: timestamp of the current batch
@@ -291,11 +305,12 @@ def process_list(folder_name, db_file_name, table_name, diff_list, jsonlines_fil
 
         if md5 != previous_md5:
             if previous_md5 is not None:
-                print(f"File {file} has changed! Old hash was: {previous_md5}")
-            add_to_jsonlines(file, jsonlines_file)
+                log.info(f"File {file} has changed! Old hash was: {previous_md5}")
+            ids.append(get_id_from_file_name(file))
         else:
-            print(f"File {file} has not changed.")
-        c.execute(f"INSERT INTO {table_name} (file_name, md5, timestamp) VALUES (?, ?, ?)", (file, md5, current_timestamp))
+            log.debug(f"File {file} has not changed.")
+        c.execute(f"INSERT INTO {table_name} (file_name, md5, timestamp) VALUES (?, ?, ?)",
+                  (file, md5, current_timestamp))
         conn.commit()
 
 
@@ -326,9 +341,9 @@ def delete_tools_metadata(db_file_name, table_name):
 
             # Check if the date part of the latest timestamp matches the current date
             for record in records:
-                record_list = list(record)  
-                timestamp = record_list[2] #the timestamp is in the third columsn on the table
-                matches_date = current_date == timestamp[:8] # compare %Y%m%d
+                record_list = list(record)
+                timestamp = record_list[2]  # the timestamp is in the third columsn on the table
+                matches_date = current_date == timestamp[:8]  # compare %Y%m%d
                 record_list.append(matches_date)
 
                 if not matches_date:
@@ -346,19 +361,21 @@ def delete_tools_metadata(db_file_name, table_name):
 
     return results
 
+
 def init_check_db(db_file_name: str, table_name: str) -> Optional[sqlite3.Connection]:
     """
     check if the database exists, if not create one
-    Creates tables in the database. 
+    Creates tables in the database.
     """
     conn = sqlite3.connect(db_file_name)
-    
+
     # check if table exists
     if not db_table_exists(conn, table_name):
-        print(f"Table {table_name} does not exist, creating!")
+        log.info(f"Table {table_name} does not exist, creating!")
         create_db_table(conn, table_name)
 
     return conn
+
 
 def get_previous_batch(db_file_name, table_name, previous_timestamp) -> List[str]:
     c, conn = get_db_cursor(db_file_name, table_name)
@@ -369,65 +386,68 @@ def get_previous_batch(db_file_name, table_name, previous_timestamp) -> List[str
 
     return previous_batch
 
+
 def sync_ruc(github_url, github_dir):
     """
-    Retrieves Rich User Content of Gihub repository "ineo-content". 
+    Retrieves Rich User Content of Gihub repository "ineo-content".
     """
-    #store the current working directory
+    # store the current working directory
     current_dir = os.getcwd()
-    
+
     # Check if the ineo-content github repository directory exists
     if not os.path.exists(github_dir):
-        print(f"The github directory '{github_dir}' does not exist. Cloning...")
-    # Clone the repository 
+        log.info(f"The github directory '{github_dir}' does not exist. Cloning...")
+        # Clone the repository
         subprocess.run(["git", "clone", github_url])
     else:
-        print(f"The github directory '{github_dir}' already exists. Pulling...")
+        log.info(f"The github directory '{github_dir}' already exists. Pulling...")
 
         # cd ineo-content
         os.chdir(github_dir)
 
-         # Run git pull and capture the output
+        # Run git pull and capture the output
         result = subprocess.run(["git", "pull"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
         # Check if the "Already up to date" message is in the output
         if "Already up to date." in result.stdout:
-            print("Repository is already up to date. The RUC have not changed")
+            log.info("Repository is already up to date. The RUC have not changed")
         else:
-            print("Repository is not up to date.")
+            log.info("Repository is not up to date.")
 
         # Change back to the previous working directory
         os.chdir(current_dir)
 
+
 def get_ruc_contents() -> dict:
     """
-    This script synchronizes with the GitHub repository of ineo-content, extracts Rich User Content (RUC) 
+    This script synchronizes with the GitHub repository of ineo-content, extracts Rich User Content (RUC)
     and returns the RUC data in a dictionary.
 
-    The 'extract_ruc' function is used to parse the RUC data from a given content string using regex. 
+    The 'extract_ruc' function is used to parse the RUC data from a given content string using regex.
     It extracts metadata fields, descriptions, and sections, returning them as a dictionary.
     """
     github_url = "https://github.com/CLARIAH/ineo-content.git"
     github_dir = "./ineo-content"
     sync_ruc(github_url, github_dir)
-    
+
     folder_path = "./ineo-content/src/tools"
     all_ruc_contents = {}
-    
+
     for filename in os.listdir(folder_path):
         file_path = os.path.join(folder_path, filename)
         with open(file_path, 'r') as file:
             contents: AnyStr = file.read()
             ruc_contents: dict = extract_ruc(contents)
-            print(f"Rich User Contents of {file_path} is:\n{ruc_contents}\n")
+            log.info(f"Rich User Contents of {file_path} is:\n{ruc_contents}\n")
             all_ruc_contents[filename] = ruc_contents
-            
+
     return all_ruc_contents
+
 
 def serialize_ruc_to_json(ruc_contents_dict, output_dir="./data") -> Union[dict, list]:
     """
     Serialize the RUC dictionary into JSON files.
-    
+
     Args:
         ruc_contents_dict (dict): A dictionary containing RUC data
         output_dir (str): The directory where the RUC JSON files will be saved. Defaults to "./data".
@@ -440,13 +460,17 @@ def serialize_ruc_to_json(ruc_contents_dict, output_dir="./data") -> Union[dict,
         with open(json_file_path, "w") as json_file:
             json.dump(ruc_contents, json_file)
 
+
 """
 main function
 """
 
-def main():
 
-    
+def get_id_from_change_list(diff_list_ruc: list):
+    return [x.split(".")[0] for x in diff_list_ruc if x.endswith('.json')]
+
+
+def main():
     # Create the "data" folder if it doesn't exist
     data_folder = "data"
     if not os.path.exists(data_folder):
@@ -455,32 +479,32 @@ def main():
     # Serialize the RUC dictionary into JSON
     ruc_contents_dict = get_ruc_contents()
     serialize_ruc_to_json(ruc_contents_dict)
-    
+
     db_file_name = os.path.join(output_path_data, "ineo.db")
-    
+
     # Initialize the database connection and create the table if it doesn't exist
     table_name_ruc = "rich_user_contents"
     (c_ruc, conn_ruc) = get_db_cursor(db_file_name=db_file_name, table_name=table_name_ruc)
-    
+
     table_name_tools = "tools_metadata"
     (c, conn) = get_db_cursor(db_file_name=db_file_name, table_name=table_name_tools)
-    
+
     # download url and download dir are optional parameters, they have default value in the download_json_files function
     download_url = ""
     codemeta_download_dir = os.path.join(output_path_data, "tools_metadata")
     ruc_download_dir = os.path.join(output_path_data, "rich_user_contents")
-    
+
     # get the current timestamp to be used in the database and make sure all the files in the same batch have the same timestamp
     current_timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
 
     # download the codemeta files
-    jsonfiles = download_json_files()
-    
+    _ = download_json_files()
+
     # check if previous batch exists in the "tools_metadata" table
     c.execute("SELECT * FROM tools_metadata ORDER BY timestamp DESC LIMIT 1")
     has_previous_batch = c.fetchone()
     if has_previous_batch is None:
-        print("No codemeta previous batch exists in the database")
+        log.debug("No codemeta previous batch exists in the database")
         previous_batch = None
         previous_timestamp = None
     else:
@@ -488,7 +512,7 @@ def main():
         if previous_timestamp is None:
             print("Error in getting the previous batch!")
             exit(1)
-        
+
         previous_batch = get_previous_batch(db_file_name, table_name_tools, previous_timestamp=previous_timestamp)
 
     # Check for a previous batch in the "rich_user_contents" table
@@ -504,7 +528,7 @@ def main():
             print("Error in getting the previous rich_user_contents batch!")
             exit(1)
 
-        ruc_previous_batch = get_previous_batch(db_file_name, table_name_ruc, previous_timestamp=previous_timestamp)   
+        ruc_previous_batch = get_previous_batch(db_file_name, table_name_ruc, previous_timestamp=previous_timestamp)
 
     # after this line we have both dir1 and dir2, dir1 is the current batch and dir2 is the previous batch
     codemeta_current_batch = get_files(codemeta_download_dir)
@@ -520,66 +544,69 @@ def main():
     diff_list = compare_lists(codemeta_current_batch, previous_batch)
     diff_list_ruc = compare_lists(ruc_current_batch, ruc_previous_batch)
 
+    codemeta_ids: list = []
     # Process the Codemeta json files
     codemeta_folder_name = "tools_metadata"
-    codemeta_output = "codemeta.jsonl"
-    
-    with jsonlines.open(os.path.join(output_path_data, codemeta_output), "w") as jsonlines_file:
-        process_list(codemeta_folder_name, db_file_name, table_name_tools, diff_list, jsonlines_file, current_timestamp, None)
+    process_list(codemeta_ids, codemeta_folder_name, db_file_name, table_name_tools, diff_list, current_timestamp, None)
 
-        if has_previous_batch is not None:
-            # get previous batch from db
-            c.execute("SELECT file_name, md5 FROM tools_metadata WHERE timestamp = ?", (previous_timestamp,))
-            previous_batch = c.fetchall()
-        
-            # previous_batch_dict contains key value pair in the form of {file_name: md5}
-            previous_batch_dict = {x[0]: x[1] for x in previous_batch}
+    if has_previous_batch is not None:
+        # get previous batch from db
+        c.execute("SELECT file_name, md5 FROM tools_metadata WHERE timestamp = ?", (previous_timestamp,))
+        previous_batch = c.fetchall()
 
-            batch = [x.split("/")[-1]  for x in codemeta_current_batch]    
-        
-            # loop through current batch and compare with previous batch using hash values
-            process_list(codemeta_folder_name, db_file_name, table_name_tools, batch, jsonlines_file, current_timestamp, previous_batch_dict)
+        # previous_batch_dict contains key value pair in the form of {file_name: md5}
+        previous_batch_dict = {x[0]: x[1] for x in previous_batch}
 
-        conn.commit()
-    
+        batch = [x.split("/")[-1] for x in codemeta_current_batch]
+
+        # loop through current batch and compare with previous batch using hash values
+        process_list(codemeta_ids, codemeta_folder_name, db_file_name, table_name_tools, batch, current_timestamp,
+                     previous_batch_dict)
+
+    conn.commit()
+
     # Process the Rich User Contents.
-    ruc_output = "ruc.jsonl"
     ruc_folder_name = "rich_user_contents"
-    with jsonlines.open(os.path.join(output_path_data, ruc_output), "w") as ruc_jsonlines_file:
-        process_list(ruc_folder_name, db_file_name, table_name_ruc, diff_list_ruc, ruc_jsonlines_file, current_timestamp, None)
+    process_list(codemeta_ids, ruc_folder_name, db_file_name, table_name_ruc, diff_list_ruc, current_timestamp, None)
 
-        if ruc_has_previous_batch is not None:
-            # get previous RUC batch from db
-            c.execute("SELECT file_name, md5 FROM rich_user_contents WHERE timestamp = ?", (previous_timestamp,))
-            ruc_previous_batch = c.fetchall()
-        
-            # previous_batch_dict contains key value pair in the form of {file_name: md5}
-            ruc_previous_batch_dict = {x[0]: x[1] for x in ruc_previous_batch}
+    if ruc_has_previous_batch is not None:
+        # get previous RUC batch from db
+        c.execute("SELECT file_name, md5 FROM rich_user_contents WHERE timestamp = ?", (previous_timestamp,))
+        ruc_previous_batch = c.fetchall()
 
-            ruc_batch = [x.split("/")[-1]  for x in ruc_current_batch]    
-        
-            # loop through current batch and compare with previous batch on hash value
-            process_list(ruc_folder_name, db_file_name, table_name_ruc, ruc_batch, ruc_jsonlines_file, current_timestamp, ruc_previous_batch_dict)
+        # previous_batch_dict contains key value pair in the form of {file_name: md5}
+        ruc_previous_batch_dict = {x[0]: x[1] for x in ruc_previous_batch}
 
+        ruc_batch = [x.split("/")[-1] for x in ruc_current_batch]
 
-        conn.commit()
+        # loop through current batch and compare with previous batch on hash value
+        process_list(codemeta_ids, ruc_folder_name, db_file_name, table_name_ruc, ruc_batch, current_timestamp,
+                     ruc_previous_batch_dict)
 
+    conn.commit()
+
+    codemeta_ids = list(set(codemeta_ids))
+
+    # creating jsonl file
+    for codemeta_id in codemeta_ids:
+        codemeta_file = os.path.join(codemeta_download_dir, f"{codemeta_id}.codemeta.json")
+        add_to_jsonlines(codemeta_file, os.path.join(output_path_data, "codemeta.jsonl"))
 
     absent_records = delete_tools_metadata(db_file_name, table_name_tools)
-    
-    for record in absent_records:
-            inactive_records = []
-            if record[-2]:  # Check the second-to-last element (True/False, True if the current date matches the timestamp of the latest record)
-                print(f"Record {record} matches the current date")
-            else:
-                time_elapsed = record[-1]
-                time_elapsed_in_days = time_elapsed.days
-                if time_elapsed_in_days > 10:
-                    print(f"Record {record} is absent for more than {time_elapsed_in_days} days.")
-                    inactive_records.append(record[0])
-                else:
-                    print(f"Record {record} does not match the current date. Time elapsed (days): {time_elapsed_in_days}")
 
+    for record in absent_records:
+        inactive_records = []
+        if record[
+            -2]:  # Check the second-to-last element (True/False, True if the current date matches the timestamp of the latest record)
+            print(f"Record {record} matches the current date")
+        else:
+            time_elapsed = record[-1]
+            time_elapsed_in_days = time_elapsed.days
+            if time_elapsed_in_days > 10:
+                print(f"Record {record} is absent for more than {time_elapsed_in_days} days.")
+                inactive_records.append(record[0])
+            else:
+                print(f"Record {record} does not match the current date. Time elapsed (days): {time_elapsed_in_days}")
 
 
 if __name__ == '__main__':
