@@ -15,6 +15,7 @@ The .env file will be checked in into the private repo later
 """
 
 load_dotenv()
+
 api_token: str = dotenv.get_key('.env', 'API_TOKEN')
 api_url = "https://ineo-resources-api-5b568b0ad6eb.herokuapp.com/resources/"
 folder_path = "./processed_jsonfiles"
@@ -49,6 +50,7 @@ def get_id() -> list:
                     print(f"Error reading processed JSON from file {filename}: {str(e)}")
     # The unique "id" values from all JSON files to be fed or updated into INEO
     return ids
+
 
 def load_processed_document(id, folder_path):
     file_path = os.path.join(folder_path, f"{id}_processed.json")
@@ -190,18 +192,21 @@ def delete_document(delete_list):
 
 
 def main():
-    processed_document_ids = get_id()
-    processed_documents, ids_to_create, ids_to_update,  = get_document(processed_document_ids)  
+    #processed_document_ids = get_id()
+    #processed_documents, ids_to_create, ids_to_update,  = get_document(processed_document_ids)  
     
-    update_document(processed_documents, ids_to_update)
-    handle_empty(ids_to_create)
+    #update_document(processed_documents, ids_to_update)
+    #handle_empty(ids_to_create)
     
-    delete_list = ["test3"]
-    try:
-        delete_document(delete_list)
-    except ToolStillPresentError as e:
-        print(str(e))
-        sys.exit(1) 
+    # json file that contains the ids of the tools that needs to be deleted 
+    delete_file_path = f"{delete_path}/deleted_tool_ids.json"
+    with open(delete_file_path, 'r') as json_file:
+        delete_list = json.load(json_file)
+        try:
+            delete_document(delete_list)
+        except ToolStillPresentError as e:
+            print(str(e))
+            sys.exit(1) 
 
 if __name__ == "__main__":
     main()

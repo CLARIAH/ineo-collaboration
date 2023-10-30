@@ -14,17 +14,17 @@ RUMBLEDB = "http://rumbledb:8001/jsoniq"
 #RUMBLEDB = "http://localhost:8001/jsoniq"
 
 # location of the JSONL file within container ineo-sync
-JSONL_ineo = "./data/codemeta.jsonl"
+JSONL_ineo = "./data/c3_codemeta.jsonl"
 # location of the (same) JSONL file within container rumbledb
-JSONL = "/data/codemeta.jsonl"
+JSONL = "/data/c3_codemeta.jsonl"
 PROCESSED_FILES = "./processed_jsonfiles"
+
+TEMPLATE = "./template.json"
 
 # ID and TEMPLATE can be overridden by command-line arguments. Default value is "grlc"
 ID = "grlc"
 if len(sys.argv) > 1:
     ID = sys.argv[1]
-
-TEMPLATE = "./template.json"
 
 if len(sys.argv) > 2:
     TEMPLATE = sys.argv[2]
@@ -410,9 +410,18 @@ def main(current_id: str = ID):
 
     # Rich User Contents
     ruc = None
-    with open(f"./data/rich_user_contents/{current_id}.json", "r") as json_file:
-        ruc = json.load(json_file)
-    debug("main", f"RUC contents of grlc: {ruc}")
+    ruc_file_path = f"./data/rich_user_contents/{current_id}.json"
+
+    if os.path.exists(ruc_file_path):
+        with open(ruc_file_path, "r") as json_file:
+            ruc = json.load(json_file)
+        debug("main", f"RUC contents of grlc: {ruc}")
+    else:
+        # If there's no RUC file, create a minimal RUC object with default values
+        ruc = {
+            "identifier": current_id,
+            "title": current_id,
+        }
 
     # Combine codemeta and RUC using the DSL template
     res = traverse_data(template, ruc)

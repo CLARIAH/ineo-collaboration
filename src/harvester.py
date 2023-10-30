@@ -13,12 +13,36 @@ from typing import List, Optional, AnyStr, Union
 from bs4 import BeautifulSoup
 from datetime import datetime
 
-log = logging.getLogger(__name__)
-log.level = logging.DEBUG
-
 output_path_data = "./data"
 output_path_queries = "./queries"
+delete_path = "./deleted_documents"
 
+
+def configure_logger(log_file_path):
+    # Create a logger
+    log = logging.getLogger(__name__)
+    log.setLevel(logging.DEBUG)
+
+    # Ensure the "logs" folder exists
+    logs_folder = "logs"
+    if not os.path.exists(logs_folder):
+        os.makedirs(logs_folder)
+
+    # Set the log file path inside the "logs" folder
+    log_file_path = os.path.join(logs_folder, log_file_path)
+
+    # Create a file handler and set the log file path
+    file_handler = logging.FileHandler(log_file_path)
+
+    # Create a log formatter and set it for the file handler
+    log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    formatter = logging.Formatter(log_format)
+    file_handler.setFormatter(formatter)
+
+    # Add the file handler to the logger
+    log.addHandler(file_handler)
+
+    return log
 
 def extract_ruc(ruc_content: AnyStr) -> dict:
     """"
@@ -314,52 +338,7 @@ def process_list(ids: list, folder_name, db_file_name, table_name, diff_list, cu
         conn.commit()
 
 
-def delete_tools_metadata(db_file_name, table_name):
-    """
-    Search the 'tools_metadata' table in the database.
-    db_file_name: The name of the SQLite database file.
-    table_name: The name of the table to query.
-    Returns a list of matching records with a flag indicating if the date matches the current date.
-    If the date does not match, it also includes the time elapsed in days.
-    """
 
-    c, conn = get_db_cursor(db_file_name, table_name)
-
-    # Get a list of distinct filenames
-    c.execute("SELECT DISTINCT file_name FROM tools_metadata")
-    distinct_filenames = [row[0] for row in c.fetchall()]
-
-    results = []
-
-    # Iterate through distinct filenames and retrieve the top 3 records for each
-    for file_name in distinct_filenames:
-        c.execute("SELECT * FROM tools_metadata WHERE file_name = ? ORDER BY timestamp DESC LIMIT 1", (file_name,))
-        records = c.fetchall()
-
-        if records:
-            current_date = datetime.now().strftime('%Y%m%d')
-
-            # Check if the date part of the latest timestamp matches the current date
-            for record in records:
-                record_list = list(record)
-                timestamp = record_list[2]  # the timestamp is in the third columsn on the table
-                matches_date = current_date == timestamp[:8]  # compare %Y%m%d
-                record_list.append(matches_date)
-
-                if not matches_date:
-                    # Calculate the time elapsed between the current date and the timestamp
-                    timestamp_date = datetime.strptime(timestamp, '%Y%m%d%H%M%S')
-                    current_date_date = datetime.strptime(current_date, '%Y%m%d')
-                    time_elapsed = current_date_date - timestamp_date
-                    record_list.append(time_elapsed)
-
-                results.append(record_list)
-
-    # Close the cursor and connection
-    c.close()
-    conn.close()
-
-    return results
 
 
 def init_check_db(db_file_name: str, table_name: str) -> Optional[sqlite3.Connection]:
@@ -461,16 +440,112 @@ def serialize_ruc_to_json(ruc_contents_dict, output_dir="./data") -> Union[dict,
             json.dump(ruc_contents, json_file)
 
 
+# Initialize a dictionary to store the absence count for each file_name
+absence_count = {}
+
+def get_matching_timesamps(db_file_name, table_name, threshold):
+    """
+    This function determines whether each file_name is present or absent based on the timestamp in the records. 
+    It Iterates through the distinct filenames and retrieves the most recent record for each file_name. It then 
+    checks if the timestamp matches the current date. If it does, the file_name is considered present in the latest download.
+    If the timestamp does not match the current date, it calculate the time elapsed in days since the last run of the file_name and
+    updates the absence count for the file_name in the absence_count dictionary.
+
+    Returns a list of records, where each record includes information about the file_name, whether it matches the current date, and the time elapsed (if not present).
+    """
+
+    c, conn = get_db_cursor(db_file_name, table_name)
+
+    # Get a list of distinct filenames
+    c.execute("SELECT DISTINCT file_name FROM tools_metadata")
+    distinct_filenames = [row[0] for row in c.fetchall()]
+
+    results = []
+    limit = threshold + 1
+
+    # Iterate through distinct filenames and retrieve the top 3 records for each
+    for file_name in distinct_filenames:
+        c.execute(f"SELECT * FROM tools_metadata WHERE file_name = ? ORDER BY timestamp DESC LIMIT {limit}", (file_name,))
+        records = c.fetchall()
+
+        if records:
+            current_date = datetime.now().strftime('%Y%m%d')
+
+            # Check if the date part of the latest timestamp matches the current date
+            for record in records:
+                record_list = list(record)
+                timestamp = record_list[2]  # the timestamp is in the third column of the table
+                matches_date = current_date == timestamp[:8]  # compare %Y%m%d
+                record_list.append(matches_date)
+
+                if not matches_date:
+                    # Calculate the time elapsed between the current date and the timestamp
+                    timestamp_date = datetime.strptime(timestamp, '%Y%m%d%H%M%S')
+                    current_date_date = datetime.strptime(current_date, '%Y%m%d')
+                    time_elapsed = current_date_date - timestamp_date
+                    record_list.append(time_elapsed)
+
+                    # Update the absence count for this file_name
+                    tool_name = record_list[0]
+                    absence_count[tool_name] = absence_count.get(tool_name, 0) + 1
+
+                results.append(record_list)
+
+    # Close the cursor and connection
+    c.close()
+    conn.close()
+
+    return results
+
+def process_records_timestamps(records):
+    for record in records:
+        if record[-2]:  # Check if the record matches the current date
+            log.info(f"Record {record} matches the current date")
+        else:
+            time_elapsed = record[-1]
+            time_elapsed_in_days = time_elapsed.days
+            log.info(f"Record {record} does not match the current date. Time elapsed (days): {time_elapsed_in_days}")
+
+
+
 """
 main function
 """
 
 
+
 def get_id_from_change_list(diff_list_ruc: list):
     return [x.split(".")[0] for x in diff_list_ruc if x.endswith('.json')]
 
+def main(threshold):
 
-def main():
+    db_file_name = os.path.join(output_path_data, "ineo.db")
+    table_name_tools = "tools_metadata"
+
+    # Retrieve the codemeta records from the database
+    codemeta_records = get_matching_timesamps(db_file_name, table_name_tools, threshold)
+    # Iterate through the absent records and compare the timestamps in the db with the current date 
+    process_records_timestamps(codemeta_records)
+
+    # Create a list to store the IDs of tools to be deleted
+    ids_to_delete = []
+
+    for file_name, count in absence_count.items():
+        if count > threshold:
+            # Extract the ID from the file_name
+            tool_id = get_id_from_file_name(file_name)
+            if tool_id:
+                ids_to_delete.append(tool_id)
+
+    if ids_to_delete:
+        log.debug(f"IDs of the tools to be deleted: {', '.join(ids_to_delete)}")
+        # Write the IDs to a JSON file in the "delete_tools" folder
+        file_path = os.path.join(delete_path, 'deleted_tool_ids.json')
+        with open(file_path, 'w') as json_file:
+            json.dump(ids_to_delete, json_file)
+            log.debug(f"JSON containing tools to be deleted saved to {file_path}")
+    exit()
+    
     # Create the "data" folder if it doesn't exist
     data_folder = "data"
     if not os.path.exists(data_folder):
@@ -510,7 +585,7 @@ def main():
     else:
         previous_timestamp = has_previous_batch[2]
         if previous_timestamp is None:
-            print("Error in getting the previous batch!")
+            log.error("Error in getting the previous batch!")
             exit(1)
 
         previous_batch = get_previous_batch(db_file_name, table_name_tools, previous_timestamp=previous_timestamp)
@@ -519,13 +594,13 @@ def main():
     c_ruc.execute("SELECT * FROM rich_user_contents ORDER BY timestamp DESC LIMIT 1")
     ruc_has_previous_batch = c_ruc.fetchone()
     if ruc_has_previous_batch is None:
-        print("No rich_user_contents previous batch exists in the database")
+        log.debug("No rich_user_contents previous batch exists in the database")
         ruc_previous_batch = None
         previous_timestamp = None
     else:
         previous_timestamp = ruc_has_previous_batch[2]
         if previous_timestamp is None:
-            print("Error in getting the previous rich_user_contents batch!")
+            log.error("Error in getting the previous rich_user_contents batch!")
             exit(1)
 
         ruc_previous_batch = get_previous_batch(db_file_name, table_name_ruc, previous_timestamp=previous_timestamp)
@@ -534,10 +609,10 @@ def main():
     codemeta_current_batch = get_files(codemeta_download_dir)
     ruc_current_batch = get_files(ruc_download_dir)
     if codemeta_current_batch is None:
-        print("No codemeta files found in the current batch!")
+        log.debug("No codemeta files found in the current batch!")
         exit(1)
     if ruc_current_batch is None:
-        print("No RUC files found in the current batch!")
+        log.debug("No RUC files found in the current batch!")
         exit(1)
 
     # compare the 2 lists and get the difference
@@ -592,22 +667,11 @@ def main():
         codemeta_file = os.path.join(codemeta_download_dir, f"{codemeta_id}.codemeta.json")
         add_to_jsonlines(codemeta_file, os.path.join(output_path_data, "codemeta.jsonl"))
 
-    absent_records = delete_tools_metadata(db_file_name, table_name_tools)
-
-    for record in absent_records:
-        inactive_records = []
-        if record[
-            -2]:  # Check the second-to-last element (True/False, True if the current date matches the timestamp of the latest record)
-            print(f"Record {record} matches the current date")
-        else:
-            time_elapsed = record[-1]
-            time_elapsed_in_days = time_elapsed.days
-            if time_elapsed_in_days > 10:
-                print(f"Record {record} is absent for more than {time_elapsed_in_days} days.")
-                inactive_records.append(record[0])
-            else:
-                print(f"Record {record} does not match the current date. Time elapsed (days): {time_elapsed_in_days}")
-
 
 if __name__ == '__main__':
-    main()
+    log_file_path = 'harvester.log'
+    log = configure_logger(log_file_path)
+    
+    # Set here the threshold of the tools to be deleted
+    delete_threshold = 3  
+    main(delete_threshold)
