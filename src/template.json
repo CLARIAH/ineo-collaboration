@@ -3,7 +3,7 @@
         "operation": "<api",
         "document": {
             "id": "<ruc:identifier,md:identifier,err:there is no identifier!",
-            "title": "<ruc:title,md:name,null",
+            "title": "<md:name,ruc:title,null",
             "intro": "<ruc:$title,md:description,null",
             "publishedAt": "yyyy-mm-dd",
             "media": {
@@ -12,7 +12,7 @@
             },
             "tabs": {
                 "overview": {
-                    "body": "<ruc:overview:^(.*)### Data.*:### Overview\n $1,ruc:overview:^(.*):### Overview\n $1,md:description,err:there is no overview!",
+                    "body": "<ruc:overview:^(.*)### Data.*:### Overview\n $1,ruc:overview:^(.*):### Overview\n $1,err:there is no overview!",
                     "bodyMore": "<ruc:overview:^.*(### Data.*),null"
                 },
                 "learn": {

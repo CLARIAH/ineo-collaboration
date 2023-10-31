@@ -5,8 +5,10 @@ import sys
 from dotenv import load_dotenv
 import dotenv
 import template
+from harvester import configure_logger
 
-
+log_file_path = 'ineo_sync.log'
+log = configure_logger(log_file_path)
 
 """
 This file loads some environment variables from a .env file
@@ -18,18 +20,19 @@ load_dotenv()
 
 api_token: str = dotenv.get_key('.env', 'API_TOKEN')
 api_url = "https://ineo-resources-api-5b568b0ad6eb.herokuapp.com/resources/"
-folder_path = "./processed_jsonfiles"
+processed_jsonfiles = "./processed_jsonfiles"
 delete_path = "./deleted_documents"
+
 # Define the header with the Authorization token 
 header = {'Authorization': f'Bearer {api_token}'}
 
-def get_id() -> list:
+def get_id_json(folder_path) -> list:
     """
     This function retrieves the ids of the processed files that need to go to INEO.  
     A document must always contain an id. This id equals the path to the resource. 
     So a document with id "alud" will be available at https://www.ineo.tools/resources/alud.
     """
-    ids = []
+    ineo_ids = []
     for filename in os.listdir(folder_path):
         if filename.endswith(".json"):
             file_path = os.path.join(folder_path, filename)
@@ -41,15 +44,15 @@ def get_id() -> list:
                         # a document must always contain an id
                         id_value = document[0].get("document", {}).get("id")
                         if id_value is not None:
-                            ids.append(id_value)
+                            ineo_ids.append(id_value)
                         else:
-                            print(f"File {filename} does not contain an 'id' field.")
+                            log.error(f"ERROR: File {filename} does not contain an 'id' field.")
                     else:
-                        print(f"File {filename} does not have the expected INEO structure.")
+                        log.error(f"ERROR: File {filename} does not have the expected INEO structure.")
                 except json.JSONDecodeError as e:
-                    print(f"Error reading processed JSON from file {filename}: {str(e)}")
+                    log.error(f"Error reading processed JSON from file {filename}: {str(e)}")
     # The unique "id" values from all JSON files to be fed or updated into INEO
-    return ids
+    return ineo_ids
 
 
 def load_processed_document(id, folder_path):
@@ -75,14 +78,14 @@ def get_document(ids) -> list:
             if get_response.text == '[]':
                 resource_exists(get_response, id, ids_to_create)
             else:
-                print(f"{id} is present in INEO")
-                print(get_response.text)
+                log.info(f"{id} is present in INEO")
+                log.info(get_response.text)
                 json_data = load_processed_document(id, folder_path)
                 processed_document.append(json_data)
                 ids_to_update.append(id)
         else:
-            print("Error retrieving the resource from INEO")
-            print(get_response.text)
+            log.error("Error retrieving the resource from INEO")
+            log.info(get_response.text)
     
     return processed_document, ids_to_create, ids_to_update
 
@@ -93,7 +96,7 @@ def resource_exists(get_response, id, ids_to_create):
     if the resource does not exist.
     """
     if get_response.text == '[]':
-        print(f"{id} does not exist in INEO.")
+        log.error(f"{id} does not exist in INEO.")
         # Append the ID to the list of resources to create in INEO
         ids_to_create.append(id)
 
@@ -106,18 +109,18 @@ def handle_empty(ids):
     for id in ids:
         confirmation = input(f"Are you sure you want to create {id}? (y/n): ")
         if confirmation.lower() == 'y':
-            print(f"Sending {id} to INEO...")
+            log.info(f"Sending {id} to INEO...")
             file_name = f"{id}_processed.json"
             file_path = os.path.join(folder_path, file_name)
             with open(file_path, 'r') as new_document:
                 new_document = json.load(new_document)
                 create_response = requests.post(api_url, json=new_document, headers=header)
             if create_response.status_code == 200:
-                print(f"Creation of {id} is successful")
-                print(create_response.text)
+                log.info(f"Creation of {id} is successful")
+                log.info(create_response.text)
             else:
-                print(f"Creation of {id} has failed")
-                print(create_response.text)
+                log.error(f"Creation of {id} has failed")
+                log.info(create_response.text)
         else:
             print(f"Creation of {id} canceled.")
 
@@ -133,18 +136,18 @@ def update_document(documents, ids):
     for document, id in zip(documents, ids):
         confirmation = input(f"Are you sure you want to update {id}? (y/n): ")
         if confirmation.lower() == 'y':
-            print(f"Updating tool {id}...")
+            log.info(f"Updating tool {id}...")
         # change default operation "create" into "update"
             document[0]["operation"] = "update"
             update_response = requests.post(api_url, json=document, headers=header)
             if update_response.status_code == 200:
-                print(f"Update of {id} is successful")
-                print(update_response.text)
+                log.info(f"Update of {id} is successful")
+                log.info(update_response.text)
             else:
-                print(f"Error updating {ids}")
-                print(update_response.text)
+                log.error(f"Error updating {ids}")
+                log.info(update_response.text)
         else:
-            print(f"Update of {id} canceled.")
+            log.info(f"Update of {id} canceled.")
 
 class ToolStillPresentError(Exception):
     pass
@@ -175,25 +178,25 @@ def delete_document(delete_list):
 
         confirmation = input(f"Are you sure you want to delete {id}? (y/n): ")
         if confirmation.lower() == 'y':
-            print(f"Deleting tool {id}...")
+            log.info(f"Deleting tool {id}...")
             update_response = requests.post(api_url, json=delete_template, headers=header)
             if update_response.status_code == 200:
                 get_url = f"{api_url}{id}"
                 get_response = requests.get(get_url, headers=header)
                 if get_response.status_code == 200 and get_response.text == '[]':
-                    print(f"Tool with id {id} deleted successfully.")
+                    log.info(f"Tool with id {id} deleted successfully.")
                 else:
                     raise ToolStillPresentError(f"ERROR: {id} is still present in INEO")
             else:
-                print(f"ERROR: cannot delete {id}")
-                print(update_response.text)
+                log.error(f"ERROR: cannot delete {id}")
+                log.info(update_response.text)
         else:
-            print(f"Deletion of tool with id {id} canceled.")
+            log.info(f"Deletion of tool with id {id} canceled.")
 
 
 def main():
-    #processed_document_ids = get_id()
-    #processed_documents, ids_to_create, ids_to_update,  = get_document(processed_document_ids)  
+    processed_document_ids = get_id_json(processed_jsonfiles)
+    processed_documents, ids_to_create, ids_to_update,  = get_document(processed_document_ids)  
     
     #update_document(processed_documents, ids_to_update)
     #handle_empty(ids_to_create)

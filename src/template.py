@@ -389,6 +389,20 @@ def retrieve_info(info, ruc) -> list | str | None:
     return res
 
 
+def create_minimal_ruc(current_id: str) -> dict:
+    """
+    Create a minimal RUC (Rich User Contents) object with default values.
+    Used when there are no RUC files. 
+    The title of the minimal RUC will be overwritten by the template.json (leading codemeta.jsonl)
+    Current_id (str): The identifier of the c3 codemeta.jsonl
+    """
+    ruc = {
+        "identifier": current_id,
+        "title": current_id,
+    }
+    return ruc
+
+
 def main(current_id: str = ID):
     """
     Main function
@@ -410,18 +424,15 @@ def main(current_id: str = ID):
 
     # Rich User Contents
     ruc = None
+    
+    # Load RUC dictionary or create a minimal RUC object
     ruc_file_path = f"./data/rich_user_contents/{current_id}.json"
-
     if os.path.exists(ruc_file_path):
         with open(ruc_file_path, "r") as json_file:
             ruc = json.load(json_file)
-        debug("main", f"RUC contents of grlc: {ruc}")
+        debug("main", f"RUC contents: {ruc}")
     else:
-        # If there's no RUC file, create a minimal RUC object with default values
-        ruc = {
-            "identifier": current_id,
-            "title": current_id,
-        }
+        ruc = create_minimal_ruc(current_id)
 
     # Combine codemeta and RUC using the DSL template
     res = traverse_data(template, ruc)

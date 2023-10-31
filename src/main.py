@@ -1,4 +1,5 @@
 import harvester
+import rating
 import template
 import ineo_sync
 import logging
@@ -8,67 +9,26 @@ import shutil
 import sys
 from collections import defaultdict
 from datetime import datetime
+from harvester import configure_logger
+
+log_file_path = 'main.log'
+log = configure_logger(log_file_path)
+JSONL_c3 = "./data/c3_codemeta.jsonl"
+
 
 def call_harvester():
     harvester.main()
-    logging.info("Harvester called...")
-    
-def get_tool_counts_from_jsonl(jsonl_files: list[str]) -> dict:
-    tool_counts = defaultdict(int) 
-    file_counts = {}  
-    
-    for jsonl_file in jsonl_files:
-        file_counts[jsonl_file] = 0 
-        with open(jsonl_file, "r") as f:
-            for line in f:
-                json_line = json.loads(line)
-                if "identifier" in json_line:
-                    identifier = json_line["identifier"]
-                    lowercase_identifier = identifier.lower()
-                    tool_counts[lowercase_identifier] += 1 
-                    file_counts[jsonl_file] += 1 
-    
-    for jsonl_file, count in file_counts.items():
-        print(f"Number of unique tools in {jsonl_file}: {count}")
-    
-    return tool_counts
-
-
-def get_ids_from_jsonl(jsonl_files: list[str]) -> list[str]:
-    """
-    This function reads multiple JSONL files and extracts the "identifier" field from each line. 
-    It onverts the identifiers to lowercase because there is a discrepancy between the identifiers
-    of the codemeta files (e.g. frog) and the Rich User Contents (e.g. Frog). 
-    The identifiers are then merged and duplicates are removed using a set. 
-    """
-    all_ids = set()  # Use a set to automatically remove duplicates
-    for jsonl_file in jsonl_files:
-        with open(jsonl_file, "r") as f:
-            for line in f:
-                json_line = json.loads(line)
-                if "identifier" in json_line:
-                    identifier = json_line["identifier"]
-                    lowercase_identifier = identifier.lower()
-                    all_ids.add(lowercase_identifier)  
-    
-    all_ids_list = list(all_ids)  
-    return all_ids_list
+    log.info("Harvester called...")
     
 
-def call_template(jsonl_files: list[str]):
-    for current_id in get_ids_from_jsonl(jsonl_files):
-        path = "./data/rich_user_contents" 
-        file_name = f"{current_id}.json"
-        file_path = os.path.join(path, file_name)
-        if os.path.isfile(file_path):
-            print(f"Combining both RUC and CM of {file_name}...")
-            template.main(current_id)
-        else:
-            print(f"The RUC of {file_name} does not exist in the directory.")
+def call_rating():
+    rating.main()
+    log.info("Filtering for rating...")
+
 
 def is_empty_jsonl_file(file_path):
     """
-    This function checks if the jsonl files are empty. If they are then it
+    This function checks if a jsonl file is empty. If it is then it
     means that there are no updates to be fed into INEO. 
     """
     try:
@@ -80,11 +40,40 @@ def is_empty_jsonl_file(file_path):
     except FileNotFoundError:
         return True 
 
+
+def get_ids_from_jsonl(jsonl_file: str) -> list[str]:
+    """
+    This function reads a JSONL files and extracts the "identifier" field from each line. 
+    Returns a list of Ids from the JSONL file 
+    """
+    all_ids = []
+    with open(jsonl_file, "r") as f:
+        for line in f:
+            json_line = json.loads(line)
+            if "identifier" in json_line:
+                identifier = json_line["identifier"]
+                all_ids.append(identifier)  
+    
+        all_ids_list = list(all_ids)  
+        return all_ids_list
+    
+
+def call_template(jsonl_file: str):
+    c3_ids = get_ids_from_jsonl(jsonl_file)
+    if c3_ids:
+        for current_id in c3_ids:
+            log.info(f"Making a json file for INEO for {current_id}...")
+            template.main(current_id)
+    else:
+        log.error("ERROR: No IDs found in the JSONL file.")
+
+
 def call_ineo_sync():
     ineo_sync.main()
 
 if "__main__" == __name__:
-    # Define the maximum number of runs to keep backups of the files fed to INEO
+    
+    # Define the maximum number of runs to keep backups of the c3 JSONL file
     max_backup_runs = 3  
     
     # Create the main backup folder if it doesn't exist
@@ -95,26 +84,24 @@ if "__main__" == __name__:
     # Create a list to store backup timestamps
     backup_timestamps = []
     
-    # harvest codemeta and Rich User Contents files 
-    call_harvester()
+    # Harvest codemeta and Rich User Contents files 
+    #call_harvester()
     
-    # Codemeta jsonl file
-    codemeta_jsonl_file: str = "./data/codemeta.jsonl"
-    # Rich User Contents jsonl file 
-    ruc_jsonl_file: str = "./data/ruc.jsonl"
-    jsonl_files = [codemeta_jsonl_file, ruc_jsonl_file]
-    
-    tool_counts = get_tool_counts_from_jsonl(jsonl_files)
-    for tool, count in tool_counts.items():
-        print(f"Tool: {tool}, Count: {count}")
+    # Filter codemeta.jsonl for reviewRating > 3 (+ manual demand list)
+    #call_rating()
 
-    # If both jsonl files are empty, there are no updates
-    if all(is_empty_jsonl_file(file) for file in jsonl_files):
-        print(f"No new updates in the jsonl files of RUC and Codemeta")
+    # Codemeta jsonl file with a reviewRating > 3 (+ manual requests)
+    c3_jsonl_file: str = JSONL_c3
     
+    # If the jsonl file is empty, there are no updates:
+    if is_empty_jsonl_file(c3_jsonl_file):
+        log.info(f"No new updates in the jsonl files of RUC and Codemeta")
     else:
-        # the jsonl line files are not empty, merge them into a template for INEO
-        call_template(jsonl_files)
+        # the jsonl line file is not empty, make a template for INEO
+        log.info(f"Jsonl file is not empty, making template...")
+        call_template(c3_jsonl_file)
+        
+        exit()
         
         call_ineo_sync()
 

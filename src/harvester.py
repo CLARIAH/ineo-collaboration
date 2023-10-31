@@ -44,6 +44,15 @@ def configure_logger(log_file_path):
 
     return log
 
+
+def create_folder(folder_name: str):
+    """
+    Create a folder if it doesn't exist.
+    """
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
+
+
 def extract_ruc(ruc_content: AnyStr) -> dict:
     """"
     Extracts Rich User Content (RUC) data from a given content string.
