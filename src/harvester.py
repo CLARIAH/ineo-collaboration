@@ -18,6 +18,7 @@ output_path_queries = "./queries"
 delete_path = "./deleted_documents"
 
 
+
 def configure_logger(log_file_path):
     # Create a logger
     log = logging.getLogger(__name__)
@@ -309,6 +310,11 @@ def db_table_exists(conn: sqlite3.Connection, table_name: str) -> bool:
         return True
     return False
 
+def get_id_from_ruc_file_name(file_name: str) -> str:
+    full_file_name = file_name.split("/")[-1]
+    id_part = full_file_name.split(".")[0]
+    return id_part
+
 
 def get_id_from_file_name(file_name: str) -> str:
     return file_name.split(".")[0].split("/")[-1]
@@ -345,9 +351,6 @@ def process_list(ids: list, folder_name, db_file_name, table_name, diff_list, cu
         c.execute(f"INSERT INTO {table_name} (file_name, md5, timestamp) VALUES (?, ?, ?)",
                   (file, md5, current_timestamp))
         conn.commit()
-
-
-
 
 
 def init_check_db(db_file_name: str, table_name: str) -> Optional[sqlite3.Connection]:
@@ -515,45 +518,31 @@ def process_records_timestamps(records):
             time_elapsed_in_days = time_elapsed.days
             log.info(f"Record {record} does not match the current date. Time elapsed (days): {time_elapsed_in_days}")
 
+def create_minimal_ruc(ruc_file):
+    """
+    Create a minimal RUC (Rich User Contents) object with default values and save it to a JSON file.
+    Used when there is no corresponding codemeta files for a RUC.
+    """
+    
+    ruc_id = get_id_from_ruc_file_name(ruc_file)
+    ruc_template = {
+    "ruc": {"identifier": ruc_id}
+    }
 
+    # Write the JSON data to the file
+    with open(ruc_file, 'w') as json_file:
+        json.dump(ruc_template, json_file, indent=4)
 
 """
 main function
 """
-
-
+log_file_path = 'harvester.log'
+log = configure_logger(log_file_path) 
 
 def get_id_from_change_list(diff_list_ruc: list):
     return [x.split(".")[0] for x in diff_list_ruc if x.endswith('.json')]
 
 def main(threshold):
-
-    db_file_name = os.path.join(output_path_data, "ineo.db")
-    table_name_tools = "tools_metadata"
-
-    # Retrieve the codemeta records from the database
-    codemeta_records = get_matching_timesamps(db_file_name, table_name_tools, threshold)
-    # Iterate through the absent records and compare the timestamps in the db with the current date 
-    process_records_timestamps(codemeta_records)
-
-    # Create a list to store the IDs of tools to be deleted
-    ids_to_delete = []
-
-    for file_name, count in absence_count.items():
-        if count > threshold:
-            # Extract the ID from the file_name
-            tool_id = get_id_from_file_name(file_name)
-            if tool_id:
-                ids_to_delete.append(tool_id)
-
-    if ids_to_delete:
-        log.debug(f"IDs of the tools to be deleted: {', '.join(ids_to_delete)}")
-        # Write the IDs to a JSON file in the "delete_tools" folder
-        file_path = os.path.join(delete_path, 'deleted_tool_ids.json')
-        with open(file_path, 'w') as json_file:
-            json.dump(ids_to_delete, json_file)
-            log.debug(f"JSON containing tools to be deleted saved to {file_path}")
-    exit()
     
     # Create the "data" folder if it doesn't exist
     data_folder = "data"
@@ -674,13 +663,36 @@ def main(threshold):
     # creating jsonl file
     for codemeta_id in codemeta_ids:
         codemeta_file = os.path.join(codemeta_download_dir, f"{codemeta_id}.codemeta.json")
+        if not os.path.isfile(codemeta_file):
+            create_minimal_ruc(codemeta_file)
+         
         add_to_jsonlines(codemeta_file, os.path.join(output_path_data, "codemeta.jsonl"))
 
-
-if __name__ == '__main__':
-    log_file_path = 'harvester.log'
-    log = configure_logger(log_file_path)
+    # Search  for inactive tools to delete in INEO
+    # Retrieve the codemeta records from the database
+    codemeta_records = get_matching_timesamps(db_file_name, table_name_tools, threshold)
+    # Iterate through the absent records and compare the timestamps in the db with the current date 
+    process_records_timestamps(codemeta_records)
     
-    # Set here the threshold of the tools to be deleted
-    delete_threshold = 3  
-    main(delete_threshold)
+    ids_to_delete = []
+    for file_name, count in absence_count.items():
+        if count > threshold:
+            # Extract the ID from the file_name
+            tool_id = get_id_from_file_name(file_name)
+            if tool_id:
+                ids_to_delete.append(tool_id)
+
+    if ids_to_delete:
+        log.debug(f"IDs of the tools to be deleted: {', '.join(ids_to_delete)}")
+        # Write the IDs to a JSON file in the "delete_tools" folder
+        file_path = os.path.join(delete_path, 'deleted_tool_ids.json')
+        with open(file_path, 'w') as json_file:
+            json.dump(ids_to_delete, json_file)
+            log.debug(f"JSON containing tools to be deleted saved to {file_path}")
+    
+
+
+if __name__ == '__main__':  
+    main(threshold=3)
+    
+    

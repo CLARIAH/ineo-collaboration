@@ -17,7 +17,7 @@ JSONL_c3 = "./data/c3_codemeta.jsonl"
 
 
 def call_harvester():
-    harvester.main()
+    harvester.main(threshold = 3)
     log.info("Harvester called...")
     
 
@@ -85,11 +85,12 @@ if "__main__" == __name__:
     backup_timestamps = []
     
     # Harvest codemeta and Rich User Contents files 
-    #call_harvester()
+    call_harvester()
     
     # Filter codemeta.jsonl for reviewRating > 3 (+ manual demand list)
-    #call_rating()
+    call_rating()
 
+    exit()
     # Codemeta jsonl file with a reviewRating > 3 (+ manual requests)
     c3_jsonl_file: str = JSONL_c3
     

@@ -14,6 +14,19 @@ log = configure_logger(log_file_path)
 tools_requests = ['mediasuite', 'lenticularlens']
 log.info(f"tools that need to be manually added to INEO: {tools_requests}")
 
+
+def get_ruc_ids(jsonl_file: str) -> list:
+    ruc_identifiers_without_cm = []
+    desired_key = "ruc"
+    # Read the JSONL file line by line
+    with open(jsonl_file, "r") as file:
+        for line in file:
+            data = json.loads(line)
+            if desired_key in data:
+                ruc_identifiers_without_cm.append(data[desired_key]["identifier"])
+    return ruc_identifiers_without_cm
+
+
 def query_rumbledb(query_file: str, jsonl_file: str) -> dict:
     """
     This function queries against RumbleDB and retrieves codemeta IDs with a rating greater than or equal to the threshold.
@@ -33,33 +46,6 @@ def query_rumbledb(query_file: str, jsonl_file: str) -> dict:
 
     return json.loads(response.text)
 
-
-def filter_codemeta(jsonl_file: str, c3_ids: dict, tools_requests: list) -> tuple:
-    """
-    Filters codemeta JSONL data based on codemeta IDs and manually requested tools.
-    jsonl_file (str): Path to the JSONL file containing codemeta data (codemeta.jsonl)
-    c3_ids (dict): Dictionary of codemeta IDs with a reviewRating > 3.
-    tools_requests (list): List of manually requested tools that need to go to INEO despite an insufficient rating
-
-    Returns a tuple containing two lists:
-    1. filtered codemeta lines with a rating >= 3.
-    2. codemeta tools that have an insufficient rating < 3
-    """
-    c3_jsonl_lines = []
-    no_c3_identifiers = [] 
-    with open(jsonl_file, "r") as codemeta_jsonl:
-        for line in codemeta_jsonl:
-            codemeta_tool = json.loads(line)
-            codemeta_identifier = codemeta_tool.get('identifier')
-            if codemeta_identifier in c3_ids['values']:
-                c3_jsonl_lines.append(codemeta_tool)
-            elif codemeta_identifier in tools_requests:
-                c3_jsonl_lines.append(codemeta_tool)
-            else:
-                no_c3_identifiers.append(codemeta_tool['identifier'])
-    return c3_jsonl_lines, no_c3_identifiers
-
-
 def save_codemeta_to_file(codemeta_lines, output_file):
     with open(output_file, "w") as output_file:
         for line in codemeta_lines:
@@ -71,17 +57,30 @@ def main():
     query_file = "./queries/rating.rq"
     c3_jsonlfile = "./data/c3_codemeta.jsonl"
 
-    # Execute the query to get codemeta IDs with a rating > 3.
+    # Execute the query to get codemeta IDs with a rating >= 3.
     c3_ids = query_rumbledb(query_file, JSONL_cc)
 
-    # Filter codemeta data and get identifiers of tools with a rating < 3.
-    c3_jsonl_lines, no_c3_identifiers = filter_codemeta(JSONL_cc_ineo, c3_ids, tools_requests)
+    # Initialize a list to store matching lines
+    matching_lines = []
 
-    # Save the filtered codemeta data to a JSONL file.
-    save_codemeta_to_file(c3_jsonl_lines, c3_jsonlfile)
-    
-    log.info(f"Tools with a rating < 3: {no_c3_identifiers}")
-    log.info(f"All codemeta JSONL files with a 3-stars rating have been saved to: {c3_jsonlfile}")
+    # Open the input JSONL file
+    with open(JSONL_cc_ineo, 'r') as input_file:
+        for line in input_file:
+            data = json.loads(line)
+            if 'identifier' in data:
+                if data['identifier'] in c3_ids['values']:
+                    # If the 'identifier' matches a c3_id, add it to the list of matching lines
+                    matching_lines.append(data)
+                elif data['identifier'] in tools_requests:
+                    # If the 'identifier' matches a tools_request, add it to the list
+                    matching_lines.append(data)
+
+    # Write the matching lines to the output JSONL file
+    with open('c3.jsonl', 'w') as output_file:
+        for data in matching_lines:
+            output_file.write(json.dumps(data) + '\n')
+
+    print("Matching lines written to 'c3.jsonl'")
 
 
 if __name__ == '__main__':
