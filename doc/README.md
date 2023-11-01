@@ -232,42 +232,42 @@ Only the `id` is needed to delete a resource.
 | link  | Url to the website of the resource.     |
 | intro | A short description about the resource. |
 
-| Name                 | Value                                                                                               |
-| -------------------- | --------------------------------------------------------------------------------------------------- |
-| resourceTypes        | "Not yet available" or an array of `title` (Tools)                                                  |
-| researchActivities   | "Not yet available" or an array of `link` ("https://vocabs.dariah.eu/tadirah/namingConvention")     |
-| researchDomains      | "Not yet available" or an array of `link` ("https://w3id.org/nwo-research-fields#HistoryofScience") |
-| informationTypes     | "Not yet available" or an array of `index title` ("1.22 Statistics")                                |
-| mediaTypes           | "Not yet available" or an array of `index title` ("1.74 ecmascript")                                |
-| status               | "Not yet available" or an array of `title` ("Active")                                               |
-| languages            | "Not yet available" or an array of `title` ("Dutch")                                                |
-| access               | multiple objects containing a title and optionally a url                                            |
-| versions             | multiple objects containing a title and optionally a url                                            |
-| programmingLanguages | multiple objects containing a title and optionally a url                                            |
-| standards            | multiple objects containing a title and optionally a url                                            |
-| provenance           | multiple objects containing a title and optionally a url                                            |
-| sourceCodeLocation   | multiple objects containing a title and optionally a url                                            |
+| Name                 | Value                                                                                                   |
+| -------------------- | ------------------------------------------------------------------------------------------------------- |
+| resourceTypes        | "Not yet available" or an array of `title` (Tools)                                                      |
+| researchActivities   | "Not yet available" or an array of `link` ("https://vocabs.dariah.eu/tadirah/namingConvention")         |
+| researchDomains      | "Not yet available" or an array of `link` ("https://w3id.org/nwo-research-fields#HistoryofScience")     |
+| informationTypes     | "Not yet available" or an array of `index title` ("1.22 Statistics")                                    |
+| mediaTypes           | "Not yet available" or an array of `index title` ("1.74 ecmascript")                                    |
+| status               | "Not yet available" or an array of `title` ("Active")                                                   |
+| languages            | "Not yet available" or an array of `title` ("Dutch")                                                    |
+| access               | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
+| versions             | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
+| programmingLanguages | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
+| standards            | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
+| provenance           | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
+| sourceCodeLocation   | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
 
 Links
 | Name | Value |
 | -------------------- | ----- |
-| learn | multiple objects containing a title and optionally a url |
-| community | multiple objects containing a title and optionally a url |
+| learn | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
+| community | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
 
 Acknowledgements
 | Name | Value |
 | -------------------- | ----- |
-| resourceHost | multiple objects containing a title and optionally a url |
-| resourceOwner | multiple objects containing a title and optionally a url |
-| development | multiple objects containing a title and optionally a url |
-| funding | multiple objects containing a title and optionally a url |
+| resourceHost | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
+| resourceOwner | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
+| development | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
+| funding | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
 
 Contact
 | Name | Value |
 | -------------------- | ----- |
-| generalContact | multiple objects containing a title and optionally a url |
-| researchContact | multiple objects containing a title and optionally a url |
-| problemContact | multiple objects containing a title and optionally a url |
+| generalContact | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
+| researchContact | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
+| problemContact | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
 
 ### Response
 
