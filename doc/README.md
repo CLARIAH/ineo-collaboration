@@ -232,21 +232,21 @@ Only the `id` is needed to delete a resource.
 | link  | Url to the website of the resource.     |
 | intro | A short description about the resource. |
 
-| Name                 | Value                                                                                             |
-| -------------------- | ------------------------------------------------------------------------------------------------- |
-| resourceTypes        | "Not yet available" or an array of `title`                                                        |
-| researchActivities   | "Not yet available" or an array of `link` (https://vocabs.dariah.eu/tadirah/namingConvention)     |
-| researchDomains      | "Not yet available" or an array of `link` (https://w3id.org/nwo-research-fields#HistoryofScience) |
-| informationTypes     | "Not yet available" or an array of `index title` ("1.22 Statistics")                              |
-| mediaTypes           | "Not yet available" or an array of `index title` ("1.74 ecmascript")                              |
-| status               | "Not yet available" or an array of `title` ("Active")                                             |
-| languages            | "Not yet available" or an array of `title` ("Dutch")                                              |
-| access               | multiple objects containing a title and optionally a url                                          |
-| versions             | multiple objects containing a title and optionally a url                                          |
-| programmingLanguages | multiple objects containing a title and optionally a url                                          |
-| standards            | multiple objects containing a title and optionally a url                                          |
-| provenance           | multiple objects containing a title and optionally a url                                          |
-| sourceCodeLocation   | multiple objects containing a title and optionally a url                                          |
+| Name                 | Value                                                                                               |
+| -------------------- | --------------------------------------------------------------------------------------------------- |
+| resourceTypes        | "Not yet available" or an array of `title` (Tools)                                                  |
+| researchActivities   | "Not yet available" or an array of `link` ("https://vocabs.dariah.eu/tadirah/namingConvention")     |
+| researchDomains      | "Not yet available" or an array of `link` ("https://w3id.org/nwo-research-fields#HistoryofScience") |
+| informationTypes     | "Not yet available" or an array of `index title` ("1.22 Statistics")                                |
+| mediaTypes           | "Not yet available" or an array of `index title` ("1.74 ecmascript")                                |
+| status               | "Not yet available" or an array of `title` ("Active")                                               |
+| languages            | "Not yet available" or an array of `title` ("Dutch")                                                |
+| access               | multiple objects containing a title and optionally a url                                            |
+| versions             | multiple objects containing a title and optionally a url                                            |
+| programmingLanguages | multiple objects containing a title and optionally a url                                            |
+| standards            | multiple objects containing a title and optionally a url                                            |
+| provenance           | multiple objects containing a title and optionally a url                                            |
+| sourceCodeLocation   | multiple objects containing a title and optionally a url                                            |
 
 Links
 | Name | Value |
