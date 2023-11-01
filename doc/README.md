@@ -241,33 +241,33 @@ Only the `id` is needed to delete a resource.
 | mediaTypes           | "Not yet available" or an array of `index title` ("1.74 ecmascript")                                    |
 | status               | "Not yet available" or an array of `title` ("Active")                                                   |
 | languages            | "Not yet available" or an array of `title` ("Dutch")                                                    |
-| access               | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
-| versions             | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
-| programmingLanguages | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
-| standards            | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
-| provenance           | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
-| sourceCodeLocation   | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
+| access               | an array of objects containing the title and optionally a url `[ { "title": "string", "link": "url" } ]` |
+| versions             | an array of objects containing the title and optionally a url `[ { "title": "string", "link": "url" } ]` |
+| programmingLanguages | an array of objects containing the title and optionally a url `[ { "title": "string", "link": "url" } ]` |
+| standards            | an array of objects containing the title and optionally a url `[ { "title": "string", "link": "url" } ]` |
+| provenance           | an array of objects containing the title and optionally a url `[ { "title": "string", "link": "url" } ]` |
+| sourceCodeLocation   | an array of objects containing the title and optionally a url `[ { "title": "string", "link": "url" } ]` |
 
 Links
 | Name | Value |
 | -------------------- | ----- |
-| learn | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
-| community | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
+| learn | an array of objects containing the title and optionally a url `[ { "title": "string", "link": "url" } ]` |
+| community | an array of objects containing the title and optionally a url `[ { "title": "string", "link": "url" } ]` |
 
 Acknowledgements
 | Name | Value |
 | -------------------- | ----- |
-| resourceHost | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
-| resourceOwner | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
-| development | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
-| funding | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
+| resourceHost | an array of objects containing the title and optionally a url `[ { "title": "string", "link": "url" } ]` |
+| resourceOwner | an array of objects containing the title and optionally a url `[ { "title": "string", "link": "url" } ]` |
+| development | an array of objects containing the title and optionally a url `[ { "title": "string", "link": "url" } ]` |
+| funding | an array of objects containing the title and optionally a url `[ { "title": "string", "link": "url" } ]` |
 
 Contact
 | Name | Value |
 | -------------------- | ----- |
-| generalContact | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
-| researchContact | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
-| problemContact | an array of objects containing the title and otionally a url `[ { "title": "string", "link": "url" } ]` |
+| generalContact | an array of objects containing the title and optionally a url `[ { "title": "string", "link": "url" } ]` |
+| researchContact | an array of objects containing the title and optionally a url `[ { "title": "string", "link": "url" } ]` |
+| problemContact | an array of objects containing the title and optionally a url `[ { "title": "string", "link": "url" } ]` |
 
 ### Response
 
