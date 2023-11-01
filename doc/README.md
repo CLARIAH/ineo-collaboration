@@ -8,7 +8,7 @@ All requests need the "Authorization header". For example:
 
 `curl 'https://ineo-resources-api-5b568b0ad6eb.herokuapp.com/resources/' -H "Authorization: bearer $INEO_RESOURCES_API_TOKEN"`
 
-## Use GET to request resources
+## Request resources
 
 When the http request method is `GET` you can request resources. This is an optional catch all route. So you can either fetch all resources at the base endpoint, or specific resources by specifying their id's in subsequent path segments.
 
@@ -18,7 +18,19 @@ When the http request method is `GET` you can request resources. This is an opti
 
 The response contains the resource(s) as json.
 
-## Use POST to send resources
+## Request properties
+
+All available properties can be requested through the endpoint `/properties/$type`:
+
+- https://ineo-resources-api-5b568b0ad6eb.herokuapp.com/properties/resourceTypes
+- https://ineo-resources-api-5b568b0ad6eb.herokuapp.com/properties/researchActivities
+- https://ineo-resources-api-5b568b0ad6eb.herokuapp.com/properties/researchDomains
+- https://ineo-resources-api-5b568b0ad6eb.herokuapp.com/properties/informationTypes
+- https://ineo-resources-api-5b568b0ad6eb.herokuapp.com/properties/languages
+- https://ineo-resources-api-5b568b0ad6eb.herokuapp.com/properties/status
+- https://ineo-resources-api-5b568b0ad6eb.herokuapp.com/properties/mediaTypes
+
+## Send resources
 
 When the http request method is `POST` you can send resources to the base endpoint `/resources`. The expected body content type is `application/json`. Always send an array of objects. Each object must contain an operation and a document.
 
@@ -64,10 +76,19 @@ A full resource looks like this:
         "link": "url",
         "intro": "text",
         "resourceTypes": [],
-        "researchActivities": [],
-        "researchDomains": [],
-        "informationTypes": [],
-        "mediaTypes": [],
+        "researchActivities": [
+          "https://vocabs.dariah.eu/tadirah/namingConvention"
+        ],
+        "researchDomains": [
+          "https://w3id.org/nwo-research-fields#HistoryofScience"
+        ],
+        "informationTypes": [
+          "1.22 Statistics",
+          "2.8 Numeric data"
+        ],
+        "mediaTypes": [
+          "1.997 vnd.svd"
+        ],
         "status": [],
         "languages": [],
         "access": [
@@ -211,21 +232,21 @@ Only the `id` is needed to delete a resource.
 | link  | Url to the website of the resource.     |
 | intro | A short description about the resource. |
 
-| Name                 | Value                                                         |
-| -------------------- | ------------------------------------------------------------- |
-| resourceTypes        | "Not yet available" or +1 of `/properties/resourceTypes`      |
-| researchActivities   | "Not yet available" or +1 of `/properties/researchActivities` |
-| researchDomains      | "Not yet available" or +1 of `/properties/researchDomains`    |
-| informationTypes     | "Not yet available" or +1 of `/properties/informationTypes`   |
-| mediaTypes           | "Not yet available" or +1 of `/properties/mediaTypes`         |
-| status               | "Not yet available" or +1 of `/properties/status`             |
-| languages            | "Not yet available" or +1 of `/properties/languages`          |
-| access               | multiple objects containing a title and optionally a url      |
-| versions             | multiple objects containing a title and optionally a url      |
-| programmingLanguages | multiple objects containing a title and optionally a url      |
-| standards            | multiple objects containing a title and optionally a url      |
-| provenance           | multiple objects containing a title and optionally a url      |
-| sourceCodeLocation   | multiple objects containing a title and optionally a url      |
+| Name                 | Value                                                                                             |
+| -------------------- | ------------------------------------------------------------------------------------------------- |
+| resourceTypes        | "Not yet available" or an array of `title`                                                        |
+| researchActivities   | "Not yet available" or an array of `link` (https://vocabs.dariah.eu/tadirah/namingConvention)     |
+| researchDomains      | "Not yet available" or an array of `link` (https://w3id.org/nwo-research-fields#HistoryofScience) |
+| informationTypes     | "Not yet available" or an array of `index title` ("1.22 Statistics")                              |
+| mediaTypes           | "Not yet available" or an array of `index title` ("1.74 ecmascript")                              |
+| status               | "Not yet available" or an array of `title` ("Active")                                             |
+| languages            | "Not yet available" or an array of `title` ("Dutch")                                              |
+| access               | multiple objects containing a title and optionally a url                                          |
+| versions             | multiple objects containing a title and optionally a url                                          |
+| programmingLanguages | multiple objects containing a title and optionally a url                                          |
+| standards            | multiple objects containing a title and optionally a url                                          |
+| provenance           | multiple objects containing a title and optionally a url                                          |
+| sourceCodeLocation   | multiple objects containing a title and optionally a url                                          |
 
 Links
 | Name | Value |
