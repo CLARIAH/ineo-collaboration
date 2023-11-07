@@ -13,7 +13,7 @@ from harvester import configure_logger
 
 log_file_path = 'main.log'
 log = configure_logger(log_file_path)
-JSONL_c3 = "./data/c3_codemeta.jsonl"
+JSONL_c3 = "./data/c3.jsonl"
 
 
 def call_harvester():
@@ -52,10 +52,13 @@ def get_ids_from_jsonl(jsonl_file: str) -> list[str]:
             json_line = json.loads(line)
             if "identifier" in json_line:
                 identifier = json_line["identifier"]
-                all_ids.append(identifier)  
+                all_ids.append(identifier)
+            
+            if "ruc" in json_line and "identifier" in json_line["ruc"]:
+                ruc_identifier = json_line["ruc"]["identifier"]
+                all_ids.append(ruc_identifier)
     
-        all_ids_list = list(all_ids)  
-        return all_ids_list
+    return all_ids
     
 
 def call_template(jsonl_file: str):
@@ -70,6 +73,7 @@ def call_template(jsonl_file: str):
 
 def call_ineo_sync():
     ineo_sync.main()
+    log.info("sync with INEO ...")
 
 if "__main__" == __name__:
     
@@ -87,35 +91,36 @@ if "__main__" == __name__:
     # Harvest codemeta and Rich User Contents files 
     call_harvester()
     
-    # Filter codemeta.jsonl for reviewRating > 3 (+ manual demand list)
+    # Filter codemeta.jsonl for reviewRating > 3 (+ manual demand list and ruc without codemeta)
     call_rating()
 
-    exit()
-    # Codemeta jsonl file with a reviewRating > 3 (+ manual requests)
-    c3_jsonl_file: str = JSONL_c3
-    
+    tools_to_INEO = get_ids_from_jsonl(JSONL_c3)
+
     # If the jsonl file is empty, there are no updates:
-    if is_empty_jsonl_file(c3_jsonl_file):
+    if is_empty_jsonl_file(JSONL_c3):
         log.info(f"No new updates in the jsonl files of RUC and Codemeta")
     else:
-        # the jsonl line file is not empty, make a template for INEO
-        log.info(f"Jsonl file is not empty, making template...")
-        call_template(c3_jsonl_file)
-        
-        exit()
-        
-        call_ineo_sync()
+        # The jsonl line file is not empty, make a template for INEO
+        log.info(f"Jsonl file is not empty, making templates ...")
+        #call_template(JSONL_c3)
 
+        exit()
+        # Templates are ready, sync with the INEO api
+        #call_ineo_sync()
+        
         # Generate a timestamp for the backup folder name
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
         backup_folder = os.path.join(main_backup_folder, f"backup_{timestamp}")
         
         # Backup the processed_jsonfiles folder
         shutil.copytree("processed_jsonfiles", backup_folder)
-        
+        log.info("backup of the processed templates created, clearing folders for the next run...")
         # Clear the processed_jsonfiles folder
         shutil.rmtree("processed_jsonfiles")
         
+        # TODO: CLEAR the codemeta.jsonl file after a backup. 
+        # TODO: create a backup folder
+
         # Add the current timestamp to the list
         backup_timestamps.append(timestamp)
         
@@ -128,6 +133,6 @@ if "__main__" == __name__:
 
             shutil.rmtree(oldest_backup_path)
         
-        logging.info("All done")
+        logging.info("All done!")
     
 

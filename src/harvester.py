@@ -684,13 +684,17 @@ def main(threshold):
 
     if ids_to_delete:
         log.debug(f"IDs of the tools to be deleted: {', '.join(ids_to_delete)}")
+        
         # Write the IDs to a JSON file in the "delete_tools" folder
+        deleted_documents_folder = delete_path
+        if not os.path.exists(deleted_documents_folder):
+            os.makedirs(deleted_documents_folder)
+        
         file_path = os.path.join(delete_path, 'deleted_tool_ids.json')
         with open(file_path, 'w') as json_file:
             json.dump(ids_to_delete, json_file)
             log.debug(f"JSON containing tools to be deleted saved to {file_path}")
     
-
 
 if __name__ == '__main__':  
     main(threshold=3)

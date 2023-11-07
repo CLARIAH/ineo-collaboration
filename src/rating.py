@@ -10,10 +10,6 @@ JSONL_cc_ineo = "./data/codemeta.jsonl"
 log_file_path = 'rating.log'
 log = configure_logger(log_file_path)
 
-# list of codemeta tools that do not have a sufficient rating but are requested by the provider. Added manually.
-tools_requests = ['mediasuite', 'lenticularlens']
-log.info(f"tools that need to be manually added to INEO: {tools_requests}")
-
 
 def get_ruc_ids(jsonl_file: str) -> list:
     ruc_identifiers_without_cm = []
@@ -51,36 +47,56 @@ def save_codemeta_to_file(codemeta_lines, output_file):
         for line in codemeta_lines:
             output_file.write(json.dumps(line) + '\n')
 
+def process_jsonlfile(input_file_path, c3_ids, tools_requests):
+    c3_lines = []
+    ruc_lines = []
+
+    with open(input_file_path, 'r') as input_file:
+        for line in input_file:
+            codemeta = json.loads(line)
+            if 'identifier' in codemeta:
+                if codemeta['identifier'] in c3_ids['values']:
+                    c3_lines.append(codemeta)
+                elif codemeta['identifier'] in tools_requests:
+                    c3_lines.append(codemeta)
+            if 'ruc' in codemeta:
+                ruc_lines.append(codemeta)
+
+    return c3_lines, ruc_lines
+
 
 def main():
+
+    # list of codemeta tools that do not have a sufficient rating but are requested by the provider. Added manually.
+    tools_requests = ['mediasuite', 'lenticularlens', 'codemeta2html']
+    log.info(f"tools that need to be manually added to INEO: {tools_requests}")
+    
     # Paths to the query file and the output JSONL file.
     query_file = "./queries/rating.rq"
-    c3_jsonlfile = "./data/c3_codemeta.jsonl"
+    c3_jsonlfile = "./data/c3.jsonl"
 
-    # Execute the query to get codemeta IDs with a rating >= 3.
+    # Execute the query to get codemeta IDs with a reviewRating >= 3.
     c3_ids = query_rumbledb(query_file, JSONL_cc)
+    log.info(f"Tools with a reviewRating >= 3: {c3_ids}")
+    
+    # Initialize a list to store matching lines 
+    c3_lines = []
+    ruc_lines = []
 
-    # Initialize a list to store matching lines
-    matching_lines = []
+    c3_lines, ruc_lines = process_jsonlfile(JSONL_cc_ineo, c3_ids, tools_requests)
+    
+    identifiers = [item['ruc']['identifier'] for item in ruc_lines]
+    log.info(f"Tools that do not have a corresponding codemeta file: {identifiers}")
 
-    # Open the input JSONL file
-    with open(JSONL_cc_ineo, 'r') as input_file:
-        for line in input_file:
-            data = json.loads(line)
-            if 'identifier' in data:
-                if data['identifier'] in c3_ids['values']:
-                    # If the 'identifier' matches a c3_id, add it to the list of matching lines
-                    matching_lines.append(data)
-                elif data['identifier'] in tools_requests:
-                    # If the 'identifier' matches a tools_request, add it to the list
-                    matching_lines.append(data)
 
-    # Write the matching lines to the output JSONL file
-    with open('c3.jsonl', 'w') as output_file:
-        for data in matching_lines:
-            output_file.write(json.dumps(data) + '\n')
+    # Combine both c3_lines and ruc_lines
+    combined_lines = c3_lines + ruc_lines
 
-    print("Matching lines written to 'c3.jsonl'")
+    with open(c3_jsonlfile, 'w') as output_file:
+        for line in combined_lines:
+            output_file.write(json.dumps(line) + '\n')
+
+    log.info("Matching and 'ruc' lines written to 'c3.jsonl'")
 
 
 if __name__ == '__main__':

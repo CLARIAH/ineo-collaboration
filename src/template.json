@@ -74,9 +74,9 @@
                 "resourceOwner": "<md:@queries/producer.rq,null",
                 "link": "<md:@queries/url.rq,null",
                 "intro": "<md:description,null",
-                "researchActivities": "<md:@queries/activities.rq:researchActivity,null",
-                "researchDomains": "<md:@queries/domains.rq:researchDomains,null",
-                "mediaTypes": [],
+                "researchActivities": "<md:@queries/activities.rq,null",
+                "researchDomains": ["<md:@queries/domains.rq:researchDomains,null"],
+                "mediaTypes": "<md:@queries/mediatype.rq,null",
                 "provenance": [
                     {
                         "title": "string",

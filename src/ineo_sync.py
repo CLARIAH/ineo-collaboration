@@ -51,7 +51,7 @@ def get_id_json(folder_path) -> list:
                         log.error(f"ERROR: File {filename} does not have the expected INEO structure.")
                 except json.JSONDecodeError as e:
                     log.error(f"Error reading processed JSON from file {filename}: {str(e)}")
-    # The unique "id" values from all JSON files to be fed or updated into INEO
+    # The unique "id" values from all processed JSON files to be fed or updated into INEO
     return ineo_ids
 
 
@@ -59,6 +59,56 @@ def load_processed_document(id, folder_path):
     file_path = os.path.join(folder_path, f"{id}_processed.json")
     with open(file_path, 'r') as json_file:
         return json.load(json_file)
+
+def save_json_data_to_file(data, file_path):
+    with open(file_path, 'w') as json_file:
+        json.dump(data, json_file, indent=4)
+
+def check_domains(id, folder_path):
+    urls_properties = [
+        "https://ineo-resources-api-5b568b0ad6eb.herokuapp.com/properties/researchDomains",
+    ]
+
+    for url in urls_properties:
+        response = requests.get(url, headers=header)
+        if response.status_code == 200:
+            # Request was successful
+            research_domains = response.json()
+            research_domain_links = {entry["link"]: entry for entry in research_domains}
+            data = load_processed_document(id, folder_path)
+
+            # Extract the researchDomains value
+            research_domains = data[0]["document"]["properties"]["researchDomains"]
+
+            updated_research_domains = []
+            
+            for domain in research_domains:
+                # Convert both domain to lowercase for case-insensitive comparison
+                domain_lower = domain.lower() if domain is not None else None
+                for link in research_domain_links:
+                    link_lower = link.lower() if link is not None else None
+                    if domain_lower and link_lower and domain_lower == link_lower:
+                        log.info(f"Match found for domain: {domain} (case-insensitive comparison)")
+                        # Replace the researchDomain with the corresponding link
+                        updated_research_domains.append(research_domain_links[link]["link"])
+                        break
+                else:
+                    # If no match is found or if domain or link is None, keep the original domain
+                    updated_research_domains.append(domain)
+
+            
+            # Update the researchDomains value in the data
+            data[0]["document"]["properties"]["researchDomains"] = updated_research_domains
+
+            # Save the updated data back to the same JSON file
+            json_file_path = f"./processed_jsonfiles/{id}_processed.json"
+            save_json_data_to_file(data, json_file_path)
+
+            return data
+
+        else:
+            print("Failed to retrieve researchDomains from the API")
+            return None
 
 
 def get_document(ids) -> list:
@@ -80,7 +130,7 @@ def get_document(ids) -> list:
             else:
                 log.info(f"{id} is present in INEO")
                 log.info(get_response.text)
-                json_data = load_processed_document(id, folder_path)
+                json_data = load_processed_document(id, processed_jsonfiles)
                 processed_document.append(json_data)
                 ids_to_update.append(id)
         else:
@@ -111,7 +161,7 @@ def handle_empty(ids):
         if confirmation.lower() == 'y':
             log.info(f"Sending {id} to INEO...")
             file_name = f"{id}_processed.json"
-            file_path = os.path.join(folder_path, file_name)
+            file_path = os.path.join(processed_jsonfiles, file_name)
             with open(file_path, 'r') as new_document:
                 new_document = json.load(new_document)
                 create_response = requests.post(api_url, json=new_document, headers=header)
@@ -122,7 +172,7 @@ def handle_empty(ids):
                 log.error(f"Creation of {id} has failed")
                 log.info(create_response.text)
         else:
-            print(f"Creation of {id} canceled.")
+            log.info(f"Creation of {id} canceled.")
 
 
 def update_document(documents, ids):
@@ -153,6 +203,26 @@ class ToolStillPresentError(Exception):
     pass
 
 
+def create_delete_template():
+    delete_template = [
+        {
+            "operation": "delete",
+            "document": {
+                "id": ""
+            }
+        }
+    ]
+
+    # Specify the file path where you want to save the template
+    file_path = "./deleted_documents/delete_template.json"
+
+    # Save the delete_template to the specified file
+    with open(file_path, 'w') as json_file:
+        json.dump(delete_template, json_file, indent=4)
+
+    create_delete_template()
+
+
 def delete_document(delete_list):
     """
     If a document contains a delete operation, with a post request we can delete resources in INEO. 
@@ -160,9 +230,7 @@ def delete_document(delete_list):
     """
     # Check if the "deleted_documents" folder exists, and create it if not
     deleted_documents_folder = "deleted_documents"
-    if not os.path.exists(deleted_documents_folder):
-        os.makedirs(deleted_documents_folder)
-    delete_template = "template_delete.json"
+    delete_template = create_delete_template()
     file_path = os.path.join(deleted_documents_folder, delete_template)   
     
     for id in delete_list:
@@ -196,20 +264,30 @@ def delete_document(delete_list):
 
 def main():
     processed_document_ids = get_id_json(processed_jsonfiles)
+    for processed_id in processed_document_ids:
+        check_domains(processed_id, processed_jsonfiles)
+
     processed_documents, ids_to_create, ids_to_update,  = get_document(processed_document_ids)  
     
-    #update_document(processed_documents, ids_to_update)
-    #handle_empty(ids_to_create)
+    update_document(processed_documents, ids_to_update)
     
-    # json file that contains the ids of the tools that needs to be deleted 
-    delete_file_path = f"{delete_path}/deleted_tool_ids.json"
-    with open(delete_file_path, 'r') as json_file:
-        delete_list = json.load(json_file)
-        try:
-            delete_document(delete_list)
-        except ToolStillPresentError as e:
-            print(str(e))
-            sys.exit(1) 
+    handle_empty(ids_to_create)
+    
+
+    # json file that contains the ids of the tools that needs to be deleted (outcome of harvester.py)
+    # Check if there are files to delete
+    if not os.path.exists(delete_path):
+        log.info(f"The folder {delete_path} does not exist, no tools to delete.")
+        sys.exit(1)
+    else:
+        delete_file_path = f"{delete_path}/deleted_tool_ids.json"
+        with open(delete_file_path, 'r') as json_file:
+            delete_list = json.load(json_file)
+            try:
+                delete_document(delete_list)
+            except ToolStillPresentError as e:
+                log.error(str(e))
+                sys.exit(1) 
 
 if __name__ == "__main__":
     main()

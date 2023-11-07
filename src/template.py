@@ -8,15 +8,16 @@ import os
 
 """
 This script is designed to process JSON data using a template and retrieve information based on a set of rules defined in the template. 
+https://github.com/CLARIAH/clariah-plus/blob/main/requirements/software-metadata-requirements.md
 """
 
 RUMBLEDB = "http://rumbledb:8001/jsoniq"
 #RUMBLEDB = "http://localhost:8001/jsoniq"
 
 # location of the JSONL file within container ineo-sync
-JSONL_ineo = "./data/c3_codemeta.jsonl"
+JSONL_ineo = "./data/c3.jsonl"
 # location of the (same) JSONL file within container rumbledb
-JSONL = "/data/c3_codemeta.jsonl"
+JSONL = "/data/c3.jsonl"
 PROCESSED_FILES = "./processed_jsonfiles"
 
 TEMPLATE = "./template.json"
@@ -135,6 +136,8 @@ def checking_vocabs(value):
     """
     if "nwo" in value:
         return re.sub(r'^nwo:', 'https://w3id.org/nwo-research-fields#', value)
+
+
     elif "w3id.org" in value:
         return value
     elif "vocabs.dariah.eu" in value:
@@ -352,21 +355,23 @@ def retrieve_info(info, ruc) -> list | str | None:
                 for val in info:
                     val = checking_vocabs(val)
                     debug(vocab, val) 
-                    
-                    # Iterate through the items in the "result" array of the vocabs
-                    for vocabs_item in vocabs[vocab].get("result", []):
-                        # Comparing the link of the vocabs with val
-                        process_vocabs(vocabs_item, val, vocabs_list)
+                    if val.startswith("https://w3id.org/nwo-research-fields#"):
+                        info = val
+                    else:
+                        # Iterate through the items in the "result" array of the vocabs
+                        for vocabs_item in vocabs[vocab].get("result", []):
+                            # Comparing the link of the vocabs with val
+                            process_vocabs(vocabs_item, val, vocabs_list)
                 
-                if len(vocabs_list) > 0:
-                    info = vocabs_list
-                else:
-                    info = None
+                        if len(vocabs_list) > 0:
+                            info = vocabs_list
+                        else:
+                            info = None
 
-                debug(
-                    "retrieve_info",
-                    f"The vocab value from '{info_parts[2].strip()}': {info}",
-                )
+                        debug(
+                            "retrieve_info",
+                            f"The vocab value from '{info_parts[2].strip()}': {info}",
+                            )
 
             if info is not None:
                 debug("retrieve_info", f"The value of '{path}' in the MD: {info}")
