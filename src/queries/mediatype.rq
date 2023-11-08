@@ -1,3 +1,14 @@
 for $i in json-file("{JSONL}", 10) 
 where $i.identifier eq "{ID}" 
-return $i.targetProduct
+return
+if ($i.targetProduct instance of array) then
+  for $item in $i.targetProduct[]
+  return 
+    if ($item.consumesData instance of object) then
+      [$item.consumesData.encodingFormat]
+    else if ($item.consumesData instance of array) then
+    for $data in $item.consumesData[]
+    return [$data.encodingFormat]  
+    else()
+    
+else()
