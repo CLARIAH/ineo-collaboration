@@ -432,6 +432,20 @@ def get_ruc_contents() -> dict:
             log.info(f"Rich User Contents of {file_path} is:\n{ruc_contents}\n")
             all_ruc_contents[filename] = ruc_contents
 
+    # Check if the RUC filename is identical to the identifier and replace if not
+    modified_contents = {}  
+    for filename, ruc_data in all_ruc_contents.items():
+        identifier = ruc_data.get('identifier', '').lower()  # Get the lowercase identifier from the RUC dictionary
+        filename_ruc = os.path.splitext(filename)[0].lower()
+        if filename_ruc != identifier:
+            log.info(f"Filename '{filename_ruc}' is not identical to the identifier '{identifier}'")
+            log.info("Replacing the filename with the identifier...")
+            modified_contents[identifier] = ruc_data  
+        else:
+            modified_contents[filename] = ruc_data  
+
+    all_ruc_contents = modified_contents 
+
     return all_ruc_contents
 
 
@@ -518,15 +532,17 @@ def process_records_timestamps(records):
             time_elapsed_in_days = time_elapsed.days
             log.info(f"Record {record} does not match the current date. Time elapsed (days): {time_elapsed_in_days}")
 
-def create_minimal_ruc(ruc_file):
+def create_minimal_ruc(ruc_file, ruc_contents_dict):
     """
     Create a minimal RUC (Rich User Contents) object with default values and save it to a JSON file.
     Used when there is no corresponding codemeta files for a RUC.
     """
     
     ruc_id = get_id_from_ruc_file_name(ruc_file)
+    identifier_value = ruc_contents_dict[f'{ruc_id}.md']['identifier']
+
     ruc_template = {
-    "ruc": {"identifier": ruc_id}
+    "ruc": {"identifier": identifier_value}
     }
 
     # Write the JSON data to the file
@@ -664,11 +680,12 @@ def main(threshold):
     for codemeta_id in codemeta_ids:
         codemeta_file = os.path.join(codemeta_download_dir, f"{codemeta_id}.codemeta.json")
         if not os.path.isfile(codemeta_file):
-            create_minimal_ruc(codemeta_file)
-         
+            create_minimal_ruc(codemeta_file, ruc_contents_dict)
+                
         add_to_jsonlines(codemeta_file, os.path.join(output_path_data, "codemeta.jsonl"))
+    
 
-    # Search  for inactive tools to delete in INEO
+    # Search for inactive tools to delete in INEO (inactive after three runs in the database)
     # Retrieve the codemeta records from the database
     codemeta_records = get_matching_timesamps(db_file_name, table_name_tools, threshold)
     # Iterate through the absent records and compare the timestamps in the db with the current date 
