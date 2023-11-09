@@ -20,7 +20,6 @@ delete_path = "./deleted_documents"
 
 
 def configure_logger(log_file_path):
-    # Create a logger
     log = logging.getLogger(__name__)
     log.setLevel(logging.DEBUG)
 
@@ -29,18 +28,11 @@ def configure_logger(log_file_path):
     if not os.path.exists(logs_folder):
         os.makedirs(logs_folder)
 
-    # Set the log file path inside the "logs" folder
     log_file_path = os.path.join(logs_folder, log_file_path)
-
-    # Create a file handler and set the log file path
     file_handler = logging.FileHandler(log_file_path)
-
-    # Create a log formatter and set it for the file handler
-    log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    log_format = "%(asctime)s - %(levelname)s - %(message)s"
     formatter = logging.Formatter(log_format)
     file_handler.setFormatter(formatter)
-
-    # Add the file handler to the logger
     log.addHandler(file_handler)
 
     return log
@@ -56,7 +48,7 @@ def create_folder(folder_name: str):
 
 def extract_ruc(ruc_content: AnyStr) -> dict:
     """"
-    Extracts Rich User Content (RUC) data from a given content string.
+    Extracts Rich User Content (RUC) data from a markdown file. 
 
     This function parses the input content string to extract metadata fields, descriptions, and sections,
     organizing them into a dictionary.
@@ -132,7 +124,8 @@ def get_db_cursor(db_file_name=os.path.join(output_path_data, "ineo.db"), table_
 
 def get_canonical(file_name):
     """
-    Create a canonical version of the json file
+    Create a canonical version of the json file. 
+    For ignoring fields that do not contain necessary changes for the MD5 to change.
     """
     log.info(f"making canon file for {file_name}")
     canon_file = f"{file_name}.canon"
@@ -166,7 +159,7 @@ def download_json_files(
         url: str = "https://tools.clariah.nl/files/",
         save_directory: str = os.path.join(output_path_data, "tools_metadata")) -> List[str]:
     """
-    Download and count all individual json files
+    Download and count all individual json files using beautifulsoup to harvest contents from the given URL. 
 
     """
     # first backup previous JSON files
@@ -235,6 +228,7 @@ def get_files(folder_name: str) -> Optional[List[str]]:
 def make_jsonline(jsonfile):
     """
     Write the contents of multiple JSON files to a single JSONlines file.
+    RumbleDB processes JSONL files. 
     """
     data = json.load(jsonfile)
     return data
@@ -242,10 +236,7 @@ def make_jsonline(jsonfile):
 
 def add_to_jsonlines(read_from_file, write_to_file):
     """
-    Add a single JSON file to a JSONlines file.
-    read_from_id: path to read JSON file from
-    write_to_file: handle to JSONlines file
-    returns: None
+    Add a single JSON file (e.g. codemeta.json) to a JSONlines file.
     """
     with open(read_from_file, 'r') as json_file:
         data = make_jsonline(json_file)
@@ -535,7 +526,7 @@ def process_records_timestamps(records):
 def create_minimal_ruc(ruc_file, ruc_contents_dict):
     """
     Create a minimal RUC (Rich User Contents) object with default values and save it to a JSON file.
-    Used when there is no corresponding codemeta files for a RUC.
+    Used when there is no corresponding codemeta file for a RUC. 
     """
     
     ruc_id = get_id_from_ruc_file_name(ruc_file)
@@ -685,8 +676,7 @@ def main(threshold):
         add_to_jsonlines(codemeta_file, os.path.join(output_path_data, "codemeta.jsonl"))
     
 
-    # Search for inactive tools to delete in INEO (inactive after three runs in the database)
-    # Retrieve the codemeta records from the database
+    # Search for inactive tools to delete in INEO (inactive after a tool is absent for three runs in the database)
     codemeta_records = get_matching_timesamps(db_file_name, table_name_tools, threshold)
     # Iterate through the absent records and compare the timestamps in the db with the current date 
     process_records_timestamps(codemeta_records)

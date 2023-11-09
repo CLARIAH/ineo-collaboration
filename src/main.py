@@ -3,6 +3,7 @@ import rating
 import template
 import ineo_sync
 import logging
+import ineo_get_properties
 import json
 import os
 import shutil
@@ -25,6 +26,10 @@ def call_rating():
     rating.main()
     log.info("Filtering for rating...")
 
+
+def call_get_properties():
+    ineo_get_properties.main()
+    log.info("Getting properties from the INEO API")
 
 def is_empty_jsonl_file(file_path):
     """
@@ -89,12 +94,13 @@ if "__main__" == __name__:
     backup_timestamps = []
     
     # Harvest codemeta and Rich User Contents files 
-    call_harvester()
+    #call_harvester()
     
     # Filter codemeta.jsonl for reviewRating > 3 (+ manual demand list and ruc without codemeta)
-    call_rating()
+    #call_rating()
 
     tools_to_INEO = get_ids_from_jsonl(JSONL_c3)
+    call_get_properties()
 
     # If the jsonl file is empty, there are no updates:
     if is_empty_jsonl_file(JSONL_c3):

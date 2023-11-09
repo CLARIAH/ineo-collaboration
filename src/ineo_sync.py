@@ -65,20 +65,15 @@ def save_json_data_to_file(data, file_path):
         json.dump(data, json_file, indent=4)
 
 def check_domains(id, folder_path):
-    urls_properties = [
-        "https://ineo-resources-api-5b568b0ad6eb.herokuapp.com/properties/researchDomains",
-    ]
-
-    for url in urls_properties:
-        response = requests.get(url, headers=header)
-        if response.status_code == 200:
-            # Request was successful
-            research_domains = response.json()
+    properties_file_path = "./properties/researchDomains.json"
+    if os.path.exists(properties_file_path):
+        with open(properties_file_path, "r") as json_file:
+            research_domains = json.load(json_file)
             research_domain_links = {entry["link"]: entry for entry in research_domains}
-            data = load_processed_document(id, folder_path)
+            properties = load_processed_document(id, folder_path)
 
             # Extract the researchDomains value
-            research_domains = data[0]["document"]["properties"]["researchDomains"]
+            research_domains = properties[0]["document"]["properties"]["researchDomains"]
 
             updated_research_domains = []
             
@@ -88,7 +83,7 @@ def check_domains(id, folder_path):
                 for link in research_domain_links:
                     link_lower = link.lower() if link is not None else None
                     if domain_lower and link_lower and domain_lower == link_lower:
-                        log.info(f"Match found for domain: {domain} (case-insensitive comparison)")
+                        print(f"Match found for domain: {domain} (case-insensitive comparison)")
                         # Replace the researchDomain with the corresponding link
                         updated_research_domains.append(research_domain_links[link]["link"])
                         break
@@ -98,17 +93,17 @@ def check_domains(id, folder_path):
 
             
             # Update the researchDomains value in the data
-            data[0]["document"]["properties"]["researchDomains"] = updated_research_domains
+            properties[0]["document"]["properties"]["researchDomains"] = updated_research_domains
 
             # Save the updated data back to the same JSON file
             json_file_path = f"./processed_jsonfiles/{id}_processed.json"
-            save_json_data_to_file(data, json_file_path)
+            save_json_data_to_file(properties, json_file_path)
 
-            return data
+            return properties
 
-        else:
-            print("Failed to retrieve researchDomains from the API")
-            return None
+    else:
+        print("no INEO properties found")
+        return None
 
 
 def get_document(ids) -> list:
@@ -267,6 +262,7 @@ def main():
     for processed_id in processed_document_ids:
         check_domains(processed_id, processed_jsonfiles)
 
+    exit()
     processed_documents, ids_to_create, ids_to_update,  = get_document(processed_document_ids)  
     
     update_document(processed_documents, ids_to_update)

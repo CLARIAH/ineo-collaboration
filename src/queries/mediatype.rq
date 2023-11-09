@@ -1,14 +1,40 @@
-for $i in json-file("{JSONL}", 10) 
-where $i.identifier eq "{ID}" 
-return
-if ($i.targetProduct instance of array) then
-  for $item in $i.targetProduct[]
-  return 
-    if ($item.consumesData instance of object) then
-      [$item.consumesData.encodingFormat]
-    else if ($item.consumesData instance of array) then
-    for $data in $item.consumesData[]
-    return [$data.encodingFormat]  
-    else()
-    
-else()
+let $results := (
+  for $i in json-file("{JSONL}", 10) 
+  where $i.identifier eq "{ID}"
+  return
+  if ($i.targetProduct instance of array) then
+    for $item in $i.targetProduct[]
+    let $consumesFormats :=
+      if ($item.consumesData instance of object) then
+        $item.consumesData.encodingFormat
+      else if ($item.consumesData instance of array) then
+        for $data in $item.consumesData[]
+        return $data.encodingFormat
+      else ()
+    let $producesFormats :=
+      if ($item.producesData instance of object) then
+        $item.producesData.encodingFormat
+      else if ($item.producesData instance of array) then
+        for $data in $item.producesData[]
+        return $data.encodingFormat
+      else ()
+    return ($consumesFormats, $producesFormats)
+  else if ($i.targetProduct instance of object) then
+    let $consumesFormats :=
+      for $product in $i.targetProduct.consumesData[]
+      return $product.encodingFormat
+    let $producesFormats :=
+      for $prod in $i.targetProduct.producesData[]
+      return $prod.encodingFormat
+    return ($consumesFormats, $producesFormats)
+  else ()
+)
+
+let $uniqueValues := distinct-values($results)
+
+let $splitValues :=
+  for $value in $uniqueValues
+  for $component in tokenize($value, "/")
+  return $component
+
+return [$splitValues]
