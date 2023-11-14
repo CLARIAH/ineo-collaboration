@@ -136,8 +136,6 @@ def checking_vocabs(value):
     """
     if "nwo" in value:
         return re.sub(r'^nwo:', 'https://w3id.org/nwo-research-fields#', value)
-
-
     elif "w3id.org" in value:
         return value
     elif "vocabs.dariah.eu" in value:
@@ -146,30 +144,30 @@ def checking_vocabs(value):
     else:
         return value
 
-def process_vocabs(vocabs_item, val, vocabs_list):
+def process_vocabs(vocabs, vocab, val, vocabs_list):
     """
-    This function compares the links of the vocabularies (e.g. research domains and activities) with the outcome of the jsoniq query on the codemeta files.
-    To make the comparisons case-insensitive, both vocab links and val are converted to lowercase (or uppercase). This is because in the vocabularies data there are examples 
-    like "https://w3id.org/nwo-research-fields#ComputationalLinguisticsAndPhilology", whereas this is "https://w3id.org/nwo-research-fields#ComputationalLinguisticsandPhilology" in the codemeta files.
+    This function compares the links of the properties (e.g. mediaType) from INEO with the outcome of the jsoniq query on the codemeta files.
+    To make the comparisons case-insensitive, both vocab links and val are converted to lowercase (or uppercase). 
 
-    The vocabularies are processed in a different script, named vocabs.py, that matches research domains in the vocabularies with nwo research fields. 
 
-    link: type = 'str, key "link' of researchDomains.json or researchActivity.json (e.g. link": "https://vocabs.dariah.eu/tadirah/contentAnalysis")
-    result: type = 'str, merged index number and title of the vocabularies (researchActivity.json, researchDomains.json). E.g. "1.5 Structural Analysis"
+    It merges the index number and title of the properties in the format {index + title} "7.23 plain"
     """
     
-    link = vocabs_item.get("link")
+    # Check if the 'properties' key of MediaType is present in the properties
+    if vocab in vocabs:
+        # Iterate through the 'mediaTypes' list
+        for item in vocabs[vocab]:
+            # Check if val is present in the 'title'
+            if val == item['title'].strip():
+                # If there is a match, return index and title
+                result = f"{item['index']} {val}"
+                #vocabs_list.append(result)
+                return result
+                
+            else:
+                debug("process_vocabs", f"There is no match for {val}")
+
     
-    if link is not None and val is not None and link.lower() == val.lower():
-        title = vocabs_item.get("title")  # Retrieving the "title" attribute from vocabs (e.g. "title": "Structural Analysis" )
-        index = vocabs_item.get("index") # Retrieving the "index" attribute from vocabs (e.g. "index": "1.5")
-        result = f"{index} {title}" # Merging them together in the right format
-        vocabs_list.append(result)
-        debug("vocabs", f"vocabs index and title: {result}")
-    else:
-        "There is no match"
-
-
 # global cache for vocabularies
 vocabs = {}
 
@@ -348,30 +346,31 @@ def retrieve_info(info, ruc) -> list | str | None:
                 
                 if vocab not in vocabs.keys():
                     # Load the vocabs file to be used later
-                    with open(f"/src/vocabs/{vocab}.json", "r") as vocabs_file:
+                    with open(f"/src/properties/{vocab}.json", "r") as vocabs_file:
                         vocabs[vocab] = json.load(vocabs_file)
                 
                 vocabs_list = []
+                
                 for val in info:
                     val = checking_vocabs(val)
                     debug(vocab, val) 
                     if val.startswith("https://w3id.org/nwo-research-fields#"):
                         info = val
                     else:
-                        # Iterate through the items in the "result" array of the vocabs
-                        for vocabs_item in vocabs[vocab].get("result", []):
-                            # Comparing the link of the vocabs with val
-                            process_vocabs(vocabs_item, val, vocabs_list)
-                
+                        # Comparing the link of the vocabs with val
+                        info = process_vocabs(vocabs, vocab, val, vocabs_list)
+                        debug(
+                            "retrieve_info",
+                            f"The vocab value from '{info_parts[2].strip()}': {val}",
+                            )
+                        if info is not None:
+                            vocabs_list.append(info)
                         if len(vocabs_list) > 0:
-                            info = vocabs_list
+                            unique_list = list(set(vocabs_list))
+                            info = unique_list
                         else:
                             info = None
 
-                        debug(
-                            "retrieve_info",
-                            f"The vocab value from '{info_parts[2].strip()}': {info}",
-                            )
 
             if info is not None:
                 debug("retrieve_info", f"The value of '{path}' in the MD: {info}")

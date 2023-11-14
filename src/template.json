@@ -35,27 +35,15 @@
                     }
                 ],
                 "funding": "<md:@queries/funding.rq,null",
-                "problemContact": [
-                    {
-                        "title": "This information is not (yet) available",
-                        "link": "url"
-                    }
-                ],
+                "problemContact": "<md:@queries/maintainer.rq,null",
                 "informationTypes": [
                     "2 Computer Files",
                     "3 Continuing Resources"
                 ],
-                "languages": [
-                    "English"
-                ],
-                "access": [
-                    {
-                        "title": "GitHub users",
-                        "link": "https://github.com/CLARIAH/grlc"
-                    }
-                ],
+                "languages": "<md:@queries/language.rq,null",
+                "access": "<md:@queries/coderepository.rq,null",
                 "sourceCodeLocation": "<md:@queries/coderepository.rq,null",
-                "researchContact": "<md:@queries/author.rq,null",
+                "researchContact": "string",
                 "generalContact": [
                     {
                         "title": "string",
@@ -75,8 +63,8 @@
                 "link": "<md:@queries/url.rq,null",
                 "intro": "<md:description,null",
                 "researchActivities": "<md:@queries/activities.rq,null",
-                "researchDomains": ["<md:@queries/domains.rq:researchDomains,null"],
-                "mediaTypes": "<md:@queries/mediatype.rq,null",
+                "researchDomains": ["<md:@queries/domains.rq,null"],
+                "mediaTypes": "<md:@queries/mediatype.rq:mediaTypes,null",
                 "provenance": [
                     {
                         "title": "string",
@@ -89,12 +77,7 @@
                         "link": "url"
                     }
                 ],
-                "development": [
-                    {
-                        "title": "string",
-                        "link": "url"
-                    }
-                ]
+                "development": "<md:@queries/author.rq,null"
             }
         }
     }
