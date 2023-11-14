@@ -1,0 +1,32 @@
+let $results := (
+  for $i in json-file("{JSONL}", 10) 
+  where $i.identifier eq "{ID}"
+  return
+  if ($i.targetProduct instance of array) then
+    for $item in $i.targetProduct[]
+    let $consumesFormats :=
+      if ($item.consumesData instance of object) then
+        $item.consumesData.inLanguage.name
+      else if ($item.consumesData instance of array) then
+        for $data in $item.consumesData[]
+        return $data.inLanguage.name
+      else ()
+    let $producesFormats :=
+      if ($item.producesData instance of object) then
+        $item.producesData.encodingFormat
+      else if ($item.producesData instance of array) then
+        for $data in $item.producesData[]
+        return $data.inLanguage.name
+      else ()
+    return ($consumesFormats, $producesFormats)
+  else if ($i.targetProduct instance of object) then
+    let $consumesFormats :=
+      for $product in $i.targetProduct.consumesData[]
+      return $product.inLanguage.name
+    let $producesFormats :=
+      for $prod in $i.targetProduct.producesData[]
+      return $prod.inLanguage.name
+    return ($consumesFormats, $producesFormats)
+  else ()
+)
+return [distinct-values($results)]

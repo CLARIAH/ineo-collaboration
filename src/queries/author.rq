@@ -1,5 +1,29 @@
-for $i in json-file("{JSONL}", 10) 
-where $i.identifier eq "{ID}" 
-for $item in $i.author[]
-return [{"title": $item."givenName" || " " || $item."familyName", 
-"link": [$item."url", $item."@id", $item."email"][[1]]}]
+
+let $results := (for $i in json-file("{JSONL}", 10) 
+where $i.identifier eq "{ID}"
+
+return (
+  for $author in $i.author[]
+  return {
+    "title": $author."givenName" || " " || $author."familyName",
+    "link": [$author."url", $author."@id", $author."email"][[1]]
+  },
+  for $contributor in $i.contributor[]
+  return {
+    "title": $contributor."givenName" || " " || $contributor."familyName",
+    "link": [$contributor."url", $contributor."@id", $contributor."email"][[1]]
+  }
+)
+)
+
+let $uniqueValues :=
+  for $result in distinct-values(
+    for $r in $results
+    return fn:concat($r."title", "|", $r."link")
+  )
+  return {
+    "title": fn:substring-before($result, "|"),
+    "link": fn:substring-after($result, "|")
+  }
+  
+return [$uniqueValues]

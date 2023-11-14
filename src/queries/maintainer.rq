@@ -1,0 +1,25 @@
+let $results :=
+  (
+    for $i in json-file("{JSONL}", 10) 
+    where $i.identifier eq "{ID}"
+    return
+      (
+        for $contact in $i.maintainer[]
+        return {
+          "title": $contact."givenName" || " " || $contact."familyName",
+          "link": $contact."email"
+        }
+      )
+  )
+
+let $uniqueValues :=
+  for $result in distinct-values(
+    for $r in $results
+    return fn:concat($r."title", "|", $r."link")
+  )
+  return {
+    "title": fn:substring-before($result, "|"),
+    "link": fn:substring-after($result, "|")
+  }
+  
+return [$uniqueValues]
