@@ -28,55 +28,27 @@
             "properties": {
                 "programmingLanguages": "<md:@queries/plangs.rq,null",
                 "learn": "<md:@queries/softwarehelp.rq,null",
-                "resourceHost": [
-                    {
-                        "title": "Huygens Instituut",
-                        "link": "https://www.huygens.knaw.nl/"
-                    }
-                ],
+                "resourceHost": "<md:@queries/provider.rq,null",
                 "funding": "<md:@queries/funding.rq,null",
                 "problemContact": "<md:@queries/maintainer.rq,null",
-                "informationTypes": [
-                    "2 Computer Files",
-                    "3 Continuing Resources"
-                ],
+                "informationTypes": [],
                 "languages": "<md:@queries/language.rq,null",
                 "access": "<md:@queries/coderepository.rq,null",
                 "sourceCodeLocation": "<md:@queries/coderepository.rq,null",
-                "researchContact": "string",
-                "generalContact": [
-                    {
-                        "title": "string",
-                        "link": "url"
-                    }
-                ],
+                "researchContact": [],
+                "generalContact": [],
                 "resourceTypes": "<md:@queries/resourcetype.rq,null",
                 "status": "<md:@queries/status.rq,null",
                 "versions": "<md:@queries/version.rq,null",
-                "standards": [
-                    {
-                        "title": "string",
-                        "link": "url"
-                    }
-                ],
+                "standards": [],
                 "resourceOwner": "<md:@queries/producer.rq,null",
                 "link": "<md:@queries/url.rq,null",
                 "intro": "<md:description,null",
                 "researchActivities": "<md:@queries/activities.rq,null",
-                "researchDomains": ["<md:@queries/domains.rq,null"],
+                "researchDomains": "<md:@queries/domains.rq:researchDomains,null",
                 "mediaTypes": "<md:@queries/mediatype.rq:mediaTypes,null",
-                "provenance": [
-                    {
-                        "title": "string",
-                        "link": "url"
-                    }
-                ],
-                "community": [
-                    {
-                        "title": "This information is not (yet) available",
-                        "link": "url"
-                    }
-                ],
+                "provenance": [],
+                "community": [],
                 "development": "<md:@queries/author.rq,null"
             }
         }
