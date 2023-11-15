@@ -64,53 +64,63 @@ def save_json_data_to_file(data, file_path):
     with open(file_path, 'w') as json_file:
         json.dump(data, json_file, indent=4)
 
-def check_domains(id, folder_path):
-    properties_file_path = "./properties/researchDomains.json"
+
+def check_properties(id, folder_path, vocabs):
+    """"
+    This function checks whether the researchDomains and researchActivities in the processed templates matches INEO.
+    There are some discrepancies, e.g. https://w3id.org/nwo-research-fields#TextualandContentAnalysis (INEO) 
+    and https://w3id.org/nwo-research-fields#TextualandContentAnalysis (processed Json file of Alud)
+    
+    """
+    properties_file_path = f"./properties/{vocabs}.json"
     if os.path.exists(properties_file_path):
         with open(properties_file_path, "r") as json_file:
-            research_domains = json.load(json_file)
-            research_domain_links = {entry["link"]: entry for entry in research_domains}
-            properties = load_processed_document(id, folder_path)
+            properties = json.load(json_file)
+            processed_files = load_processed_document(id, folder_path)
+            research_domains = processed_files[0]['document']['properties'][f'{vocabs}']
+            links = [entry['link'] for entry in properties]
+            # Check if research_domains is not None
+            if research_domains is not None:
+                # Filter out None values from research_domains
+                research_domains = [domain for domain in research_domains if domain]
 
-            # Extract the researchDomains value
-            research_domains = properties[0]["document"]["properties"]["researchDomains"]
+                matches = [domain for domain in research_domains if domain in links]
 
-            updated_research_domains = []
-            
-            for domain in research_domains:
-                # Convert both domain to lowercase for case-insensitive comparison
-                domain_lower = domain.lower() if domain is not None else None
-                for link in research_domain_links:
-                    link_lower = link.lower() if link is not None else None
-                    if domain_lower and link_lower and domain_lower == link_lower:
-                        print(f"Match found for domain: {domain} (case-insensitive comparison)")
-                        # Replace the researchDomain with the corresponding link
-                        updated_research_domains.append(research_domain_links[link]["link"])
-                        break
-                else:
-                    # If no match is found or if domain or link is None, keep the original domain
-                    updated_research_domains.append(domain)
+                updated_research_domains = []
+                non_matches = []
 
-            
-            # Update the researchDomains value in the data
-            properties[0]["document"]["properties"]["researchDomains"] = updated_research_domains
+                # Print results and update research domains
+                for domain in research_domains:
+                    if domain in matches:
+                        log.info(f"Match found: {domain}")
+                        corresponding_link = next(link for link in links if link.lower() == domain.lower())
+                        updated_research_domains.append(corresponding_link)
+                    elif domain.lower() in [link.lower() for link in links]:
+                        log.info(f"Match found (case-insensitive): {domain}")
+                        corresponding_link = next(link for link in links if link.lower() == domain.lower())
+                        updated_research_domains.append(corresponding_link)
+                    else:
+                        log.info(f"No match found for: {domain}")
+                        non_matches.append(domain)
+                        log.info(f"no matches for: {non_matches}")
 
-            # Save the updated data back to the same JSON file
-            json_file_path = f"./processed_jsonfiles/{id}_processed.json"
-            save_json_data_to_file(properties, json_file_path)
+                # Update the researchDomains value in the data
+                processed_files[0]['document']['properties'][f'{vocabs}'] = updated_research_domains
 
-            return properties
-
-    else:
-        print("no INEO properties found")
-        return None
-
+                # Save the updated data back to the same JSON file
+                json_file_path = f"./processed_jsonfiles/{id}_processed.json"
+                save_json_data_to_file(processed_files, json_file_path)
+  
 
 def get_document(ids) -> list:
     """
     This code first checks if a tool with the given identifier exists in INEO by performing a GET request. 
     If a resource exists (status code 200) and does not return an empty list, it returns a list with the processed resources. 
     If the resource does not exist the API returns an empty list [] (not a status code 404). 
+
+    - id (str): Identifier of the processed files.
+    - folder_path (str): Path to the folder containing the processed files.
+    - vocabs (str): Name of the property (e.g., "researchDomains" or "researchActivities").
 
     """
     processed_document = []
@@ -260,16 +270,16 @@ def delete_document(delete_list):
 def main():
     processed_document_ids = get_id_json(processed_jsonfiles)
     for processed_id in processed_document_ids:
-        check_domains(processed_id, processed_jsonfiles)
-
+        check_properties(processed_id, processed_jsonfiles, vocabs = "researchDomains")
+        check_properties(processed_id, processed_jsonfiles, vocabs = "researchActivities")
+    
+    #processed_documents, ids_to_create, ids_to_update,  = get_document(processed_document_ids)  
+    
+   # update_document(processed_documents, ids_to_update)
+    
+    #handle_empty(ids_to_create)
+    
     exit()
-    processed_documents, ids_to_create, ids_to_update,  = get_document(processed_document_ids)  
-    
-    update_document(processed_documents, ids_to_update)
-    
-    handle_empty(ids_to_create)
-    
-
     # json file that contains the ids of the tools that needs to be deleted (outcome of harvester.py)
     # Check if there are files to delete
     if not os.path.exists(delete_path):
