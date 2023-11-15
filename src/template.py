@@ -141,10 +141,13 @@ def checking_vocabs(value):
     elif "vocabs.dariah.eu" in value:
         debug("info", "The value contains 'vocabs.dariah.eu'")
         return value
+    elif ">" in value:
+        debug("info", "Value contains '>' and will be ignored")
+        return None 
     else:
         return value
 
-def process_vocabs(vocabs, vocab, val, vocabs_list):
+def process_vocabs(vocabs, vocab, val):
     """
     This function compares the links of the properties (e.g. mediaType) from INEO with the outcome of the jsoniq query on the codemeta files.
     To make the comparisons case-insensitive, both vocab links and val are converted to lowercase (or uppercase). 
@@ -153,14 +156,14 @@ def process_vocabs(vocabs, vocab, val, vocabs_list):
     It merges the index number and title of the properties in the format {index + title} "7.23 plain"
     """
     
-    # Check if the 'properties' key of MediaType is present in the properties
+    # Check if the 'properties' key of e.g. MediaType is present in the properties
     if vocab in vocabs:
         # Iterate through the 'mediaTypes' list
         for item in vocabs[vocab]:
             # Check if val is present in the 'title'
             if val == item['title'].strip():
                 # If there is a match, return index and title
-                result = f"{item['index']} {val}"
+                result = f"{item['index']} {val.strip()}"
                 #vocabs_list.append(result)
                 return result
                 
@@ -350,15 +353,17 @@ def retrieve_info(info, ruc) -> list | str | None:
                         vocabs[vocab] = json.load(vocabs_file)
                 
                 vocabs_list = []
+                result_info = []
                 
                 for val in info:
-                    val = checking_vocabs(val)
+                    checked_val = checking_vocabs(val)
                     debug(vocab, val) 
-                    if val.startswith("https://w3id.org/nwo-research-fields#"):
-                        info = val
+                    if checked_val is not None and checked_val.startswith("https://w3id.org/nwo-research-fields#"):
+                        result_info.append(checked_val)
+                        info = result_info 
                     else:
-                        # Comparing the link of the vocabs with val
-                        info = process_vocabs(vocabs, vocab, val, vocabs_list)
+                        # Retrieve the index number of the title of the property for mapping to INEO. E.g. for MediaTypes that is 7.23 plain
+                        info = process_vocabs(vocabs, vocab, val)
                         debug(
                             "retrieve_info",
                             f"The vocab value from '{info_parts[2].strip()}': {val}",
