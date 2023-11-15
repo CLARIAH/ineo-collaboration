@@ -1,0 +1,14 @@
+let $results := (
+  for $i in json-file("{JSONL}", 10) 
+  where $i.identifier eq "{ID}"
+  return
+  if ($i.targetProduct.provider.name instance of string) 
+  then [{"title": $i.targetProduct.provider.name, "link": $i.targetProduct.provider.url}]
+  else [
+    for $name in $i.targetProduct.provider.name[]
+    where $name."@language" eq "en"
+    return {"title": $name."@value", "link": $i.targetProduct.provider.url}
+  ]
+)
+
+return $results
