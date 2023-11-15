@@ -1,6 +1,7 @@
 import requests
 import json
 import logging
+import os
 from harvester import configure_logger
 
 
@@ -67,17 +68,38 @@ def process_jsonlfile(input_file_path, c3_ids, tools_requests):
 
 def main():
 
-    # list of codemeta tools that do not have a sufficient rating but are requested by the provider. Added manually.
-    tools_requests = ['mediasuite', 'lenticularlens', 'codemeta2html']
-    log.info(f"tools that need to be manually added to INEO: {tools_requests}")
+    # Exmample list of codemeta tools that do not have a sufficient rating but are requested by the provider. 
+    # For now (15112023) this is a list of codemeta tools that are already uploaded to INEO and do not have a rating >= 3. 
+    tools_requests = ['gretel', 'burgerlinker']
     
-    # Paths to the query file and the output JSONL file.
-    query_file = "./queries/rating.rq"
+    # Here follows code for tools that have a RUC but do not have a sufficient rating
+    # Path to the query file for a reviewRating >= 3 and the output JSONL file.
+    query_file_rating = "./queries/rating.rq"
+    # Path to the query file for a reviewRating < 3
+    query_file_no_rating = "./queries/norating.rq"
     c3_jsonlfile = "./data/c3.jsonl"
 
     # Execute the query to get codemeta IDs with a reviewRating >= 3.
-    c3_ids = query_rumbledb(query_file, JSONL_cc)
+    c3_ids = query_rumbledb(query_file_rating, JSONL_cc)
     log.info(f"Tools with a reviewRating >= 3: {c3_ids}")
+    
+    # Execute the query to get codemeta IDs with a reviewRating < 3.
+    no_c3 = query_rumbledb(query_file_no_rating, JSONL_cc)
+    log.info(f"Tools with a reviewRating < 3: {no_c3}")
+
+    identifiers = no_c3.get('values', [])
+    RUC_tools_no_rating = []
+    rich_user_contents_folder = "./data/rich_user_contents"
+    for identifier in identifiers:
+        filename = f"{identifier}.json"
+        filepath = os.path.join(rich_user_contents_folder, filename)
+
+        if os.path.exists(filepath):
+            log.info(f"Tool {identifier} exists in the rich_user_contents folder. Add to jsonl file to be processed for INEO!")
+            RUC_tools_no_rating.append(identifier)
+    
+    tools_requests.extend(RUC_tools_no_rating)
+    log.info(f"tools that need to be manually added to INEO: {tools_requests}")
     
     # Initialize a list to store matching lines 
     c3_lines = []
