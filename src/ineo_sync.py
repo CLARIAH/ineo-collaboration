@@ -155,54 +155,69 @@ def resource_exists(get_response, id, ids_to_create):
         # Append the ID to the list of resources to create in INEO
         ids_to_create.append(id)
 
-def handle_empty(ids):
+
+def handle_empty(ids, force_yes=False):
     """
-    In case a resource does not exists in the INEO API (returns [], not a 404!), it will be created with a POST request.
+    In case a resource does not exist in the INEO API (returns [], not a 404!), it will be created with a POST request.
     The default operation in a document is "create". 
     """
-    # id of the document that is not present in INEO
+    if not force_yes:
+        force_yes = input("Do you want to force 'yes' for all new tools (create)? (y/n): ").lower() == 'y'
+
     for id in ids:
-        confirmation = input(f"Are you sure you want to create {id}? (y/n): ")
-        if confirmation.lower() == 'y':
-            log.info(f"Sending {id} to INEO...")
-            file_name = f"{id}_processed.json"
-            file_path = os.path.join(processed_jsonfiles, file_name)
-            with open(file_path, 'r') as new_document:
-                new_document = json.load(new_document)
-                create_response = requests.post(api_url, json=new_document, headers=header)
-            if create_response.status_code == 200:
-                log.info(f"Creation of {id} is successful")
-                log.info(create_response.text)
-            else:
-                log.error(f"Creation of {id} has failed")
-                log.info(create_response.text)
+        if not force_yes:
+            confirmation = input(f"Are you sure you want to create {id}? (y/n): ")
+            if confirmation.lower() != 'y':
+                log.info(f"Creation of {id} canceled.")
+                continue
+        
+        log.info(f"Sending {id} to INEO...")
+        file_name = f"{id}_processed.json"
+        file_path = os.path.join(processed_jsonfiles, file_name)
+        
+        with open(file_path, 'r') as new_document:
+            new_document = json.load(new_document)
+            create_response = requests.post(api_url, json=new_document, headers=header)
+        
+        if create_response.status_code == 200:
+            log.info(f"Creation of {id} is successful")
+            log.info(create_response.text)
+            log.info(f"New tool available here: https://ineo-git-feature-api-resource-eightmedia.vercel.app/resources/{id}")
         else:
-            log.info(f"Creation of {id} canceled.")
+            log.error(f"Creation of {id} has failed")
+            log.info(create_response.text)
 
 
-def update_document(documents, ids):
+def update_document(documents, ids, force_yes=False):
     """
     When the http request method is POST we can send resources to the INEO API. 
-    There are three operations with POST: create, update and delete.
+    There are three operations with POST: create, update, and delete.
     This code handles an update operation if a resource already exists in INEO.
     If a resource exists (200), it changes the default operation "create" into "update" and performs a POST request.
-    If a resource does not esixt we get an empty list []. 
+    If a resource does not exist, we get an empty list [].
     """
+    if not force_yes:
+        force_yes = input("Do you want to force 'yes' for all updates? (y/n): ").lower() == 'y'
+    
     for document, id in zip(documents, ids):
-        confirmation = input(f"Are you sure you want to update {id}? (y/n): ")
-        if confirmation.lower() == 'y':
-            log.info(f"Updating tool {id}...")
+        if not force_yes:
+            confirmation = input(f"Are you sure you want to update {id}? (y/n): ")
+            if confirmation.lower() != 'y':
+                log.info(f"Update of {id} canceled.")
+                continue
+        
+        log.info(f"Updating tool {id}...")
         # change default operation "create" into "update"
-            document[0]["operation"] = "update"
-            update_response = requests.post(api_url, json=document, headers=header)
-            if update_response.status_code == 200:
-                log.info(f"Update of {id} is successful")
-                log.info(update_response.text)
-            else:
-                log.error(f"Error updating {ids}")
-                log.info(update_response.text)
+        document[0]["operation"] = "update"
+        update_response = requests.post(api_url, json=document, headers=header)
+        
+        if update_response.status_code == 200:
+            log.info(f"Update of {id} is successful")
+            log.info(update_response.text)
+            log.info(f"Updated tool available here: https://ineo-git-feature-api-resource-eightmedia.vercel.app/resources/{id}")
         else:
-            log.info(f"Update of {id} canceled.")
+            log.error(f"Error updating {ids}")
+            log.info(update_response.text)
 
 class ToolStillPresentError(Exception):
     pass
@@ -228,7 +243,7 @@ def create_delete_template():
     create_delete_template()
 
 
-def delete_document(delete_list):
+def delete_document(delete_list, force_yes=False):
     """
     If a document contains a delete operation, with a post request we can delete resources in INEO. 
     Only the id is needed to delete a resource.
@@ -237,6 +252,9 @@ def delete_document(delete_list):
     deleted_documents_folder = "deleted_documents"
     delete_template = create_delete_template()
     file_path = os.path.join(deleted_documents_folder, delete_template)   
+    
+    if not force_yes:
+        force_yes = input("Do you want to force 'yes' for all deletions? (y/n): ").lower() == 'y'
     
     for id in delete_list:
         # Read the delete template and insert the id of the tool to be deleted
@@ -249,22 +267,26 @@ def delete_document(delete_list):
         with open(output_file_path, 'w') as file:
             json.dump(delete_template, file, indent=4) 
 
-        confirmation = input(f"Are you sure you want to delete {id}? (y/n): ")
-        if confirmation.lower() == 'y':
-            log.info(f"Deleting tool {id}...")
-            update_response = requests.post(api_url, json=delete_template, headers=header)
-            if update_response.status_code == 200:
-                get_url = f"{api_url}{id}"
-                get_response = requests.get(get_url, headers=header)
-                if get_response.status_code == 200 and get_response.text == '[]':
-                    log.info(f"Tool with id {id} deleted successfully.")
-                else:
-                    raise ToolStillPresentError(f"ERROR: {id} is still present in INEO")
+        if not force_yes:
+            confirmation = input(f"Are you sure you want to delete {id}? (y/n): ")
+            if confirmation.lower() != 'y':
+                log.info(f"Deletion of tool with id {id} canceled.")
+                continue
+        
+        log.info(f"Deleting tool {id}...")
+        update_response = requests.post(api_url, json=delete_template, headers=header)
+        
+        if update_response.status_code == 200:
+            get_url = f"{api_url}{id}"
+            get_response = requests.get(get_url, headers=header)
+            if get_response.status_code == 200 and get_response.text == '[]':
+                log.info(f"Tool with id {id} deleted successfully.")
             else:
-                log.error(f"ERROR: cannot delete {id}")
-                log.info(update_response.text)
+                raise ToolStillPresentError(f"ERROR: {id} is still present in INEO")
         else:
-            log.info(f"Deletion of tool with id {id} canceled.")
+            log.error(f"ERROR: cannot delete {id}")
+            log.info(update_response.text)
+
 
 
 def main():
@@ -273,15 +295,15 @@ def main():
         check_properties(processed_id, processed_jsonfiles, vocabs = "researchDomains")
         check_properties(processed_id, processed_jsonfiles, vocabs = "researchActivities")
     
-    #processed_documents, ids_to_create, ids_to_update,  = get_document(processed_document_ids)  
+    processed_documents, ids_to_create, ids_to_update,  = get_document(processed_document_ids)  
     
-   # update_document(processed_documents, ids_to_update)
+    update_document(processed_documents, ids_to_update)
     
-    #handle_empty(ids_to_create)
+    handle_empty(ids_to_create)
     
-    exit()
-    # json file that contains the ids of the tools that needs to be deleted (outcome of harvester.py)
+
     # Check if there are files to delete
+    # json file that contains the ids of the tools that needs to be deleted (outcome of harvester.py)
     if not os.path.exists(delete_path):
         log.info(f"The folder {delete_path} does not exist, no tools to delete.")
         sys.exit(1)
