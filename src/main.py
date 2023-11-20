@@ -82,25 +82,14 @@ def call_ineo_sync():
 
 if "__main__" == __name__:
     
-    # Define the maximum number of runs to keep backups of the c3 JSONL file
-    max_backup_runs = 3  
-    
-    # Create the main backup folder if it doesn't exist
-    main_backup_folder = "./backup_processed_jsonfiles"
-    if not os.path.exists(main_backup_folder):
-        os.makedirs(main_backup_folder)
-    
-    # Create a list to store backup timestamps
-    backup_timestamps = []
-    
     # Harvest codemeta and Rich User Contents files 
-    #call_harvester()
+    call_harvester()
     
     # Filter codemeta.jsonl for reviewRating > 3 (+ manual demand list and ruc without codemeta)
-    #call_rating()
+    call_rating()
 
     tools_to_INEO = get_ids_from_jsonl(JSONL_c3)
-    call_get_properties()
+    #call_get_properties()
 
     # If the jsonl file is empty, there are no updates:
     if is_empty_jsonl_file(JSONL_c3):
@@ -108,28 +97,67 @@ if "__main__" == __name__:
     else:
         # The jsonl line file is not empty, make a template for INEO
         log.info(f"Jsonl file is not empty, making templates ...")
-        #call_template(JSONL_c3)
+        call_template(JSONL_c3)
 
-        exit()
         # Templates are ready, sync with the INEO api
         #call_ineo_sync()
         
+        exit()
+
+        log.info("sync completed. Begin backing-up and clearing of folders for the next run ...")
+        # Define the maximum number of runs to keep backups of the c3 JSONL file
+        max_backup_runs = 3
+
+        # Create the main backup folder if it doesn't exist
+        main_backup_folder = "./backups"
+        os.makedirs(main_backup_folder, exist_ok=True)
+
+        # Create a list to store backup timestamps
+        backup_timestamps = []
+
         # Generate a timestamp for the backup folder name
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
         backup_folder = os.path.join(main_backup_folder, f"backup_{timestamp}")
-        
+
         # Backup the processed_jsonfiles folder
-        shutil.copytree("processed_jsonfiles", backup_folder)
-        log.info("backup of the processed templates created, clearing folders for the next run...")
+        shutil.copytree("processed_jsonfiles", os.path.join(backup_folder, "processed_json_templates"))
+
+        # Backup the rich_user_contents folder
+        shutil.copytree("./data/rich_user_contents", os.path.join(backup_folder, "rich_user_contents_json"))
+
+        # Create a folder for jsonl_files
+        jsonl_files_folder = os.path.join(backup_folder, "jsonl_files")
+        os.makedirs(jsonl_files_folder, exist_ok=True)
+
+        # Backup individual files within jsonl_files folder
+        shutil.copy("./data/c3.jsonl", os.path.join(jsonl_files_folder, "c3.jsonl"))
+        shutil.copy("./data/codemeta.jsonl", os.path.join(jsonl_files_folder, "codemeta.jsonl"))
+
+        # Copy the tools_metadata_backup folder to the backup folder
+        shutil.copytree("./data/tools_metadata_backup", os.path.join(backup_folder, "tools_metadata_backup"))
+
+        # Check if the deleted_documents folder exists and back it up if present. Then delete it. 
+        deleted_documents_path = "./deleted_documents"
+        if os.path.exists(deleted_documents_path) and os.path.isdir(deleted_documents_path):
+            shutil.copytree(deleted_documents_path, os.path.join(backup_folder, "deleted_documents_backup"))
+            
+        log.info("backups created, clearing folders for the next run...")
+        
         # Clear the processed_jsonfiles folder
         shutil.rmtree("processed_jsonfiles")
-        
-        # TODO: CLEAR the codemeta.jsonl file after a backup. 
-        # TODO: create a backup folder
+        shutil.rmtree(deleted_documents_path)
 
+        for item in os.listdir("./data"):
+            if item != "ineo.db":
+                item_path = os.path.join("./data", item)
+                if os.path.isfile(item_path):
+                    os.remove(item_path)
+                elif os.path.isdir(item_path):
+                    shutil.rmtree(item_path)
+        
         # Add the current timestamp to the list
         backup_timestamps.append(timestamp)
-        
+
         # Check if there are more than max_backup_runs backups
         if len(backup_timestamps) > max_backup_runs:
             # Sort the list and remove the oldest backup
@@ -139,6 +167,6 @@ if "__main__" == __name__:
 
             shutil.rmtree(oldest_backup_path)
         
-        logging.info("All done!")
+        log.info("All done!")
     
 
