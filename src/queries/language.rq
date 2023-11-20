@@ -13,7 +13,7 @@ let $results := (
       else ()
     let $producesFormats :=
       if ($item.producesData instance of object) then
-        $item.producesData.encodingFormat
+        $item.producesData.inLanguage.name
       else if ($item.producesData instance of array) then
         for $data in $item.producesData[]
         return $data.inLanguage.name
