@@ -30,13 +30,13 @@
                 "learn": "<md:@queries/softwarehelp.rq,null",
                 "resourceHost": "<md:@queries/provider.rq,null",
                 "funding": "<md:@queries/funding.rq,null",
-                "problemContact": "<md:@queries/maintainer.rq,null",
+                "problemContact": "<md:@queries/issuetracker+maintainer.rq,null",
                 "informationTypes": [],
                 "languages": "<md:@queries/language.rq,null",
-                "access": "<md:@queries/coderepository.rq,null",
+                "access": "<md:@queries/access.rq,null",
                 "sourceCodeLocation": "<md:@queries/coderepository.rq,null",
                 "researchContact": [],
-                "generalContact": [],
+                "generalContact": "<md:@queries/maintainer.rq,null",
                 "resourceTypes": "<md:@queries/resourcetype.rq,null",
                 "status": "<md:@queries/status.rq,null",
                 "versions": "<md:@queries/version.rq,null",
@@ -48,7 +48,7 @@
                 "researchDomains": "<md:@queries/domains.rq:researchDomains,null",
                 "mediaTypes": "<md:@queries/mediatype.rq:mediaTypes,null",
                 "provenance": [],
-                "community": [],
+                "community": "<md:@queries/issuetracker.rq,null",
                 "development": "<md:@queries/author.rq,null"
             }
         }
