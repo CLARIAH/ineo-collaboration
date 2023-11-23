@@ -1,3 +1,20 @@
+
+let $issueTracker :=
+  for $i in json-file("{JSONL}", 10)
+  where $i.identifier eq "{ID}"
+  return 
+    if (exists($i.issueTracker))
+    then [
+      {
+        "title": "Issue tracker",
+        "link": $i.issueTracker
+      }
+    ]
+    else ()
+
+let $maintainers :=
+  if (empty($issueTracker))
+  then (
 let $results :=
   for $i in json-file("{JSONL}")
   where $i.identifier eq "{ID}"
@@ -66,3 +83,12 @@ let $uniqueValues :=
   }
 
 return [$uniqueValues]
+
+  )
+  else ()
+
+return (
+  if (empty($issueTracker))
+  then $maintainers
+  else $issueTracker
+)

@@ -1,0 +1,11 @@
+for $i in json-file("{JSONL}", 10) 
+where $i.identifier eq "{ID}" 
+return 
+  if (contains($i.codeRepository, "github"))
+  then [
+    {
+      "title": "Open Access",
+      "link": $i.codeRepository
+    }
+  ]
+  else ()

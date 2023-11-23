@@ -1,0 +1,16 @@
+(: This query check if issueTracker exists in the codemeta files. If so it returns Issue tracker as the title with the issueTracker codemeta value as the link. :)
+
+let $issueTracker :=
+  for $i in json-file("{JSONL}", 10)
+  where $i.identifier eq "{ID}"
+  return 
+    if (exists($i.issueTracker))
+    then [
+      {
+        "title": "Issue tracker",
+        "link": $i.issueTracker
+      }
+    ]
+    else ()
+
+return $issueTracker

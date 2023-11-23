@@ -1,17 +1,29 @@
 let $results := (
-  for $i in json-file("{JSONL}", 10) 
-  where $i.identifier eq "{ID}"
-
-  return (
+  for $i in json-file("{JSONL}", 10)
+  where $i.identifier eq "{ID}" 
+return (
     for $author in $i.author[]
+    let $title :=
+      if (exists($author.affiliation) and ($author.affiliation.name instance of array)) then
+          for $name in $author.affiliation.name[]
+          where $name."@language" eq "en" return
+                 $author."givenName" || " " || $author."familyName" || ", " || $name."@value"
+
+      else if (exists($author.affiliation) and ($author.affiliation.name instance of string)) then
+        $author."givenName" || " " || $author."familyName" || ", " || $author.affiliation.name
+      else
+        $author."givenName" || " " || $author."familyName"
     return {
-      "title": $author."givenName" || " " || $author."familyName",
-      "link": [$author."url", $author."email", null][[1]]
-    },
-    for $contributor in $i.contributor[]
-    return {
-      "title": $contributor."givenName" || " " || $contributor."familyName",
-      "link": [$contributor."url", $contributor."email", null][[1]]
+      "title": $title,
+      "link": (
+if (exists($author."url")) then
+          $author."url"      
+else if (exists($author."sameAs")) then
+          $author."sameAs"
+        else if (exists($author."@id") and not(starts-with($author."@id", "https://tools.clariah.nl"))) then
+          $author."@id"
+        else ()
+      )
     }
   )
 )
@@ -20,8 +32,8 @@ let $uniqueValues :=
   for $result in distinct-values(
     for $r in $results
     return fn:concat(
-      $r."title", 
-      "|", 
+      $r."title",
+      "|",
       string-join(
         for $link in $r."link"
         return if ($link instance of xs:string) then $link else (),
@@ -32,9 +44,14 @@ let $uniqueValues :=
   let $title := fn:substring-before($result, "|")
   let $link := fn:substring-after($result, "|")
   group by $title
-  return {
+    return {
     "title": $title,
-    "link": $link
+    "link": (
+      if ($link = "") then
+        ()
+      else
+        $link
+    )
   }
-  
+
 return [$uniqueValues]
