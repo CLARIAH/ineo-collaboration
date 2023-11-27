@@ -70,7 +70,7 @@ def main():
 
     # Exmample list of codemeta tools that do not have a sufficient rating but are requested by the provider. 
     # For now (15112023) this is a list of codemeta tools that are already uploaded to INEO and do not have a rating >= 3. 
-    tools_requests = ['gretel', 'burgerlinker']
+    tools_requests = []
     
     # Here follows code for tools that have a RUC but do not have a sufficient rating
     # Path to the query file for a reviewRating >= 3 and the output JSONL file.
