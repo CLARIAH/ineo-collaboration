@@ -16,10 +16,7 @@ src/ineo_get.py
 src/from_api
 src/researchdomains
 src/backup_processed_jsonfiles
-src/deleted_documents/test2_delete.json
-src/deleted_documents/test3_delete.json
-src/deleted_documents/test_delete.json
-src/deleted_documents/deleted_tool_ids.json
+src/deleted_documents
 src/logs
 src/out
 src/backups

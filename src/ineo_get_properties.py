@@ -38,10 +38,10 @@ def main():
             file_path = os.path.join(folder_properties, f'{filename}.json')
             with open(file_path, 'w') as json_file:
                 json.dump(properties, json_file, indent=4)
-            print(f"JSON data for {url} saved to {file_path}")
+            log.info(f"JSON data for {url} saved to {file_path}")
         else:
-            print(f"Request for {url} failed with status code {response.status_code}")
-            print(response.text)
+            log.info(f"Request for {url} failed with status code {response.status_code}")
+            log.info(response.text)
 
 
 if __name__ == '__main__':
