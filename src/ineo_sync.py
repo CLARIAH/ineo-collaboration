@@ -68,7 +68,7 @@ def save_json_data_to_file(data, file_path):
 def check_properties(id, folder_path, vocabs):
     """"
     This function checks whether the researchDomains and researchActivities in the processed templates matches INEO.
-    There are some discrepancies, e.g. https://w3id.org/nwo-research-fields#TextualandContentAnalysis (INEO) 
+    There are some discrepancies, e.g. https://w3id.org/nwo-research-fields#TextualAndContentAnalysis (INEO) 
     and https://w3id.org/nwo-research-fields#TextualandContentAnalysis (processed Json file of Alud)
     
     """
@@ -240,8 +240,7 @@ def create_delete_template():
     with open(file_path, 'w') as json_file:
         json.dump(delete_template, json_file, indent=4)
 
-    create_delete_template()
-
+    return delete_template 
 
 def delete_document(delete_list, force_yes=False):
     """
@@ -251,8 +250,7 @@ def delete_document(delete_list, force_yes=False):
     # Check if the "deleted_documents" folder exists, and create it if not
     deleted_documents_folder = "deleted_documents"
     delete_template = create_delete_template()
-    file_path = os.path.join(deleted_documents_folder, delete_template)   
-    
+    file_path = os.path.join(deleted_documents_folder, "delete_template.json")   
     if not force_yes:
         force_yes = input("Do you want to force 'yes' for all deletions? (y/n): ").lower() == 'y'
     
@@ -260,7 +258,7 @@ def delete_document(delete_list, force_yes=False):
         # Read the delete template and insert the id of the tool to be deleted
         with open(file_path, 'r') as delete_file:
             delete_template = json.load(delete_file)
-        delete_template[0]["document"]["id"] = id
+            delete_template[0]["document"]["id"] = id
 
         # Save the modified template with the id of the tool to be deleted
         output_file_path = os.path.join(deleted_documents_folder, f"{id}_delete.json")
@@ -301,7 +299,7 @@ def main():
     
     handle_empty(ids_to_create)
     
-
+    exit()
     # Check if there are files to delete
     # json file that contains the ids of the tools that needs to be deleted (outcome of harvester.py)
     if not os.path.exists(delete_path):
