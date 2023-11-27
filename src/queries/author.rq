@@ -11,6 +11,8 @@ return (
 
       else if (exists($author.affiliation) and ($author.affiliation.name instance of string)) then
         $author."givenName" || " " || $author."familyName" || ", " || $author.affiliation.name
+      else if (exists($author.affiliation) and ($author.affiliation.legalName instance of string)) then
+        $author."givenName" || " " || $author."familyName" || ", " || $author.affiliation.legalName
       else
         $author."givenName" || " " || $author."familyName"
     return {
