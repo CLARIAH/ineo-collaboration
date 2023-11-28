@@ -13,6 +13,10 @@ return (
         $author."givenName" || " " || $author."familyName" || ", " || $author.affiliation.name
       else if (exists($author.affiliation) and ($author.affiliation.legalName instance of string)) then
         $author."givenName" || " " || $author."familyName" || ", " || $author.affiliation.legalName
+else if (exists($author.affiliation) and ($author.affiliation instance of array)) then
+for $name in $author.affiliation[[1]]
+return $author."givenName" || " " || $author."familyName" || ", " || $name.name
+
       else
         $author."givenName" || " " || $author."familyName"
     return {
