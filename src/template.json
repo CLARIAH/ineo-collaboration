@@ -3,7 +3,7 @@
         "operation": "<api",
         "document": {
             "id": "<ruc:identifier,md:identifier,err:there is no identifier!",
-            "title": "<md:name,ruc:title,null",
+            "title": "<md:@queries/name.rq,ruc:title",
             "intro": "<ruc:$title,md:description,null",
             "publishedAt": "yyyy-mm-dd",
             "media": {
