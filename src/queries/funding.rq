@@ -1,6 +1,12 @@
+(: This query evaluates the structure of the funder and funding fields to create objects with "title" and "link" for fill funding in the template.
+If there's a funder field, it constructs an object with "title" as the name under funder and "link" as the url under funder.
+If funding is an object (dictionary in jsoniq), it constructs an object with "title" as the name under funding or funding.funder and "link" as the url under funding or funding.funder.
+If funding is an array, it constructs an array of objects by iterating through each item in the funding array. 
+The [[1]] syntax is applied to these arrays, attempting to access the second value within each array.
+If none of the conditions above are met, it returns the string "null". :)
+
 for $i in json-file("{JSONL}", 10) 
 where $i.identifier eq "{ID}" 
-
 return 
 if ($i.funder) then
 [{"title": $i.funder."name", "link": $i.funder."url"}]

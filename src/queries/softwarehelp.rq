@@ -1,3 +1,9 @@
+(: This query extracts information from the "softwareHelp" field, ensuring proper handling for both object (dicionary) and array structures within it. 
+If the field is an object, it extracts the name and URL. 
+If it's an array, it extracts multiple sets of name and URL pairs, and if none of these structures match, it returns nothing. :) 
+
+
+
 for $i in json-file("{JSONL}", 10)
 where $i.identifier eq "{ID}"
 return
@@ -5,4 +11,4 @@ if ($i.softwareHelp instance of object) then [{"title": $i.softwareHelp."name", 
 else if ($i.softwareHelp instance of array) then [
 for $item in $i.softwareHelp[]
 return {"title": $item."name", "link": $item."url"}]
-else "null"
+else ()

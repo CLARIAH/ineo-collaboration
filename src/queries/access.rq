@@ -1,3 +1,8 @@
+(: This query operates on a JSONL file, limiting results to 10 items and filtering based on a specified identifier defined by template.py. 
+It retrieves the codemeta value from codeRepository, returning the link and setting the title to "Open Access" if that link contains "github". 
+If the condition is not met, it returns an empty result.:)
+
+
 for $i in json-file("{JSONL}", 10) 
 where $i.identifier eq "{ID}" 
 return 

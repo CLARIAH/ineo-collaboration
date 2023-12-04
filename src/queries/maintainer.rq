@@ -1,3 +1,11 @@
+(: This query extracts and organizes maintainers' names and associated links (emails or reference links), 
+ensuring uniqueness in the title-link pairs while handling various formats of email addresses.
+It first iterates through the codemeta file and checks the structure of the "maintainer" field.
+Depending on whether the "maintainer" is an object, an array, or contains specific properties like "email" or "sameAs," 
+it constructs objects containing "title" (a combination of given and family names) and "link" (an email address or a reference link).
+It processes various scenarios for email addresses within the "maintainer" field, ensuring that links are formatted correctly as mailto: email. :)
+
+
 let $results :=
   for $i in json-file("{JSONL}")
   where $i.identifier eq "{ID}"

@@ -1,3 +1,11 @@
+(: This query focuses on extracting producer names (producer in codemeta) and associated URLs, ensuring that for arrays of names, it selects the English name with the respective URL.
+
+If the "producer.name" field is a string, it constructs an object with a "title" representing the producer's name and a "link" pointing to the producer's URL.
+If the "producer.name" field is an array, it further processes each name in the array.
+In that array, it filters these names to extract the one where the "@language" property is "en" (English).
+Constructs objects with a "title" representing the name in English and a "link" pointing to the producer's URL. :)
+
+
 for $i in json-file("{JSONL}", 10)
 where $i.identifier eq "{ID}"
 return

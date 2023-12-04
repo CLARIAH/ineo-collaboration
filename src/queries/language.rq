@@ -1,3 +1,7 @@
+(: This query works on extracting and organizing inLanguage properties associated with consumed (consumesData) and produced data (producesData) formats within the targetProduct field of codemeta :)
+
+
+
 let $results := (
   for $i in json-file("{JSONL}", 10) 
   where $i.identifier eq "{ID}"
