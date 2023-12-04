@@ -5,12 +5,16 @@ networks:
     external:
       name: nginxproxynetwork
 
+volumes:
+  ineo-sync-data:
+    driver: local
+
 services:
   python-run:
     image: registry.huc.knaw.nl/ineo/ineo-sync:0.1
     container_name: ineo-sync
     volumes:
-      - ./src:/src
+      - ineo-sync-data:/src/data
     restart: unless-stopped
     networks:
       - ineo_network
@@ -19,7 +23,7 @@ services:
     image: rumbledb/rumble:latest
     container_name: rumbledb
     volumes:
-      - ./src/data:/data
+      - ineo-sync-data:/data
     restart: unless-stopped
     command: ["serve", "-p", "8001", "-h", "0.0.0.0"]
     networks:
