@@ -1,0 +1,29 @@
+version: "2"
+
+networks:
+  ineo_network:
+    external:
+      name: nginxproxynetwork
+
+services:
+  python-run:
+    image: registry.huc.knaw.nl/ineo/ineo-sync:0.1
+    container_name: ineo-sync
+    volumes:
+      - ./src:/src
+    restart: unless-stopped
+    networks:
+      - ineo_network
+
+  rumbledb:
+    image: rumbledb/rumble:latest
+    container_name: rumbledb
+    volumes:
+      - ./src/data:/data
+    restart: unless-stopped
+    command: ["serve", "-p", "8001", "-h", "0.0.0.0"]
+    networks:
+      - ineo_network
+    depends_on:
+      - python-run
+  
