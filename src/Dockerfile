@@ -3,16 +3,17 @@ FROM python:3.11-slim-buster
 RUN apt update && apt install -y cron curl vim git
 
 WORKDIR /src
-ADD main.py ./main.py
-ADD harvester.py ./harvester.py
-ADD template.py ./template.py
-ADD template.json ./template.json
-ADD ineo_sync.py ./ineo_sync.py
-ADD queries ./queries
-ADD vocabs ./vocabs
-ADD .env ./.env
+COPY main.py ./main.py
+COPY harvester.py ./harvester.py
+COPY template.py ./template.py
+COPY template.json ./template.json
+COPY ineo_sync.py ./ineo_sync.py
+COPY queries ./queries
+COPY vocabs ./vocabs
+COPY .env ./.env
+COPY rating.py ./rating.py
 
-ADD requirements.txt ./
+COPY requirements.txt ./
 
 RUN pip install --no-cache-dir -r requirements.txt
 #RUN crontab -l | { cat; echo "*/2 * * * * cd /src && /usr/local/bin/python /src/main.py"; } | crontab -
