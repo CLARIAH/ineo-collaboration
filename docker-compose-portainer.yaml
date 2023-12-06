@@ -2,8 +2,7 @@ version: "2"
 
 networks:
   ineo_network:
-    external:
-      name: nginxproxynetwork
+    external: true
 
 volumes:
   ineo-sync-data:
