@@ -1,0 +1,6 @@
+(: This query extracts characters 1 through 10 from the dateCreated field of the codemeta, 
+which represents the YYYY-MM-DD part of the datetime string as used by INEO :)
+
+for $i in json-file("{JSONL}", 10) 
+where $i.identifier eq "{ID}"
+return substring($i.dateCreated, 1, 10)
