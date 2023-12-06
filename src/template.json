@@ -5,7 +5,7 @@
             "id": "<ruc:identifier,md:identifier,err:there is no identifier!",
             "title": "<md:@queries/name.rq,ruc:title",
             "intro": "<ruc:$title,md:description,null",
-            "publishedAt": "yyyy-mm-dd",
+            "publishedAt": "<md:@queries/date.rq,null",
             "media": {
                 "thumbnail": "<md:thumbnailUrl,null",
                 "slider": "<ruc:carousel[]:^/(.*):https://raw.githubusercontent.com/CLARIAH/ineo-content/master/$1,null"
