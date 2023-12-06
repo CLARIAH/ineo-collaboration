@@ -32,11 +32,17 @@ let $results :=
           "title": $i.maintainer."givenName" || " " || $i.maintainer."familyName",
           "link": $i.maintainer."sameAs"
         }
-      else
+      else if (exists($i.maintaner."@id")) then
         {
           "title": $i.maintainer."givenName" || " " || $i.maintainer."familyName",
           "link": $i.maintainer."@id"
         }
+      else
+       {
+          "title": $i.maintainer."givenName" || " " || $i.maintainer."familyName",
+          "link": ()
+        }
+
     else if ($i.maintainer instance of array) then
       let $contacts := $i.maintainer[]
       for $contact in $contacts
