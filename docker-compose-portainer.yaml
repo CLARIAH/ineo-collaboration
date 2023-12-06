@@ -16,7 +16,7 @@ services:
       - ineo-sync-data:/src/data
     restart: unless-stopped
     networks:
-      - ineo_network
+      - traefik-public
 
   rumbledb:
     image: rumbledb/rumble:latest
@@ -26,7 +26,7 @@ services:
     restart: unless-stopped
     command: ["serve", "-p", "8001", "-h", "0.0.0.0"]
     networks:
-      - ineo_network
+      - traefik-public
     depends_on:
       - python-run
   
