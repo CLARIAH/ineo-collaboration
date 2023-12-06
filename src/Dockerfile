@@ -8,11 +8,11 @@ COPY harvester.py ./harvester.py
 COPY template.py ./template.py
 COPY template.json ./template.json
 COPY ineo_sync.py ./ineo_sync.py
+COPY ineo_get_properties.py ./ineo_get_properties.py
 COPY queries ./queries
-COPY vocabs ./vocabs
+COPY properties ./properties
 COPY .env ./.env
 COPY rating.py ./rating.py
-
 COPY requirements.txt ./
 
 RUN pip install --no-cache-dir -r requirements.txt
