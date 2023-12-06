@@ -1,7 +1,7 @@
 (:
 This query maps a URL to the link field in the template for INEO. The link field maps to the "Go to resource" button in INEO.
 
-It first checks if there is a targetProduct field for WebApplication and WebSite (e.g. for mediasuite) or SoftwareLibrary (for alud) in the codemeta.
+It first checks if there is a targetProduct field for WebApplication and WebSite (e.g. for mediasuite) in the codemeta.
 If there is, then it takes the url of the targetProduct. 
 If the tool is not a WebApplication or a WebSite, it checks for a 'url' root field. It checks if the value of url is an object (dictionary) 
 or a string with a 'url' property in the codemeta file.
