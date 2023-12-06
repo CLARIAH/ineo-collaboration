@@ -84,13 +84,13 @@ if "__main__" == __name__:
     
     # Harvest codemeta and Rich User Contents files 
     call_harvester()
-    
+
     # Filter codemeta.jsonl for reviewRating > 3 (+ manual demand list and ruc without codemeta)
     call_rating()
-
+   
     tools_to_INEO = get_ids_from_jsonl(JSONL_c3)
-    #call_get_properties()
-
+    call_get_properties()
+ 
     # If the jsonl file is empty, there are no updates:
     if is_empty_jsonl_file(JSONL_c3):
         log.info(f"No new updates in the jsonl files of RUC and Codemeta")
@@ -100,9 +100,7 @@ if "__main__" == __name__:
         call_template(JSONL_c3)
 
         # Templates are ready, sync with the INEO api
-        #call_ineo_sync()
-        
-        exit()
+        call_ineo_sync()
 
         log.info("sync completed. Begin backing-up and clearing of folders for the next run ...")
         # Define the maximum number of runs to keep backups of the c3 JSONL file

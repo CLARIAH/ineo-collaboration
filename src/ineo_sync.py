@@ -69,7 +69,7 @@ def check_properties(id, folder_path, vocabs):
     """"
     This function checks whether the researchDomains and researchActivities in the processed templates matches INEO.
     There are some discrepancies, e.g. https://w3id.org/nwo-research-fields#TextualAndContentAnalysis (INEO) 
-    and https://w3id.org/nwo-research-fields#TextualandContentAnalysis (processed Json file of Alud)
+    and https://w3id.org/nwo-research-fields#TextualandContentAnalysis (processed Json file of Alud). 
     
     """
     properties_file_path = f"./properties/{vocabs}.json"
@@ -79,6 +79,8 @@ def check_properties(id, folder_path, vocabs):
             processed_files = load_processed_document(id, folder_path)
             research_domains = processed_files[0]['document']['properties'][f'{vocabs}']
             links = [entry['link'] for entry in properties]
+            
+            
             # Check if research_domains is not None
             if research_domains is not None:
                 # Filter out None values from research_domains
@@ -96,6 +98,8 @@ def check_properties(id, folder_path, vocabs):
                         corresponding_link = next(link for link in links if link.lower() == domain.lower())
                         updated_research_domains.append(corresponding_link)
                     elif domain.lower() in [link.lower() for link in links]:
+                        # if there is a match found (case-insensitive e.g. TextualAndContentAnalysis (INEO) == TextualandContentAnalysis (codemeta))
+                        # the value of the processed.jsonfile is replaced with the property from INEO (so TextualAndContentAnalysis)
                         log.info(f"Match found (case-insensitive): {domain}")
                         corresponding_link = next(link for link in links if link.lower() == domain.lower())
                         updated_research_domains.append(corresponding_link)
@@ -104,7 +108,8 @@ def check_properties(id, folder_path, vocabs):
                         non_matches.append(domain)
                         log.info(f"no matches for: {non_matches}")
 
-                # Update the researchDomains value in the data
+    
+                # Update the researchDomains value in the data (case-insensitive value of the processed.jsonfile is replaced by its corresponding property from INEO (so TextualAndContentAnalysis)). 
                 processed_files[0]['document']['properties'][f'{vocabs}'] = updated_research_domains
 
                 # Save the updated data back to the same JSON file
@@ -299,9 +304,9 @@ def main():
     
     handle_empty(ids_to_create)
     
-    exit()
+    
     # Check if there are files to delete
-    # json file that contains the ids of the tools that needs to be deleted (outcome of harvester.py)
+    # imports a json file that contains the ids of the tools that needs to be deleted (outcome of harvester.py)
     if not os.path.exists(delete_path):
         log.info(f"The folder {delete_path} does not exist, no tools to delete.")
         sys.exit(1)
