@@ -57,3 +57,6 @@ Execute main.py to initiate the workflow.
 python main.py
 ``
 
+## RumbleDB
+
+For testing queries: http://0.0.0.0:8001/public.html
