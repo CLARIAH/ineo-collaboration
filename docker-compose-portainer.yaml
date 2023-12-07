@@ -11,7 +11,7 @@ volumes:
 services:
   python-run:
 #    image: registry.huc.knaw.nl/ineo/ineo-sync:0.1
-    image: registry.diginfra.net/tsd/ineo-sync:0.1
+    image: registry.diginfra.net/tsd/ineo-sync:0.2
     container_name: ineo-sync
     volumes:
       - ineo-sync-data:/src/data
