@@ -3,7 +3,7 @@ version: "3"
 services:
   python-run:
     build: .
-    image: ineo-sync:latest
+    image: ineo-sync:0.1
     container_name: ineo-sync
     volumes:
       - ./:/src
