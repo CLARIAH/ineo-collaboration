@@ -540,6 +540,51 @@ def create_minimal_ruc(ruc_file, ruc_contents_dict):
     with open(ruc_file, 'w') as json_file:
         json.dump(ruc_template, json_file, indent=4)
 
+
+
+def datasets_are_valid_jsons(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            ineo_datasets = json.load(file)
+            # Check if the necessary keys are present
+            if 'response' in ineo_datasets and 'docs' in ineo_datasets['response']:
+                return True
+            else:
+                return False
+    except (json.JSONDecodeError, KeyError) as e:
+        return False
+
+
+def get_datasets(parsed_datasets_directory, dataset_file_path):
+    """
+    Saves individual datasets as separate JSON files
+
+    Args:
+    parsed_datasets_directory (str): Path to the directory to save the parsed datasets.
+    dataset_file_path (str): Path to the dataset JSON file.
+
+    """
+    # Create the parsed_datasets folder if it doesn't exist
+    if not os.path.exists(parsed_datasets_directory):
+        os.makedirs(parsed_datasets_directory)
+
+    # Get datasets
+    if datasets_are_valid_jsons(dataset_file_path):
+        log.info(f"Getting and parsing datasets ...")
+        with open(dataset_file_path, 'r') as file:
+            ineo_datasets = json.load(file)
+
+        # Extract individual datasets from the 'docs' array
+        docs = ineo_datasets['response']['docs']
+        for index, dataset in enumerate(docs, start=1):
+            # Create a filename for each document in the parsed_datasets folder and save
+            datasets_filename = os.path.join(parsed_datasets_directory, f"dataset_{index}.json")
+
+            with open(datasets_filename, 'w') as datasets_files:
+                json.dump(dataset, datasets_files, indent=2)
+    else:
+        log.error("The JSON file does not have the expected structure.")
+
 """
 main function
 """
@@ -555,24 +600,34 @@ def main(threshold):
     data_folder = "data"
     if not os.path.exists(data_folder):
         os.makedirs(data_folder)
-
+    
+    # Get and parse INEO datasets
+    parsed_datasets_directory = './data/parsed_datasets'
+    dataset_file_path = './data/datasets/vlo-response.json'
+    get_datasets(parsed_datasets_directory, dataset_file_path)
+    
     # Serialize the RUC dictionary into JSON
     ruc_contents_dict = get_ruc_contents()
     serialize_ruc_to_json(ruc_contents_dict)
 
     db_file_name = os.path.join(output_path_data, "ineo.db")
 
-    # Initialize the database connection and create the table if it doesn't exist
+    # Initialize the database connection and create the tables if they do not exist
     table_name_ruc = "rich_user_contents"
     (c_ruc, conn_ruc) = get_db_cursor(db_file_name=db_file_name, table_name=table_name_ruc)
 
     table_name_tools = "tools_metadata"
     (c, conn) = get_db_cursor(db_file_name=db_file_name, table_name=table_name_tools)
 
+    table_name_datasets = "datasets"
+    (c_datasets, conn_datasets) = get_db_cursor(db_file_name=db_file_name, table_name=table_name_datasets)
+
     # download url and download dir are optional parameters, they have default value in the download_json_files function
     download_url = ""
     codemeta_download_dir = os.path.join(output_path_data, "tools_metadata")
     ruc_download_dir = os.path.join(output_path_data, "rich_user_contents")
+    datasets_download_dir = os.path.join(output_path_data, "parsed_datasets")
+
 
     # get the current timestamp to be used in the database and make sure all the files in the same batch have the same timestamp
     current_timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -610,21 +665,46 @@ def main(threshold):
 
         ruc_previous_batch = get_previous_batch(db_file_name, table_name_ruc, previous_timestamp=previous_timestamp)
 
+
+    # Check for a previous batch in the "datasets" table
+    c_datasets.execute("SELECT * FROM datasets ORDER BY timestamp DESC LIMIT 1")
+    datasets_has_previous_batch = c_datasets.fetchone()
+    if datasets_has_previous_batch is None:
+        log.debug("No datasets previous batch exists in the database")
+        datasets_previous_batch = None
+        previous_timestamp = None
+    else:
+        previous_timestamp = datasets_has_previous_batch[2]
+        if previous_timestamp is None:
+            log.error("Error in getting the previous datasets batch!")
+            exit(1)
+
+        datasets_previous_batch = get_previous_batch(db_file_name, table_name_datasets, previous_timestamp=previous_timestamp)
+
+
     # after this line we have both dir1 and dir2, dir1 is the current batch and dir2 is the previous batch
     codemeta_current_batch = get_files(codemeta_download_dir)
     ruc_current_batch = get_files(ruc_download_dir)
+    datasets_current_batch = get_files(datasets_download_dir)
+    
     if codemeta_current_batch is None:
-        log.debug("No codemeta files found in the current batch!")
+        log.error("No codemeta files found in the current batch!")
         exit(1)
     if ruc_current_batch is None:
-        log.debug("No RUC files found in the current batch!")
+        log.error("No RUC files found in the current batch!")
+        exit(1)
+    if datasets_current_batch is None:
+        log.error("No datasets files found in the current batch!")
         exit(1)
 
     # compare the 2 lists and get the difference
     diff_list = compare_lists(codemeta_current_batch, previous_batch)
     diff_list_ruc = compare_lists(ruc_current_batch, ruc_previous_batch)
+    diff_list_datasets = compare_lists(datasets_current_batch, datasets_previous_batch)
 
     codemeta_ids: list = []
+    datasets_ids: list = []
+    
     # Process the Codemeta json files
     codemeta_folder_name = "tools_metadata"
     process_list(codemeta_ids, codemeta_folder_name, db_file_name, table_name_tools, diff_list, current_timestamp, None)
@@ -664,10 +744,31 @@ def main(threshold):
                      ruc_previous_batch_dict)
 
     conn.commit()
+    
+    # Process the datasets
+    datasets_folder_name = "parsed_datasets"
+    process_list(datasets_ids, datasets_folder_name, db_file_name, table_name_datasets, diff_list_datasets, current_timestamp, None)
+
+    if datasets_has_previous_batch is not None:
+        # get previous datasets batch from db
+        c.execute("SELECT file_name, md5 FROM datasets WHERE timestamp = ?", (previous_timestamp,))
+        datasets_previous_batch = c.fetchall()
+
+        # previous_batch_dict contains key value pair in the form of {file_name: md5}
+        datasets_previous_batch_dict = {x[0]: x[1] for x in datasets_previous_batch}
+
+        datasets_batch = [x.split("/")[-1] for x in datasets_current_batch]
+
+        # loop through current batch and compare with previous batch on hash value
+        process_list(datasets_ids, datasets_folder_name, db_file_name, table_name_datasets, datasets_batch, current_timestamp,
+                     datasets_previous_batch_dict)
+
+    conn.commit()
 
     codemeta_ids = list(set(codemeta_ids))
-
-    # creating jsonl file
+    datasets_ids = list(set(datasets_ids))
+    
+    # creating jsonl file for the tools
     for codemeta_id in codemeta_ids:
         codemeta_file = os.path.join(codemeta_download_dir, f"{codemeta_id}.codemeta.json")
         if not os.path.isfile(codemeta_file):
@@ -675,7 +776,15 @@ def main(threshold):
                 
         add_to_jsonlines(codemeta_file, os.path.join(output_path_data, "codemeta.jsonl"))
     
+    
+    # creating jsonl file for the datasets
+    for dataset_id in datasets_ids:
+        datasets_file = os.path.join(datasets_download_dir, f"{dataset_id}.json")          
+        add_to_jsonlines(datasets_file, os.path.join(output_path_data, "datasets.jsonl"))
 
+
+    # <<<DELETION SCENERIO >>>
+        
     # Search for inactive tools to delete in INEO (inactive after a tool is absent for three runs in the database)
     codemeta_records = get_matching_timesamps(db_file_name, table_name_tools, threshold)
     # Iterate through the absent records and compare the timestamps in the db with the current date 
