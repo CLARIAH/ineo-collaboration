@@ -16,11 +16,14 @@ RUMBLEDB = "http://rumbledb:8001/jsoniq"
 
 # location of the JSONL file within container ineo-sync
 JSONL_ineo = "./data/c3.jsonl"
+JSONL_datasets_ineo = "/data/datasets.jsonl"
+
 # location of the (same) JSONL file within container rumbledb
 JSONL = "/data/c3.jsonl"
-PROCESSED_FILES = "./processed_jsonfiles"
+JSONL_datasets = "/data/datasets.jsonl"
 
-TEMPLATE = "./template.json"
+PROCESSED_FILES = "./processed_jsonfiles"
+TOOLS_TEMPLATE = "./template_tools.json"
 
 # ID and TEMPLATE can be overridden by command-line arguments. Default value is "grlc"
 ID = "grlc"
@@ -28,7 +31,7 @@ if len(sys.argv) > 1:
     ID = sys.argv[1]
 
 if len(sys.argv) > 2:
-    TEMPLATE = sys.argv[2]
+    TOOLS_TEMPLATE = sys.argv[2]
 
 # Debug and error handling functions
 def debug(func, msg):
@@ -77,7 +80,7 @@ def resolve_path(ruc, path):
                     return None
 
 
-def traverse_data(template, ruc):
+def traverse_data(template, ruc, rumbledb_jsonl_path):
     """
     This function traverses and processes the template. 
     
@@ -96,10 +99,10 @@ def traverse_data(template, ruc):
             if isinstance(value, str) and value.startswith("<"):
                 # Extract the information after the '<'
                 info = value.split("<")[1]
-                value = retrieve_info(info, ruc)
+                value = retrieve_info(info, ruc, rumbledb_jsonl_path)
             else:
                 # dealing with nested dictionaries or lists
-                value = traverse_data(value, ruc)
+                value = traverse_data(value, ruc, rumbledb_jsonl_path)
             if value is not None:
                 if value == "null":
                     res[key] = None
@@ -113,10 +116,10 @@ def traverse_data(template, ruc):
             if isinstance(item, str) and item.startswith("<"):
                 # Extract the information after the '<'
                 info = item.split("<")[1]
-                item = retrieve_info(info, ruc)
+                item = retrieve_info(info, ruc, rumbledb_jsonl_path)
             else:
                 # dealing nested dictionaries or lists
-                item = traverse_data(item, ruc)
+                item = traverse_data(item, ruc, rumbledb_jsonl_path)
             if item is not None:
                 if item == "null":
                     res.append(None)
@@ -174,7 +177,7 @@ def process_vocabs(vocabs, vocab, val):
 # global cache for vocabularies
 vocabs = {}
 
-def retrieve_info(info, ruc) -> list | str | None:
+def retrieve_info(info, ruc, rumbledb_jsonl_path) -> list | str | None:
     """
     
     This scripts parses and processes a set of input instructions from template.json (info, e.g. md:@queries/domains.rq:researchDomains,null) 
@@ -197,7 +200,6 @@ def retrieve_info(info, ruc) -> list | str | None:
         err: if an instruction starts with "err", it indicates that an error message should be printed to the standard error stream (err:there is no learn!" > there is no learn!)
         null: if an instruction starts with "null", it sets the res variable to the string "null".
 
-    docstring
     info: type  = 'str', input instruction from template.json (information after "<" in def traverse_data, e.g. md:@queries/domains.rq:researchDomains)
     ruc: type = 'dict', Rich User Contents (from Github Repository ineo-content). The ruc is processed and created in script FAIRdatasets_tools_harvester.py.
     res: type = 'str' | 'list' | None, the function returns the value stored in the res variable, which represents the result of processing the instructions in the template.
@@ -314,11 +316,14 @@ def retrieve_info(info, ruc) -> list | str | None:
                     with open(file, "r") as file:
                         query = file.read()
                 if query is not None:
-                    query = query.replace("{JSONL}", JSONL)
-                    query = query.replace("{ID}", ruc["identifier"].lower())
+                    query = query.replace("{JSONL}", rumbledb_jsonl_path)
+                    query = query.replace("{ID}", ruc["identifier"])
                 # This line generates a query string. It's a fallback query that is used when there is no external query file.
                 else:
-                    query = f'for $i in json-file("{JSONL}",10) where $i.identifier eq "{ruc["identifier"].lower()}" return $i.{path}'
+                    if "datasets" in rumbledb_jsonl_path:
+                        query = f'for $i in json-file("{rumbledb_jsonl_path}",10) where $i.id eq "{ruc["identifier"]}" return $i.{path}'
+                    else:
+                        query = f'for $i in json-file("{rumbledb_jsonl_path}",10) where $i.identifier eq "{ruc["identifier"].lower()}" return $i.{path}'
 
                 debug("retrieve_info", f"rumbledb query[{query}]")
                 response = requests.post(RUMBLEDB, data=query)
@@ -412,7 +417,7 @@ def create_minimal_ruc(current_id: str) -> dict:
     return ruc
 
 
-def main(current_id: str = ID):
+def main(current_id: str = ID, template_path: str = TOOLS_TEMPLATE, rumbledb_jsonl_path: str = TOOLS_TEMPLATE):
     """
     Main function
     
@@ -428,13 +433,12 @@ def main(current_id: str = ID):
     
     # DSL template
     global template
-    with open(TEMPLATE, "r") as file:
+    with open(template_path, "r") as file:
         template = json.load(file)
 
     # Rich User Contents
     ruc = None
-    
-    # Load RUC dictionary or create a minimal RUC object
+    # Load RUC dictionary or create a minimal RUC object if not existent
     ruc_file_path = f"./data/rich_user_contents/{current_id}.json"
     if os.path.exists(ruc_file_path):
         with open(ruc_file_path, "r") as json_file:
@@ -443,11 +447,11 @@ def main(current_id: str = ID):
     else:
         ruc = create_minimal_ruc(current_id)
 
-    # Combine codemeta and RUC using the DSL template
-    res = traverse_data(template, ruc)
+    # Combine codemeta and RUC using the template
+    res = traverse_data(template, ruc, rumbledb_jsonl_path)
 
     # Save res as json files ready to be fed into the INEO api    
-    folder_name = 'processed_jsonfiles'
+    folder_name = 'processed_jsonfiles_tools'
     if not os.path.exists(folder_name):
         os.makedirs(folder_name)
 
