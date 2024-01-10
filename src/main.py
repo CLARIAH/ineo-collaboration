@@ -14,17 +14,27 @@ from harvester import configure_logger
 
 log_file_path = 'main.log'
 log = configure_logger(log_file_path)
-JSONL_c3 = "./data/c3.jsonl"
 
+# location of the JSONL file within container ineo-sync
+JSONL_c3 = "./data/c3.jsonl"
+JSONL_datasets = "./data/datasets.jsonl"
+
+# location of the (same) JSONL file within container rumbledb
+JSONL_tools_rdb = "/data/c3.jsonl"
+JSONL_datasets_rdb = "/data/datasets.jsonl"
+
+# location of the templates for both tools and datasets
+TOOLS_TEMPLATE = "./template_tools.json"
+DATASETS_TEMPLATE = "./template_datasets.json"
 
 def call_harvester():
     harvester.main(threshold = 3)
-    log.info("Harvester called...")
+    log.info("Harvester called ...")
     
 
 def call_rating():
     rating.main()
-    log.info("Filtering for rating...")
+    log.info("Filtering for rating ...")
 
 
 def call_get_properties():
@@ -48,7 +58,7 @@ def is_empty_jsonl_file(file_path):
 
 def get_ids_from_jsonl(jsonl_file: str) -> list[str]:
     """
-    This function reads a JSONL files and extracts the "identifier" field from each line. 
+    This function reads a JSONL files and extracts the "identifier" or "id" field from each line. 
     Returns a list of Ids from the JSONL file 
     """
     all_ids = []
@@ -62,18 +72,31 @@ def get_ids_from_jsonl(jsonl_file: str) -> list[str]:
             if "ruc" in json_line and "identifier" in json_line["ruc"]:
                 ruc_identifier = json_line["ruc"]["identifier"]
                 all_ids.append(ruc_identifier)
+
+            if "id" in json_line:
+                datasets_identifier = json_line["id"]
+                all_ids.append(datasets_identifier)
     
     return all_ids
     
 
-def call_template(jsonl_file: str):
-    c3_ids = get_ids_from_jsonl(jsonl_file)
-    if c3_ids:
-        for current_id in c3_ids:
-            log.info(f"Making a json file for INEO for {current_id}...")
-            template.main(current_id)
-    else:
+def call_template(jsonl_file: str, template_type: str = 'tools'):
+    jsonl_ids = get_ids_from_jsonl(jsonl_file)
+
+    if not jsonl_ids:
         log.error("ERROR: No IDs found in the JSONL file.")
+        return
+
+    for current_id in jsonl_ids:
+        log.info(f"Making a json file for INEO for {current_id} ...")
+        
+        template_path = TOOLS_TEMPLATE if template_type == 'tools' else DATASETS_TEMPLATE
+        rumbledb_jsonl_path = JSONL_tools_rdb if template_type == 'tools' else JSONL_datasets_rdb
+        
+        if template:
+            template.main(current_id, template_path, rumbledb_jsonl_path)
+        else:
+            log.error("ERRORL no template provided to process.")
 
 
 def call_ineo_sync():
@@ -82,23 +105,41 @@ def call_ineo_sync():
 
 if "__main__" == __name__:
     
-    # Harvest codemeta and Rich User Contents files 
-    call_harvester()
+    # Harvest codemeta tools, Rich User Contents files and datasets 
+    #call_harvester()
 
     # Filter codemeta.jsonl for reviewRating > 3 (+ manual demand list and ruc without codemeta)
-    call_rating()
-   
-    tools_to_INEO = get_ids_from_jsonl(JSONL_c3)
-    call_get_properties()
- 
-    # If the jsonl file is empty, there are no updates:
-    if is_empty_jsonl_file(JSONL_c3):
-        log.info(f"No new updates in the jsonl files of RUC and Codemeta")
-    else:
-        # The jsonl line file is not empty, make a template for INEO
-        log.info(f"Jsonl file is not empty, making templates ...")
-        call_template(JSONL_c3)
+    #call_rating()
 
+
+    tools_to_INEO = get_ids_from_jsonl(JSONL_c3)
+    datasets_to_INEO = get_ids_from_jsonl(JSONL_datasets)
+    
+    # Check the IDs of the datasets
+    num_ids = len(datasets_to_INEO)
+    has_duplicates = len(datasets_to_INEO) != len(set(datasets_to_INEO))
+    if has_duplicates:
+        log.debug(f"There are {num_ids} datasets IDs in total, and there are duplicates.")
+    else:
+        log.debug(f"There are {num_ids} datasets IDs in total, and there are no duplicates.")
+
+    # get INEO properties, e.g. research activities and domains from the api
+    #call_get_properties()
+    
+    # If the jsonl file is empty, there are no updates to be fed into INEO:
+    if is_empty_jsonl_file(JSONL_c3) and is_empty_jsonl_file(JSONL_datasets):
+        log.info("No new updates in the JSONL files of RUC, Codemeta, and Datasets")
+    else:
+        log.info("At least one JSONL file is not empty, generating templates ...")
+        if not is_empty_jsonl_file(JSONL_c3):
+            log.info("Making template(s) for tools ...")
+            call_template(JSONL_c3, 'tools')
+        if not is_empty_jsonl_file(JSONL_datasets):
+            log.info("Making template(s) for datasets ...")
+            call_template(JSONL_datasets, 'datasets')
+        
+        exit()
+        
         # Templates are ready, sync with the INEO api
         call_ineo_sync()
 
