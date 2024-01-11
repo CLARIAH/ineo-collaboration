@@ -1,3 +1,0 @@
-for $i in json-file("{JSONL}", 10) 
-where $i.id eq "{ID}"
-return $i.description

@@ -2,12 +2,12 @@
     {
         "operation": "<api",
         "document": {
-            "id": "<md:id,err:there is no id!",
-            "title": "<md:name,null",
-            "intro": "<md:@queriesds/description.rq,null",
-            "publishedAt": "<md:@queries/date.rq,null",
+            "id": "<md:id,ruc:identifier,err:there is no id!",
+            "title": "<md:@dsqueries/name.rq,ruc:title,null",
+            "intro": "<md:@dsqueries/description.rq,null",
+            "publishedAt": [],
             "media": {
-                "thumbnail": "<md:thumbnailUrl,null",
+                "thumbnail": [],
                 "slider": "<ruc:carousel[]:^/(.*):https://raw.githubusercontent.com/CLARIAH/ineo-content/master/$1,null"
             },
             "tabs": {
@@ -26,30 +26,30 @@
                 }
             },
             "properties": {
-                "programmingLanguages": "<md:@queries/plangs.rq,null",
-                "learn": "<md:@queries/softwarehelp.rq,null",
-                "resourceHost": "<md:@queries/provider.rq,null",
-                "funding": "<md:@queries/funding.rq,null",
-                "problemContact": "<md:@queries/issuetracker+maintainer.rq,null",
+                "programmingLanguages": [],
+                "learn": [],
+                "resourceHost": "<md:dataProvider,null",
+                "funding": [],
+                "problemContact": [],
                 "informationTypes": [],
-                "languages": "<md:@queries/language.rq,null",
-                "access": "<md:@queries/access.rq,null",
-                "sourceCodeLocation": "<md:@queries/coderepository.rq,null",
+                "languages": "<md:_languageName,null",
+                "access": "<md:@dsqueries/access.rq,null",
+                "sourceCodeLocation": [],
                 "researchContact": [],
-                "generalContact": "<md:@queries/maintainer.rq,null",
-                "resourceTypes": "<md:@queries/resourcetype.rq,null",
-                "status": "<md:@queries/status.rq,null",
-                "versions": "<md:@queries/version.rq,null",
+                "generalContact": "<md:creator,null",
+                "resourceTypes": [],
+                "status": "<md:lifeCycleStatus,null",
+                "versions": [],
                 "standards": [],
-                "resourceOwner": "<md:@queries/producer.rq,null",
-                "link": "<md:@queries/url.rq,null",
+                "resourceOwner": "<md:rightsHolder,null",
+                "link": "<md:_selfLink,null",
                 "intro": "<md:description,null",
-                "researchActivities": "<md:@queries/activities.rq,null",
-                "researchDomains": "<md:@queries/domains.rq:researchDomains,null",
-                "mediaTypes": "<md:@queries/mediatype.rq:mediaTypes,null",
+                "researchActivities": [],
+                "researchDomains": "<md:subject,null",
+                "mediaTypes": "<md:@dsqueries/mediatype.rq:mediaTypes,null",
                 "provenance": [],
-                "community": "<md:@queries/issuetracker.rq,null",
-                "development": "<md:@queries/author.rq,null"
+                "community": [],
+                "development": "<md:creator,null"
             }
         }
     }
