@@ -8,21 +8,21 @@
             "publishedAt": [],
             "media": {
                 "thumbnail": [],
-                "slider": "<ruc:carousel[]:^/(.*):https://raw.githubusercontent.com/CLARIAH/ineo-content/master/$1,null"
+                "slider": []
             },
             "tabs": {
                 "overview": {
-                    "body": "<ruc:overview:^(.*)### Data.*:### Overview\n $1,ruc:overview:^(.*):### Overview\n $1,err:there is no overview!",
-                    "bodyMore": "<ruc:overview:^.*(### Data.*),null"
+                    "body": [],
+                    "bodyMore": []
                 },
                 "learn": {
-                    "body": "<ruc:learn,err:there is no learn!"
+                    "body": []
                 },
                 "mentions": {
-                    "body": "<ruc:mentions,err:there is no mentions!"
+                    "body": []
                 },
                 "metadata": {
-                    "body": "markdown"
+                    "body": []
                 }
             },
             "properties": {
@@ -31,7 +31,7 @@
                 "resourceHost": "<md:dataProvider,null",
                 "funding": [],
                 "problemContact": [],
-                "informationTypes": [],
+                "informationTypes": "<md:modality,null",
                 "languages": "<md:_languageName,null",
                 "access": "<md:@dsqueries/access.rq,null",
                 "sourceCodeLocation": [],
@@ -43,13 +43,13 @@
                 "standards": [],
                 "resourceOwner": "<md:rightsHolder,null",
                 "link": "<md:_selfLink,null",
-                "intro": "<md:description,null",
+                "intro": "<md:@dsqueries/description.rq,null",
                 "researchActivities": [],
                 "researchDomains": "<md:subject,null",
                 "mediaTypes": "<md:@dsqueries/mediatype.rq:mediaTypes,null",
                 "provenance": [],
                 "community": [],
-                "development": "<md:creator,null"
+                "development": "<md:@dsqueries/creator.rq,null"
             }
         }
     }
