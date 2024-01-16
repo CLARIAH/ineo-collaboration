@@ -1,16 +1,22 @@
+(: This query extracts the "description" field (list), which will be mapped to the intro fields in INEO. The query iterates over each descriptions and filters 
+those descriptions that contains specific language code {code:eng}", "{code:und}" and "{code:lbe}"). The replace function then removes the langauge codes and newsline characters from each 
+descriptions. The descriptions are then merges and normalized, removing multiple consecutive spaces within the string. :)  
+
+
+
 let $description := (
-    for $i in json-file("/data/datasets copy.jsonl", 10)
-    where $i.id eq "https_58__47__47_hdl.handle.net_47_1839_47_00-0000-0000-0009-426C-B"
+    for $i in json-file("{JSONL}", 10)
+where $i.id eq "{ID}"
     return $i.description
 )
 
 let $english := (
     for $item in $description[]
-    where contains($item, "{code:eng}") or contains($item, "{code:und}") or contains($item, "{code:lbe}")
-    return $item
+
+     where contains($item, "{code:eng}") or contains($item, "{code:und}") or contains($item, "{code:lbe}")
+    return replace(replace($item, "\\{code:[^}]+}", " "), "\n", " ")
 )
 
-let $mergedString := string-join($english, " ")
-
+let $mergedString := normalize-space(string-join($english, ""))
 
 return $mergedString

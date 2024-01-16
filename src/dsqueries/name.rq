@@ -2,8 +2,8 @@
 
 let $name :=
     (
-        for $i in json-file("/data/datasets.jsonl", 10)
-        where $i.id eq "https_58__47__47_hdl.handle.net_47_1839_47_00-0000-0000-0009-428D-6"
+        for $i in json-file("{JSONL}", 10)
+        where $i.id eq "{ID}"
         return $i.name
     )[[1]]
     
