@@ -20,7 +20,7 @@ load_dotenv()
 
 api_token: str = dotenv.get_key('.env', 'API_TOKEN')
 api_url = "https://ineo-resources-api-5b568b0ad6eb.herokuapp.com/resources/"
-processed_jsonfiles = "./processed_jsonfiles"
+processed_jsonfiles = "./processed_jsonfiles_tools"
 delete_path = "./deleted_documents"
 
 # Define the header with the Authorization token 
@@ -70,51 +70,51 @@ def check_properties(id, folder_path, vocabs):
     This function checks whether the researchDomains and researchActivities in the processed templates matches INEO.
     There are some discrepancies, e.g. https://w3id.org/nwo-research-fields#TextualAndContentAnalysis (INEO) 
     and https://w3id.org/nwo-research-fields#TextualandContentAnalysis (processed Json file of Alud). 
-    
     """
     properties_file_path = f"./properties/{vocabs}.json"
+    
     if os.path.exists(properties_file_path):
         with open(properties_file_path, "r") as json_file:
             properties = json.load(json_file)
             processed_files = load_processed_document(id, folder_path)
             research_domains = processed_files[0]['document']['properties'][f'{vocabs}']
-            links = [entry['link'] for entry in properties]
-            
             
             # Check if research_domains is not None
             if research_domains is not None:
                 # Filter out None values from research_domains
                 research_domains = [domain for domain in research_domains if domain]
 
-                matches = [domain for domain in research_domains if domain in links]
-
                 updated_research_domains = []
                 non_matches = []
 
                 # Print results and update research domains
                 for domain in research_domains:
-                    if domain in matches:
-                        log.info(f"Match found: {domain}")
-                        corresponding_link = next(link for link in links if link.lower() == domain.lower())
-                        updated_research_domains.append(corresponding_link)
-                    elif domain.lower() in [link.lower() for link in links]:
-                        # if there is a match found (case-insensitive e.g. TextualAndContentAnalysis (INEO) == TextualandContentAnalysis (codemeta))
+                    # Check if the researchdomain (template) is directly in the links (INEO property). If there is a match found (case-insensitive e.g. TextualAndContentAnalysis (INEO) == TextualandContentAnalysis (codemeta))
                         # the value of the processed.jsonfile is replaced with the property from INEO (so TextualAndContentAnalysis)
-                        log.info(f"Match found (case-insensitive): {domain}")
-                        corresponding_link = next(link for link in links if link.lower() == domain.lower())
+                    matches = [entry for entry in properties if entry['link'].lower() == domain.lower()]
+                    if matches:
+                        log.info(f"Match found: {domain}")
+                        corresponding_link = matches[0]['link']
                         updated_research_domains.append(corresponding_link)
                     else:
-                        log.info(f"No match found for: {domain}")
-                        non_matches.append(domain)
-                        log.info(f"no matches for: {non_matches}")
+                        # Check if the domain is in the titles (mapping subjects datasets)
+                        matches_in_titles = [entry for entry in properties if domain.lower() in entry['title'].lower()]
+                        if matches_in_titles:
+                            log.info(f"Match found in title: {domain}")
+                            corresponding_entry = matches_in_titles[0]
+                            updated_research_domains.append(corresponding_entry['link'])
+                        else:
+                            log.info(f"No match found for: {domain}")
+                            non_matches.append(domain)
+                            log.info(f"no matches for: {non_matches}")
 
-    
-                # Update the researchDomains value in the data (case-insensitive value of the processed.jsonfile is replaced by its corresponding property from INEO (so TextualAndContentAnalysis)). 
+                # Update the researchDomains value in the data
                 processed_files[0]['document']['properties'][f'{vocabs}'] = updated_research_domains
 
                 # Save the updated data back to the same JSON file
-                json_file_path = f"./processed_jsonfiles/{id}_processed.json"
+                json_file_path = f"./processed_jsonfiles_tools/{id}_processed.json"
                 save_json_data_to_file(processed_files, json_file_path)
+
   
 
 def get_document(ids) -> list:
@@ -298,13 +298,13 @@ def main():
         check_properties(processed_id, processed_jsonfiles, vocabs = "researchDomains")
         check_properties(processed_id, processed_jsonfiles, vocabs = "researchActivities")
     
-    processed_documents, ids_to_create, ids_to_update,  = get_document(processed_document_ids)  
+    #processed_documents, ids_to_create, ids_to_update,  = get_document(processed_document_ids)  
     
-    update_document(processed_documents, ids_to_update)
+    #update_document(processed_documents, ids_to_update)
     
-    handle_empty(ids_to_create)
+    #handle_empty(ids_to_create)
     
-    
+    exit()
     # Check if there are files to delete
     # imports a json file that contains the ids of the tools that needs to be deleted (outcome of harvester.py)
     if not os.path.exists(delete_path):
