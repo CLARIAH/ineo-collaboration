@@ -10,6 +10,7 @@ src/codemeta.jsonl
 src/ineo-content
 src/data
 src/processed_jsonfiles_tools
+src/processed_jsonfiles_datasets
 src/vocabs
 src/properties
 src/ineo_get.py

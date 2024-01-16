@@ -438,6 +438,7 @@ def main(current_id: str = ID, template_path: str = TOOLS_TEMPLATE, rumbledb_jso
 
     # Rich User Contents
     ruc = None
+    
     # Load RUC dictionary or create a minimal RUC object if not existent
     ruc_file_path = f"./data/rich_user_contents/{current_id}.json"
     if os.path.exists(ruc_file_path):
@@ -447,17 +448,34 @@ def main(current_id: str = ID, template_path: str = TOOLS_TEMPLATE, rumbledb_jso
     else:
         ruc = create_minimal_ruc(current_id)
 
-    # Combine codemeta and RUC using the template
+    # Combine codemeta/datasets and RUC using the template
     res = traverse_data(template, ruc, rumbledb_jsonl_path)
-
-    # Save res as json files ready to be fed into the INEO api    
-    folder_name = 'processed_jsonfiles_tools'
-    if not os.path.exists(folder_name):
-        os.makedirs(folder_name)
-
-    with open(os.path.join(folder_name, f"{current_id}_processed.json"), 'w') as json_file:
-        json.dump(res, json_file, indent=2)
     
+    # Create folders if they don't exist
+    tools_folder = 'processed_jsonfiles_tools'
+    datasets_folder = 'processed_jsonfiles_datasets'
+
+    if not os.path.exists(tools_folder):
+        os.makedirs(tools_folder)
+
+    if not os.path.exists(datasets_folder):
+        os.makedirs(datasets_folder)
+    
+    # Iterate through the results and save JSON files accordingly
+    for result in res:
+        resource_types = res[0].get('document', {}).get('properties', {}).get('resourceTypes', [])
+
+        if "Tools" in resource_types:
+            folder_name = tools_folder
+        else:
+            folder_name = datasets_folder
+
+        filename = os.path.join(folder_name, f"{current_id}_processed.json")
+        with open(filename, 'w') as file:
+            json.dump(result, file, indent=2)
+
+    print("JSON files saved successfully.")
+
 if __name__ == "__main__":
     main()
 
