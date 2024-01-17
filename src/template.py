@@ -80,7 +80,7 @@ def resolve_path(ruc, path):
                     return None
 
 
-def traverse_data(template, ruc, rumbledb_jsonl_path):
+def traverse_data(template, ruc, rumbledb_jsonl_path, current_id):
     """
     This function traverses and processes the template. 
     
@@ -99,10 +99,10 @@ def traverse_data(template, ruc, rumbledb_jsonl_path):
             if isinstance(value, str) and value.startswith("<"):
                 # Extract the information after the '<'
                 info = value.split("<")[1]
-                value = retrieve_info(info, ruc, rumbledb_jsonl_path)
+                value = retrieve_info(info, ruc, rumbledb_jsonl_path, current_id)
             else:
                 # dealing with nested dictionaries or lists
-                value = traverse_data(value, ruc, rumbledb_jsonl_path)
+                value = traverse_data(value, ruc, rumbledb_jsonl_path, current_id)
             if value is not None:
                 if value == "null":
                     res[key] = None
@@ -116,10 +116,10 @@ def traverse_data(template, ruc, rumbledb_jsonl_path):
             if isinstance(item, str) and item.startswith("<"):
                 # Extract the information after the '<'
                 info = item.split("<")[1]
-                item = retrieve_info(info, ruc, rumbledb_jsonl_path)
+                item = retrieve_info(info, ruc, rumbledb_jsonl_path, current_id)
             else:
                 # dealing nested dictionaries or lists
-                item = traverse_data(item, ruc, rumbledb_jsonl_path)
+                item = traverse_data(item, ruc, rumbledb_jsonl_path, current_id)
             if item is not None:
                 if item == "null":
                     res.append(None)
@@ -177,7 +177,7 @@ def process_vocabs(vocabs, vocab, val):
 # global cache for vocabularies
 vocabs = {}
 
-def retrieve_info(info, ruc, rumbledb_jsonl_path) -> list | str | None:
+def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | None | str:
     """
     
     This scripts parses and processes a set of input instructions from template.json (info, e.g. md:@queries/domains.rq:researchDomains,null) 
@@ -289,6 +289,14 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path) -> list | str | None:
         if info_value.startswith("api"):
             res = "create"
         
+         # The default values is defined in the template after the column
+        if info_value.startswith("default"):
+            debug("retrieve_info", f"Starting with {info_value}")
+            info_parts = info_value.split(":")
+            debug("retrieve_info", f"info_parts[{info_parts}]")
+            
+            res = info_parts[1]
+        
         # Checking if the info_value string begins with "md" (e.g. "<md:@queries/activities.rq,null")
         # First check if the JSONL file of codemeta is not empty   
         if info_value.startswith("md"):
@@ -317,13 +325,13 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path) -> list | str | None:
                         query = file.read()
                 if query is not None:
                     query = query.replace("{JSONL}", rumbledb_jsonl_path)
-                    query = query.replace("{ID}", ruc["identifier"])
+                    query = query.replace("{ID}", current_id)
                 # This line generates a query string. It's a fallback query that is used when there is no external query file.
                 else:
                     if "datasets" in rumbledb_jsonl_path:
-                        query = f'for $i in json-file("{rumbledb_jsonl_path}",10) where $i.id eq "{ruc["identifier"]}" return $i.{path}'
+                        query = f'for $i in json-file("{rumbledb_jsonl_path}",10) where $i.id eq "{current_id}" return $i.{path}'
                     else:
-                        query = f'for $i in json-file("{rumbledb_jsonl_path}",10) where $i.identifier eq "{ruc["identifier"].lower()}" return $i.{path}'
+                        query = f'for $i in json-file("{rumbledb_jsonl_path}",10) where $i.identifier eq "{current_id}" return $i.{path}'
 
                 debug("retrieve_info", f"rumbledb query[{query}]")
                 response = requests.post(RUMBLEDB, data=query)
@@ -441,6 +449,7 @@ def main(current_id: str = ID, template_path: str = TOOLS_TEMPLATE, rumbledb_jso
     
     # Load RUC dictionary or create a minimal RUC object if not existent
     ruc_file_path = f"./data/rich_user_contents/{current_id}.json"
+
     if os.path.exists(ruc_file_path):
         with open(ruc_file_path, "r") as json_file:
             ruc = json.load(json_file)
@@ -449,7 +458,7 @@ def main(current_id: str = ID, template_path: str = TOOLS_TEMPLATE, rumbledb_jso
         ruc = create_minimal_ruc(current_id)
 
     # Combine codemeta/datasets and RUC using the template
-    res = traverse_data(template, ruc, rumbledb_jsonl_path)
+    res = traverse_data(template, ruc, rumbledb_jsonl_path, current_id)
     
     # Create folders if they don't exist
     tools_folder = 'processed_jsonfiles_tools'
@@ -462,19 +471,25 @@ def main(current_id: str = ID, template_path: str = TOOLS_TEMPLATE, rumbledb_jso
         os.makedirs(datasets_folder)
     
     # Iterate through the results and save JSON files accordingly
+    processed_results = []
+
     for result in res:
-        resource_types = res[0].get('document', {}).get('properties', {}).get('resourceTypes', [])
+        resource_types = result.get('document', {}).get('properties', {}).get('resourceTypes', [])
 
         if "Tools" in resource_types:
             folder_name = tools_folder
         else:
             folder_name = datasets_folder
 
-        filename = os.path.join(folder_name, f"{current_id}_processed.json")
-        with open(filename, 'w') as file:
-            json.dump(result, file, indent=2)
+        processed_results.append(result)
+    
+    filename = os.path.join(folder_name, f"{current_id}_processed.json")
+    
+    with open(filename, 'w') as file:
+        json.dump(processed_results, file, indent=2)
 
     print("JSON files saved successfully.")
+
 
 if __name__ == "__main__":
     main()
