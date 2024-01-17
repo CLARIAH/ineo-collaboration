@@ -37,7 +37,7 @@
                 "sourceCodeLocation": "<md:@queries/coderepository.rq,null",
                 "researchContact": [],
                 "generalContact": "<md:@queries/maintainer.rq,null",
-                "resourceTypes": "<md:@queries/resourcetype.rq,null",
+                "resourceTypes": ["<default:Tools"],
                 "status": "<md:@queries/status.rq,null",
                 "versions": "<md:@queries/version.rq,null",
                 "standards": [],

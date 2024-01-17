@@ -13,7 +13,7 @@ where $i.id eq "{ID}"
 let $english := (
     for $item in $description[]
 
-     where contains($item, "{code:eng}") or contains($item, "{code:und}") or contains($item, "{code:lbe}")
+     where contains($item, "{code:eng}") or contains($item, "{code:und}")
     return replace(replace($item, "\\{code:[^}]+}", " "), "\n", " ")
 )
 
