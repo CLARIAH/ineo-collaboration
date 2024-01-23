@@ -11,19 +11,13 @@
                 "slider": []
             },
             "tabs": {
-                "overview": {
-                    "body": [],
-                    "bodyMore": []
-                },
-                "learn": {
-                    "body": []
-                },
-                "mentions": {
-                    "body": []
-                },
-                "metadata": {
-                    "body": []
-                }
+              "overview": {
+                "body": "markdown",
+                "bodyMore": "markdown"
+              },
+              "learn": { "body": "markdown" },
+              "mentions": { "body": "markdown" },
+              "metadata": { "body": "markdown" }
             },
             "properties": {
                 "programmingLanguages": [],
@@ -31,8 +25,8 @@
                 "resourceHost": "<md:@dsqueries/host.rq,null",
                 "funding": [],
                 "problemContact": [],
-                "informationTypes": "<md:@dsqueries/infotype.rq,null",
-                "languages": "<md:_languageName,null",
+                "informationTypes": "<md:@dsqueries/infotype.rq:informationTypes,null",
+                "languages": "<md:@dsqueries/language.rq,null",
                 "access": "<md:@dsqueries/access.rq,null",
                 "sourceCodeLocation": [],
                 "researchContact": [],
@@ -45,7 +39,7 @@
                 "link": "<md:@dsqueries/link.rq,null",
                 "intro": "<md:@dsqueries/description.rq,null",
                 "researchActivities": [],
-                "researchDomains": "<md:subject:researchDomains,null",
+                "researchDomains": "<md:subject,null",
                 "mediaTypes": "<md:@dsqueries/mediatype.rq:mediaTypes,null",
                 "provenance": [],
                 "community": [],

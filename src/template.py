@@ -134,6 +134,7 @@ def checking_vocabs(value):
     research domains: Some values in "applicationCategory in the codemeta files contain the correct URL with "w3id.org"
     research activities: Checking if the URL contains vocabs.dariah.eu in order to be mapped to nwo-research-fields.json. 
 
+    !Further processing of the research domains and activities (checking against INEO with lowercase spellingvariations) happens in ineo-sync.py!
     value: type = 'str', the jsoniq query result of activities.rq or domains.rq. 
     
     """
@@ -155,6 +156,7 @@ def process_vocabs(vocabs, vocab, val):
     This function compares the links of the properties (e.g. mediaType) from INEO with the outcome of the jsoniq query on the codemeta files.
     To make the comparisons case-insensitive, both vocab links and val are converted to lowercase (or uppercase). 
 
+    !Further processing of the research domains and research activities (checking against INEO with lowercase spellingvariations) happens in ineo-sync.py!
 
     It merges the index number and title of the properties in the format {index + title} "7.23 plain"
     """
@@ -169,7 +171,6 @@ def process_vocabs(vocabs, vocab, val):
                 result = f"{item['index']} {val.strip()}"
                 #vocabs_list.append(result)
                 return result
-                
             else:
                 debug("process_vocabs", f"There is no match for {val}")
 

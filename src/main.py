@@ -68,7 +68,7 @@ def get_ids_from_jsonl(jsonl_file: str) -> list[str]:
             if "identifier" in json_line:
                 identifier = json_line["identifier"]
                 all_ids.append(identifier)
-            
+
             if "ruc" in json_line and "identifier" in json_line["ruc"]:
                 ruc_identifier = json_line["ruc"]["identifier"]
                 all_ids.append(ruc_identifier)
@@ -76,9 +76,9 @@ def get_ids_from_jsonl(jsonl_file: str) -> list[str]:
             if "id" in json_line:
                 datasets_identifier = json_line["id"]
                 all_ids.append(datasets_identifier)
-    
+
     return all_ids
-    
+
 
 def call_template(jsonl_file: str, template_type: str = 'tools'):
     jsonl_ids = get_ids_from_jsonl(jsonl_file)
@@ -96,7 +96,7 @@ def call_template(jsonl_file: str, template_type: str = 'tools'):
         if template:
             template.main(current_id, template_path, rumbledb_jsonl_path)
         else:
-            log.error("ERRORL no template provided to process.")
+            log.error("ERROR: no template provided to process.")
 
 
 def call_ineo_sync():
@@ -108,10 +108,12 @@ if "__main__" == __name__:
     # Harvest codemeta tools, Rich User Contents files and datasets 
     #call_harvester()
 
+
+
     # Filter codemeta.jsonl for reviewRating > 3 (+ manual demand list and ruc without codemeta)
     #call_rating()
 
-
+    
     tools_to_INEO = get_ids_from_jsonl(JSONL_c3)
     datasets_to_INEO = get_ids_from_jsonl(JSONL_datasets)
     
@@ -133,16 +135,17 @@ if "__main__" == __name__:
         log.info("At least one JSONL file is not empty, generating templates ...")
         if not is_empty_jsonl_file(JSONL_c3):
             log.info("Making template(s) for tools ...")
-            call_template(JSONL_c3, 'tools')
+            #call_template(JSONL_c3, 'tools')
         if not is_empty_jsonl_file(JSONL_datasets):
             log.info("Making template(s) for datasets ...")
             call_template(JSONL_datasets, 'datasets')
         
-        exit()
-        
-        # Templates are ready, sync with the INEO api
-        call_ineo_sync()
+        # Templates are ready, sync with the INEO api. Also researchdomains and researchactivities are further processed here. 
+        #call_ineo_sync()
 
+        exit()
+     
+        
         log.info("sync completed. Begin backing-up and clearing of folders for the next run ...")
         # Define the maximum number of runs to keep backups of the c3 JSONL file
         max_backup_runs = 3
@@ -159,7 +162,7 @@ if "__main__" == __name__:
         backup_folder = os.path.join(main_backup_folder, f"backup_{timestamp}")
 
         # Backup the processed_jsonfiles folder
-        shutil.copytree("processed_jsonfiles", os.path.join(backup_folder, "processed_json_templates"))
+        shutil.copytree("processed_jsonfiles_tools", os.path.join(backup_folder, "processed_json_templates"))
 
         # Backup the rich_user_contents folder
         shutil.copytree("./data/rich_user_contents", os.path.join(backup_folder, "rich_user_contents_json"))
