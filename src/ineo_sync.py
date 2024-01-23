@@ -27,6 +27,7 @@ delete_path = "./deleted_documents"
 # Define the header with the Authorization token 
 header = {'Authorization': f'Bearer {api_token}'}
 
+
 def get_id_json(folder_path) -> list:
     """
     This function retrieves the ids of the processed files that need to go to INEO.  
@@ -61,12 +62,13 @@ def load_processed_document(id, folder_path):
     with open(file_path, 'r') as json_file:
         return json.load(json_file)
 
+
 def save_json_data_to_file(data, file_path):
     with open(file_path, 'w') as json_file:
         json.dump(data, json_file, indent=4)
 
 
-def check_properties(id, folder_path, vocabs):
+def check_properties(id, folder_path, vocabs) -> None:
     """"
     This function checks whether the researchDomains and researchActivities in the processed templates matches INEO.
     There are some discrepancies, e.g. https://w3id.org/nwo-research-fields#TextualAndContentAnalysis (INEO) 
@@ -116,9 +118,8 @@ def check_properties(id, folder_path, vocabs):
                 json_file_path = f"./{folder_path}/{id}_processed.json"
                 save_json_data_to_file(processed_files, json_file_path)
 
-  
 
-def get_document(ids, processed_jsonfiles) -> list:
+def get_document(ids: list[str], processed_jsonfiles: list[str]) -> tuple[list, list, list]:
     """
     This code first checks if a tool with the given identifier exists in INEO by performing a GET request. 
     If a resource exists (status code 200) and does not return an empty list, it returns a list with the processed resources. 
@@ -225,6 +226,7 @@ def update_document(documents, ids, force_yes=False):
             log.error(f"Error updating {ids}")
             log.info(update_response.text)
 
+
 class ToolStillPresentError(Exception):
     pass
 
@@ -292,31 +294,27 @@ def delete_document(delete_list, force_yes=False):
             log.info(update_response.text)
 
 
-
-def main():
-    
+def main() -> None:
     # check tool properties and replace with INEO property if match is found
     processed_document_ids = get_id_json(processed_jsonfiles)
     for processed_id in processed_document_ids:
-        check_properties(processed_id, processed_jsonfiles, vocabs = "researchDomains")
-        check_properties(processed_id, processed_jsonfiles, vocabs = "researchActivities")
+        check_properties(processed_id, processed_jsonfiles, vocabs="researchDomains")
+        check_properties(processed_id, processed_jsonfiles, vocabs="researchActivities")
     
     # check datasets properties and replace with INEO property if match is found
     processed_document_ids_ds = get_id_json(processed_jsonfiles_ds)
     for processed_id_ds in processed_document_ids_ds:
-        check_properties(processed_id_ds, processed_jsonfiles_ds, vocabs = "researchDomains")
+        check_properties(processed_id_ds, processed_jsonfiles_ds, vocabs="researchDomains")
 
     # INEO sync tools
-    """
-    processed_documents, ids_to_create, ids_to_update,  = get_document(processed_document_ids, processed_jsonfiles)  # get tools
+    processed_documents, ids_to_create, ids_to_update = get_document(processed_document_ids, processed_jsonfiles)  # get tools
     update_document(processed_documents, ids_to_update) # update tools
     handle_empty(ids_to_create, processed_jsonfiles) # create new tools
-    """
 
     # INEO sync datasets
-    processed_documents_ds, ids_to_create_ds, ids_to_update_ds,  = get_document(processed_document_ids_ds, processed_jsonfiles_ds) # get datasets
-    update_document(processed_documents_ds, ids_to_update_ds) # update datasets
-    handle_empty(ids_to_create_ds, processed_jsonfiles_ds) # create datasets
+    # processed_documents_ds, ids_to_create_ds, ids_to_update_ds = get_document(processed_document_ids_ds, processed_jsonfiles_ds) # get datasets
+    # update_document(processed_documents_ds, ids_to_update_ds) # update datasets
+    # handle_empty(ids_to_create_ds, processed_jsonfiles_ds) # create datasets
 
     exit()
     
@@ -334,6 +332,7 @@ def main():
             except ToolStillPresentError as e:
                 log.error(str(e))
                 sys.exit(1) 
+
 
 if __name__ == "__main__":
     main()

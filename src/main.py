@@ -27,8 +27,9 @@ JSONL_datasets_rdb = "/data/datasets.jsonl"
 TOOLS_TEMPLATE = "./template_tools.json"
 DATASETS_TEMPLATE = "./template_datasets.json"
 
+
 def call_harvester():
-    harvester.main(threshold = 3)
+    harvester.main(threshold=3)
     log.info("Harvester called ...")
     
 
@@ -103,19 +104,24 @@ def call_ineo_sync():
     ineo_sync.main()
     log.info("sync with INEO ...")
 
-if "__main__" == __name__:
-    
-    # Harvest codemeta tools, Rich User Contents files and datasets 
-    #call_harvester()
 
-
+if __name__ == "__main__":
+    # Harvest codemeta tools, Rich User Contents files and datasets
+    # TODO: uncomment the line below to enable harvesting
+    # Find downloaded json files in ./data
+    # For code_meta, ./data/tools_metadata
+    # For code_meta RUC, ./data/rich_user_contents
+    # For datasets, ./data/parsed_datasets (The data source is solr API, now simulated using ./data/datasets/vlo-response.json)
+    # codemeta.jsonl and datasets.jsonl will be generated in ./data
+    # delted files will be moved to ./src/deleted_documents (which is a text file contains ids to be deleted)
+    # call_harvester()
 
     # Filter codemeta.jsonl for reviewRating > 3 (+ manual demand list and ruc without codemeta)
-    #call_rating()
+    # After calling this line, a c3.jsonl file will be generated in "./data/c3.jsonl", further processing will be done on this file
+    # call_rating()
 
-    
-    tools_to_INEO = get_ids_from_jsonl(JSONL_c3)
-    datasets_to_INEO = get_ids_from_jsonl(JSONL_datasets)
+    tools_to_INEO: list[str] = get_ids_from_jsonl(JSONL_c3)
+    datasets_to_INEO: list[str] = get_ids_from_jsonl(JSONL_datasets)
     
     # Check the IDs of the datasets
     num_ids = len(datasets_to_INEO)
@@ -126,7 +132,8 @@ if "__main__" == __name__:
         log.debug(f"There are {num_ids} datasets IDs in total, and there are no duplicates.")
 
     # get INEO properties, e.g. research activities and domains from the api
-    #call_get_properties()
+    # properties are stored in json files, do they ever change??????????
+    # call_get_properties()
     
     # If the jsonl file is empty, there are no updates to be fed into INEO:
     if is_empty_jsonl_file(JSONL_c3) and is_empty_jsonl_file(JSONL_datasets):
@@ -135,17 +142,18 @@ if "__main__" == __name__:
         log.info("At least one JSONL file is not empty, generating templates ...")
         if not is_empty_jsonl_file(JSONL_c3):
             log.info("Making template(s) for tools ...")
-            #call_template(JSONL_c3, 'tools')
-        if not is_empty_jsonl_file(JSONL_datasets):
-            log.info("Making template(s) for datasets ...")
-            call_template(JSONL_datasets, 'datasets')
+            # TODO: make a enum for template_type
+            call_template(JSONL_c3, 'tools')
+        # if not is_empty_jsonl_file(JSONL_datasets):
+        #     log.info("Making template(s) for datasets ...")
+        #     call_template(JSONL_datasets, 'datasets')
         
         # Templates are ready, sync with the INEO api. Also researchdomains and researchactivities are further processed here. 
-        #call_ineo_sync()
+        call_ineo_sync()
+        log.info("Sync with INEO completed ...")
+        exit(0)
 
-        exit()
-     
-        
+        # TODO: The code below does house keeping after the sync with INEO is completed.
         log.info("sync completed. Begin backing-up and clearing of folders for the next run ...")
         # Define the maximum number of runs to keep backups of the c3 JSONL file
         max_backup_runs = 3

@@ -25,7 +25,11 @@ headers = {
     'Authorization': f'Bearer {api_token}'
 }
 
-def main():
+
+def main() -> None:
+    """
+    This function retrieves the properties from the INEO API and saves them to a JSON file.
+    """
     folder_properties = 'properties/'
     if not os.path.exists(folder_properties):
         os.makedirs(folder_properties)

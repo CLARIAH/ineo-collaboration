@@ -43,10 +43,12 @@ def query_rumbledb(query_file: str, jsonl_file: str) -> dict:
 
     return json.loads(response.text)
 
+
 def save_codemeta_to_file(codemeta_lines, output_file):
     with open(output_file, "w") as output_file:
         for line in codemeta_lines:
             output_file.write(json.dumps(line) + '\n')
+
 
 def process_jsonlfile(input_file_path, c3_ids, tools_requests):
     c3_lines = []
@@ -68,8 +70,9 @@ def process_jsonlfile(input_file_path, c3_ids, tools_requests):
 
 def main():
 
-    # Exmample list of codemeta tools that do not have a sufficient rating but are requested by the provider. 
-    # For now (15112023) this is a list of codemeta tools that are already uploaded to INEO and do not have a rating >= 3. 
+    # Example list of codemeta tools that do not have a sufficient rating but are requested by the provider.
+    # For now (15112023) this is a list of codemeta tools that are already uploaded to INEO and do not have a rating >= 3.
+    # TODO: move this list to a separate file and find a way to let providers decide the content of this list.
     tools_requests = []
     
     # Here follows code for tools that have a RUC but do not have a sufficient rating

@@ -591,10 +591,17 @@ main function
 log_file_path = 'harvester.log'
 log = configure_logger(log_file_path) 
 
-def get_id_from_change_list(diff_list_ruc: list):
+
+def get_id_from_change_list(diff_list_ruc: list) -> list[str]:
     return [x.split(".")[0] for x in diff_list_ruc if x.endswith('.json')]
 
-def main(threshold):
+
+def main(threshold: int) -> None:
+    """
+    This script downloads the latest Codemeta JSON files and Rich User Content (RUC) from Github,
+    threshold: int : The number of iterations after which a file is considered absent.
+    TODO: The threshold is implemented, but need test
+    """
     
     # Create the "data" folder if it doesn't exist
     data_folder = "data"
