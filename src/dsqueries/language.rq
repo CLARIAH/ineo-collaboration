@@ -1,0 +1,13 @@
+let $languages := (
+    for $i in json-file("{JSONL}", 10)
+    where $i.id eq "{ID}"
+    return $i."_languageName"
+)
+
+let $filteredLanguages := (
+    for $language in distinct-values($languages[])
+    where $language ne "Unspecified" and $language ne "Unknown"
+    return $language
+)
+
+return [$filteredLanguages]

@@ -1,34 +1,37 @@
-(: This query maps either the "accessInfo" or "license" field based on their existence to INEO's Access. 
-The "title" is taken from the first element ($desc[[1]]).
-The "link" is determined based on the following conditions:
-1. If the first element contains "http:", it takes that link (e.g.http://www.apache.org/licenses/LICENSE-2.0 id: "http_58__47__47_hdl.handle.net_47_10032_47_c632814b08cafbbdefed5de13de6bdb0")
-2. If the first element contains "OPEN" and the second element contains "http:", it sets the link to the second element ($desc[[2]]):
-This second condition is valid for cases such as ["OPEN_ACCESS","http://creativecommons.org/publicdomain/zero/1.0" (id: oai_58_easy.dans.knaw.nl_58_easy-dataset_58_114649)]
+(: This query extracts either "licenseType" or "accessInfo" field based on their existence to INEO's Access. 
 
-Otherwise, it sets the link to () (an empty sequence). :)
+If the "licenseType" contains "UNSPECIFIED," it takes, if it is there, the accessInfo as the 'title' otherwise null. 
+If it contains "PUB," it returns a array with "Public" as the title.
+If it contains "ACA," it returns a array indicating "Academic" as the title.
+If it contains "RES," it returns a JSON array indicating "Restricted for individual" as the title. 
+If none of the conditions match, it returns an empty string (null) 
+
+For the link it uses the "license". If "license" does not exists, it returns an empty string (null) :) 
 
 
 
-let $access := (
-    for $i in json-file("{JSONL}", 10)
-where $i.id eq "{ID}"
+let $licensetype :=
+  (for $i in json-file("{JSONL}", 10)
+   where $i.id eq "{ID}"
+   return if (exists($i.licenseType)) then $i.licenseType else $i.accessInfo)
 
-    return 
-        if (exists($i.accessInfo))
-        then $i.accessInfo
-        else $i.license
-)
+let $license :=
+  (for $i in json-file("{JSONL}", 10)
+   where $i.id eq "{ID}"
+   return if (exists($i.license)) then $i.license[[1]] else ())
 
-let $containsOpenAccess := 
-    for $item in $access
-    return
-   {
-            "title": $item[[1]],
-            "link": if (contains($item[[1]], "http:")) then $item[[1]] 
+let $accessinfo :=
+  (for $i in json-file("{JSONL}", 10)
+   where $i.id eq "{ID}"
+   return if (exists($i.accessInfo)) then $i.accessInfo[[1]] else ())
 
-else if (contains($item[[1]], "OPEN")) then $item[[2]] 
 
-else ()
-        }
+let $formattedAccess :=
+  (if ($licensetype) then $licensetype[[1]] else ())
 
-return [$containsOpenAccess]
+return if (contains($formattedAccess, "UNSPECIFIED")) then [{"title": $accessinfo, "link": $license}] 
+else if (contains($formattedAccess, "PUB")) then [{"title": "Public", "link": $license}] 
+else if (contains($formattedAccess, "ACA")) then [{"title": "Academic", "link": $license}]
+else if (contains($formattedAccess, "RES")) then [{"title": "Restricted for individual", "link": $license}]
+else "Unspecified"
+

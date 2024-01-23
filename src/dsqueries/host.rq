@@ -25,5 +25,5 @@ return
 {"title": if (contains($item, "archive.mpi")) then "Max Planck Institute for Psycholinguistics" else $item, "link": $item}
 
 
-return $host
+return [$host]
 
