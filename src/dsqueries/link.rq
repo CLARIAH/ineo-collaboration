@@ -1,3 +1,30 @@
-for $i in json-file("{JSONL}", 10)
-where $i.id eq "{ID}"
-return parse-json($i."_landingPageRef"[]).url
+(: This query aims to retrieve relevant URLs for the link property in INEO (Go to resource button), with a preference for URLs containing "dx.doi.org" in the field _resourceRef.
+If there is not a dx.doi URL for the resource it searched for a URL in the _landingPageRef, and finally, if the _landingPageRef is not available, 
+it takes the self-link URL. :)
+
+
+let $resourceRef :=
+  (for $i in json-file("{JSONL}", 10)
+   where $i.id eq "{ID}"
+   return $i."_resourceRef")
+
+let $landingPageRef :=
+  (for $i in json-file("{JSONL}", 10)
+   where $i.id eq "{ID}"
+   return parse-json($i."_landingPageRef"[]).url)
+
+let $parsed :=
+  (for $resource in $resourceRef[]
+   let $jsonObject := parse-json($resource)
+   where contains($jsonObject.url, "dx.doi.org")
+   return $jsonObject.url)
+
+let $selflink :=
+  (for $i in json-file("{JSONL}", 10)
+   where $i.id eq "{ID}"
+   return $i."_selfLink")
+
+return
+  if (exists($parsed)) then $parsed
+  else if (exists($landingPageRef)) then $landingPageRef
+else $selflink
