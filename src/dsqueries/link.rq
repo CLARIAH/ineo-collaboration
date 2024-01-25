@@ -16,7 +16,7 @@ let $landingPageRef :=
 let $parsed :=
   (for $resource in $resourceRef[]
    let $jsonObject := parse-json($resource)
-   where contains($jsonObject.url, "dx.doi.org")
+   where contains($jsonObject.url, "dx.doi.org") or contains($jsonObject.url, "data.beeldengeluid")
    return $jsonObject.url)
 
 let $selflink :=

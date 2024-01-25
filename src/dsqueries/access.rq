@@ -1,6 +1,6 @@
 (: This query extracts either "licenseType" or "accessInfo" field based on their existence to INEO's Access. 
 
-If the "licenseType" contains "UNSPECIFIED," it takes, if it is there, the accessInfo as the 'title' otherwise null. 
+If the "licenseType" contains "UNSPECIFIED," it takes, if it is there, the accessInfo as the 'title' otherwise it takes the licenceType (thus UNSPECIFIED). 
 If it contains "PUB," it returns a array with "Public" as the title.
 If it contains "ACA," it returns a array indicating "Academic" as the title.
 If it contains "RES," it returns a JSON array indicating "Restricted for individual" as the title. 
@@ -9,29 +9,37 @@ If none of the conditions match, it returns an empty string (null)
 For the link it uses the "license". If "license" does not exists, it returns an empty string (null) :) 
 
 
-
 let $licensetype :=
   (for $i in json-file("{JSONL}", 10)
    where $i.id eq "{ID}"
-   return if (exists($i.licenseType)) then $i.licenseType else $i.accessInfo)
+   return if (exists($i.licenseType)) then $i.licenseType else ())
+
 
 let $license :=
   (for $i in json-file("{JSONL}", 10)
    where $i.id eq "{ID}"
    return if (exists($i.license)) then $i.license[[1]] else ())
 
+
 let $accessinfo :=
   (for $i in json-file("{JSONL}", 10)
    where $i.id eq "{ID}"
    return if (exists($i.accessInfo)) then $i.accessInfo[[1]] else ())
 
-
 let $formattedAccess :=
   (if ($licensetype) then $licensetype[[1]] else ())
 
-return if (contains($formattedAccess, "UNSPECIFIED")) then [{"title": $accessinfo, "link": $license}] 
-else if (contains($formattedAccess, "PUB")) then [{"title": "Public", "link": $license}] 
-else if (contains($formattedAccess, "ACA")) then [{"title": "Academic", "link": $license}]
-else if (contains($formattedAccess, "RES")) then [{"title": "Restricted for individual", "link": $license}]
-else "Unspecified"
+return
+  if ($accessinfo) then
+  if (contains($formattedAccess, "UNSPECIFIED")) then [{"title": $accessinfo, "link": $license}] 
+  else if (contains($formattedAccess, "PUB")) then [{"title": "Public", "link": $license}] 
+  else if (contains($formattedAccess, "ACA")) then [{"title": "Academic", "link": $license}]
+  else if (contains($formattedAccess, "RES")) then [{"title": "Restricted for individual", "link": $license}]
+  else "Unspecified"
 
+  else
+  if (contains($formattedAccess, "UNSPECIFIED")) then [{"title": $formattedAccess, "link": $license}] 
+  else if (contains($formattedAccess, "PUB")) then [{"title": "Public", "link": $license}] 
+  else if (contains($formattedAccess, "ACA")) then [{"title": "Academic", "link": $license}]
+  else if (contains($formattedAccess, "RES")) then [{"title": "Restricted for individual", "link": $license}]
+  else "Unspecified"
