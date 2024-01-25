@@ -38,7 +38,7 @@
                 "researchContact": [],
                 "generalContact": "<md:@queries/maintainer.rq,null",
                 "resourceTypes": ["<default:Tools"],
-                "status": "<md:@queries/status.rq,null",
+                "status": "<md:@queries/status.rq:status,null",
                 "versions": "<md:@queries/version.rq,null",
                 "standards": [],
                 "resourceOwner": "<md:@queries/producer.rq,null",

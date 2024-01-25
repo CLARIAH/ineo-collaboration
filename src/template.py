@@ -153,7 +153,7 @@ def checking_vocabs(value):
 
 def process_vocabs(vocabs, vocab, val):
     """
-    This function compares the links of the properties (e.g. mediaType) from INEO with the outcome of the jsoniq query on the codemeta files.
+    This function compares the links of the properties (e.g. mediaType, status ) from INEO with the outcome of the jsoniq query on the codemeta files.
     To make the comparisons case-insensitive, both vocab links and val are converted to lowercase (or uppercase). 
 
     !Further processing of the research domains and research activities (checking against INEO with lowercase spellingvariations) happens in ineo-sync.py!
@@ -166,13 +166,17 @@ def process_vocabs(vocabs, vocab, val):
         # Iterate through the 'mediaTypes' list
         for item in vocabs[vocab]:
             # Check if val is present in the 'title'
-            if val == item['title'].strip():
-                # If there is a match, return index and title
-                result = f"{item['index']} {val.strip()}"
+            if val.lower() == item['title'].strip().lower():
+                # If there is a match, return index and title (if the index is null (e.g. by status properties) return only the title)
+                if item['index'] is not None:
+                    result = f"{item['index']} {item['title'].strip()}"
+                else:
+                    result = f"{item['title'].strip()}"
+
                 #vocabs_list.append(result)
                 return result
-            else:
-                debug("process_vocabs", f"There is no match for {val}")
+        else:
+            debug("process_vocabs", f"There is no match for {val}")
 
     
 # global cache for vocabularies

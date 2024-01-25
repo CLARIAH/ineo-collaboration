@@ -32,7 +32,7 @@
                 "researchContact": [],
                 "generalContact": [],
                 "resourceTypes": "<default:Data",
-                "status": "<md:lifeCycleStatus,null",
+                "status": "<md:lifeCycleStatus:status,null",
                 "versions": [],
                 "standards": [],
                 "resourceOwner": "<md:rightsHolder,null",
