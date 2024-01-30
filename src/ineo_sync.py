@@ -312,9 +312,9 @@ def main() -> None:
     handle_empty(ids_to_create, processed_jsonfiles) # create new tools
 
     # INEO sync datasets
-    # processed_documents_ds, ids_to_create_ds, ids_to_update_ds = get_document(processed_document_ids_ds, processed_jsonfiles_ds) # get datasets
-    # update_document(processed_documents_ds, ids_to_update_ds) # update datasets
-    # handle_empty(ids_to_create_ds, processed_jsonfiles_ds) # create datasets
+    processed_documents_ds, ids_to_create_ds, ids_to_update_ds = get_document(processed_document_ids_ds, processed_jsonfiles_ds) # get datasets
+    update_document(processed_documents_ds, ids_to_update_ds) # update datasets
+    handle_empty(ids_to_create_ds, processed_jsonfiles_ds) # create datasets
 
     exit()
     

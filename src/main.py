@@ -114,11 +114,11 @@ if __name__ == "__main__":
     # For datasets, ./data/parsed_datasets (The data source is solr API, now simulated using ./data/datasets/vlo-response.json)
     # codemeta.jsonl and datasets.jsonl will be generated in ./data
     # delted files will be moved to ./src/deleted_documents (which is a text file contains ids to be deleted)
-    # call_harvester()
+    call_harvester()
 
     # Filter codemeta.jsonl for reviewRating > 3 (+ manual demand list and ruc without codemeta)
     # After calling this line, a c3.jsonl file will be generated in "./data/c3.jsonl", further processing will be done on this file
-    # call_rating()
+    call_rating()
 
     tools_to_INEO: list[str] = get_ids_from_jsonl(JSONL_c3)
     datasets_to_INEO: list[str] = get_ids_from_jsonl(JSONL_datasets)
@@ -133,8 +133,8 @@ if __name__ == "__main__":
 
     # get INEO properties, e.g. research activities and domains from the api
     # properties are stored in json files, do they ever change??????????
-    # call_get_properties()
-    
+    call_get_properties()
+
     # If the jsonl file is empty, there are no updates to be fed into INEO:
     if is_empty_jsonl_file(JSONL_c3) and is_empty_jsonl_file(JSONL_datasets):
         log.info("No new updates in the JSONL files of RUC, Codemeta, and Datasets")
@@ -144,9 +144,9 @@ if __name__ == "__main__":
             log.info("Making template(s) for tools ...")
             # TODO: make a enum for template_type
             call_template(JSONL_c3, 'tools')
-        # if not is_empty_jsonl_file(JSONL_datasets):
-        #     log.info("Making template(s) for datasets ...")
-        #     call_template(JSONL_datasets, 'datasets')
+        if not is_empty_jsonl_file(JSONL_datasets):
+            log.info("Making template(s) for datasets ...")
+            call_template(JSONL_datasets, 'datasets')
         
         # Templates are ready, sync with the INEO api. Also researchdomains and researchactivities are further processed here. 
         call_ineo_sync()
@@ -198,6 +198,8 @@ if __name__ == "__main__":
         shutil.rmtree(deleted_documents_path)
 
         for item in os.listdir("./data"):
+            # the database cannot be deleted because it needs to get track of the inactival tools and md5 comparison.
+            # Implement way to delete old entries (e.g. > 3 runs) in the databaes.
             if item != "ineo.db":
                 item_path = os.path.join("./data", item)
                 if os.path.isfile(item_path):
