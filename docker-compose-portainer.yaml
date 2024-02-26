@@ -9,7 +9,7 @@ volumes:
     driver: local
 
 services:
-  python-run:
+  ineo-run:
     image: registry.diginfra.net/tsd/ineo-sync:0.3
     container_name: ineo-sync
     volumes:
@@ -24,7 +24,9 @@ services:
     volumes:
       - ineo-sync-data:/data
     restart: unless-stopped
-    command: ["serve", "-p", "8001", "-h", "0.0.0.0"]
+    command: ["serve", "-p", "8001", "-h", "0.0.0.0", "--driver-memory", "2G", "--executor-memory", "2G"]
+    environment:
+      - JAVA_OPTS=-Xmx6g -Xms6g
     networks:
       - traefik-public
     depends_on:

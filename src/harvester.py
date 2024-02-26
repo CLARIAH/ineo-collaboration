@@ -542,6 +542,15 @@ def datasets_are_valid_jsons(file_path):
         return False
 
 
+def query_solr_api(solr_url, query, output_file):
+    """
+    This function queries the Solr API and writes the results to a file.
+    """
+    response = requests.get(solr_url, params=query)
+    with open(output_file, 'w') as file:
+        file.write(response.text)
+
+
 def get_datasets(parsed_datasets_directory, dataset_file_path):
     """
     Saves individual datasets as separate JSON files
@@ -571,11 +580,6 @@ def get_datasets(parsed_datasets_directory, dataset_file_path):
                 json.dump(dataset, datasets_files, indent=2)
     else:
         logger.error("The JSON file does not have the expected structure.")
-
-
-"""
-main function
-"""
 
 
 def get_id_from_change_list(diff_list_ruc: list) -> list[str]:
