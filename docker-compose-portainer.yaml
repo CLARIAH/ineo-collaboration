@@ -29,6 +29,4 @@ services:
       - JAVA_OPTS=-Xmx2g -Xms2g
     networks:
       - traefik-public
-    depends_on:
-      - python-run
   
