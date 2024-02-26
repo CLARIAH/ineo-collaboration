@@ -23,3 +23,5 @@ src/out
 src/backups
 src/processed_jsonfiles_datasets_copy
 src/processed_jsonfiles_tools_copy
+src/get.sh
+src/props.sh

@@ -3,12 +3,13 @@ import requests
 import os
 import dotenv
 from dotenv import load_dotenv
-from harvester import configure_logger
+from harvester import get_logger
 
 load_dotenv()
 api_token: str = dotenv.get_key('.env', 'API_TOKEN')
+
 log_file_path = 'get_properties.log'
-log = configure_logger(log_file_path)
+log = get_logger(log_file_path, __name__)
 
 urls_properties = [
     "https://ineo-resources-api-5b568b0ad6eb.herokuapp.com/properties/languages",

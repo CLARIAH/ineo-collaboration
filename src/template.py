@@ -2,9 +2,11 @@ import sys
 import json
 import requests
 import re
-import pretty_errors
-import jsonlines
 import os
+import logging
+from utils import get_logger
+
+logger = get_logger("template.log", __name__, level=logging.ERROR)
 
 """
 This script is designed to process JSON data using a template and retrieve information based on a set of rules defined in the template. 
@@ -12,7 +14,7 @@ https://github.com/CLARIAH/clariah-plus/blob/main/requirements/software-metadata
 """
 
 RUMBLEDB = "http://rumbledb:8001/jsoniq"
-#RUMBLEDB = "http://localhost:8001/jsoniq"
+# RUMBLEDB = "http://localhost:8001/jsoniq"
 
 # location of the JSONL file within container ineo-sync
 JSONL_ineo = "./data/c3.jsonl"
@@ -33,26 +35,16 @@ if len(sys.argv) > 1:
 if len(sys.argv) > 2:
     TOOLS_TEMPLATE = sys.argv[2]
 
-# Debug and error handling functions
-def debug(func, msg):
-    print(f"?DBG:{func}:{msg}", file=sys.stderr)
-    return None
-
-def error(func, msg):
-    if func is None:
-        print(f"!ERR:{msg}", file=sys.stderr)
-    else:
-        print(f"!ERR:{func}:{msg}", file=sys.stderr)
 
 def resolve_path(ruc, path):
     """
     Function to resolve a path within a nested dictionary. It splits the path into steps, and if a step starts with "$", 
     it looks for a matching key in the dictionary to access the nested values.
     """
-    debug("resolve_path", f"path[{path}]")
+    logger.debug("resolve_path", f"path[{path}]")
     steps = path.split("/")
     step = steps[0]
-    debug("resolve_path", f"step[{step}]")
+    logger.debug("resolve_path", f"step[{step}]")
     if step.startswith("$"):
         step = step.replace("$", "")
         ruc_key = step
@@ -60,23 +52,23 @@ def resolve_path(ruc, path):
             if key.lower() == step.lower():
                 ruc_key = key
         step = ruc[ruc_key]
-        debug("resolve_path", f"$step[{step}]")
+        logger.debug("resolve_path", f"$step[{step}]")
     ruc_key = None
     for key in ruc.keys():
-        debug("resolve_path", f"key[{key}]")
+        logger.debug("resolve_path", f"key[{key}]")
         if key.lower() == step.lower():
             ruc_key = key
             if len(steps) == 1:
                 res = ruc[ruc_key]
-                debug("resolve_path", f"res[{res}]")
+                logger.debug("resolve_path", f"res[{res}]")
                 return res
             else:
                 if isinstance(ruc[ruc_key], dict):
                     res = resolve_path(ruc[ruc_key], "/".join(steps[1:]))
-                    debug("resolve_path", f"res[{res}]")
+                    logger.debug("resolve_path", f"res[{res}]")
                     return res
                 else:
-                    debug("resolve_path", f"path is deeper, but dict not!")
+                    logger.debug("resolve_path", f"path is deeper, but dict not!")
                     return None
 
 
@@ -88,7 +80,7 @@ def traverse_data(template, ruc, rumbledb_jsonl_path, current_id):
     key: type = 'str', key of the template.json (e.g. "programmingLanguages")
     info: type = 'str', extracted information after "<" if the value starts with "<" (e.g. "<md:@queries/plangs.rq,null" > md:@queries/plangs.rq,null) 
     """
-    
+
     res = None
 
     # Check if the data is a dictionary
@@ -126,8 +118,9 @@ def traverse_data(template, ruc, rumbledb_jsonl_path, current_id):
                 else:
                     res.append(item)
     return res
-    
-def checking_vocabs(value): 
+
+
+def checking_vocabs(value):
     """
     This function is used to modify and standardize the query results of the research activities and domains (activities.rq and domains.rq) in order to be mapped against nwo-research-fields.json
     research domains: Some namespaces in "applicationCategory" in the codemeta files need to be expanded with the correct URL (e.g. nwo:ComputationalLinguisticsandPhilology > https://w3id.org/nwo-research-fields#ComputationalLinguisticsandPhilology)
@@ -143,13 +136,14 @@ def checking_vocabs(value):
     elif "w3id.org" in value:
         return value
     elif "vocabs.dariah.eu" in value:
-        debug("info", "The value contains 'vocabs.dariah.eu'")
+        logger.debug("The value contains 'vocabs.dariah.eu'")
         return value
     elif ">" in value:
-        debug("info", "Value contains '>' and will be ignored")
-        return None 
+        logger.debug("Value contains '>' and will be ignored")
+        return None
     else:
         return value
+
 
 def process_vocabs(vocabs, vocab, val):
     """
@@ -160,7 +154,7 @@ def process_vocabs(vocabs, vocab, val):
 
     It merges the index number and title of the properties in the format {index + title} "7.23 plain"
     """
-    
+
     # Check if the 'properties' key of e.g. MediaType is present in the properties
     if vocab in vocabs:
         # Iterate through the 'mediaTypes' list
@@ -173,14 +167,15 @@ def process_vocabs(vocabs, vocab, val):
                 else:
                     result = f"{item['title'].strip()}"
 
-                #vocabs_list.append(result)
+                # vocabs_list.append(result)
                 return result
         else:
-            debug("process_vocabs", f"There is no match for {val}")
+            logger.debug(f"There is no match for {val}")
 
-    
+
 # global cache for vocabularies
 vocabs = {}
+
 
 def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | None | str:
     """
@@ -215,13 +210,13 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
 
     global vocabs
 
-    debug("retrieve_info", f"info[{info}]")
-    info_values = info.split(",") 
+    logger.info("retrieve_info", f"info[{info}]")
+    info_values = info.split(",")
     for info_value in info_values:
-        debug("retrieve_info", f"info_value[{info_value}]")
+        logger.debug("retrieve_info", f"info_value[{info_value}]")
         if info_value.startswith("ruc"):
             info_parts = info_value.split(":")
-            debug("retrieve_info", f"info_parts[{info_parts}]")
+            logger.debug("retrieve_info", f"info_parts[{info_parts}]")
 
             if len(info_parts) >= 2:
                 """
@@ -232,14 +227,14 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
                     template_key = template_key[:-2]
 
                 info = resolve_path(ruc, template_key)
-                debug(
+                logger.debug(
                     "retrieve_info", f"The value of '{template_key}' in the RUC: {info}"
                 )
 
             if info is not None and len(info_parts) > 2:
                 regex_str = info_parts[2].strip()
                 regex = re.compile(regex_str, flags=re.DOTALL)
-                debug("retrieve_info", f"the regex string is: {regex_str}")
+                logger.debug(f"the regex string is: {regex_str}")
                 if isinstance(info, list):
                     match = [
                         regex.search(item) if regex.search(item) is not None else item
@@ -256,11 +251,11 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
                         else:
                             info.append(m.group(1))
                 elif match is not None:
+                    logger.debug("retrieve_info", f"The regex value of '{regex_str}': {info}")
                     info.append(match.group(1))
-                    debug("retrieve_info", f"The regex value of '{regex_str}': {info}")
                 else:
+                    logger.debug("retrieve_info", f"The regex value of '{regex_str}': {info}")
                     info = None
-                    debug("retrieve_info", f"The regex value of '{regex_str}': {info}")
 
             if info is not None and len(info_parts) > 3:
                 template_key = info_parts[1].strip().lower()
@@ -280,37 +275,34 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
                     text: str = text.replace("$1", info[0])
 
                 info = text
-                debug(
-                    "retrieve_info",
-                    f"The text value of '{info_parts[3].strip()}': {info}",
-                )
+                logger.debug(f"The text value of '{info_parts[3].strip()}': {info}")
 
             res = info
             if res is not None:
                 break  # Exit the loop once a match is found
-    
+
         # With the http request method POST, the INEO api can perform three operations: create, update and delete.
         # the default option is create. This will be further processed in ineo_sync.py
         if info_value.startswith("api"):
             res = "create"
-        
-         # The default values is defined in the template after the column
+
+        # The default values is defined in the template after the column
         if info_value.startswith("default"):
-            debug("retrieve_info", f"Starting with {info_value}")
+            logger.debug("retrieve_info", f"Starting with {info_value}")
             info_parts = info_value.split(":")
-            debug("retrieve_info", f"info_parts[{info_parts}]")
-            
+            logger.debug("retrieve_info", f"info_parts[{info_parts}]")
+
             res = info_parts[1]
-        
+
         # Checking if the info_value string begins with "md" (e.g. "<md:@queries/activities.rq,null")
         # First check if the JSONL file of codemeta is not empty   
         if info_value.startswith("md"):
             info = None
-            debug("retrieve_info", f"Starting with {info_value}")
+            logger.info("retrieve_info", f"Starting with {info_value}")
 
             info_parts = info_value.split(":")
-            debug("retrieve_info", f"info_parts[{info_parts}]")
-            
+            logger.debug("retrieve_info", f"info_parts[{info_parts}]")
+
             if len(info_parts) >= 2:
                 path = info_parts[1]
 
@@ -325,7 +317,7 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
                     # If the path starts with "@", this line extracts the file path by removing the "@" character. 
                     # For example, if path is "@queries/activities.rq", the path will be set to "queries/activities.rq". 
                     file = path[1:]
-                    debug("path", f"path for the query[{file}]")
+                    logger.debug("path", f"path for the query[{file}]")
                     with open(file, "r") as file:
                         query = file.read()
                 if query is not None:
@@ -338,19 +330,16 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
                     else:
                         query = f'for $i in json-file("{rumbledb_jsonl_path}",10) where $i.identifier eq "{current_id}" return $i.{path}'
 
-                debug("retrieve_info", f"rumbledb query[{query}]")
+                logger.debug("retrieve_info", f"rumbledb query[{query}]")
                 response = requests.post(RUMBLEDB, data=query)
                 assert (
-                    response.status_code == 200
+                        response.status_code == 200
                 ), f"Error running {query} on rumbledb: {response.text}"
 
                 # check whether the query run was successful
                 resp = json.loads(response.text)
                 if ("error-code" in resp) or ("error-message" in resp):
-                    error(
-                        "retrieve_info",
-                        f"Error running {query} on rumbledb: {response.text}",
-                    )
+                    logger.error(f"Error running {query} on rumbledb: {response.text}")
                     exit()
 
                 if len(resp["values"]) > 0:
@@ -363,29 +352,26 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
 
             if info is not None and len(info_parts) > 2:
                 vocab = info_parts[2].strip()
-                debug("retrieve_info", f"filter on vocab[{vocab}]")
-                
+                logger.debug(f"filter on vocab[{vocab}]")
+
                 if vocab not in vocabs.keys():
                     # Load the vocabs file to be used later
                     with open(f"/src/properties/{vocab}.json", "r") as vocabs_file:
                         vocabs[vocab] = json.load(vocabs_file)
-                
+
                 vocabs_list = []
                 result_info = []
-                
+
                 for val in info:
                     checked_val = checking_vocabs(val)
-                    debug(vocab, val) 
+                    logger.debug(vocab, val)
                     if checked_val is not None and checked_val.startswith("https://w3id.org/nwo-research-fields#"):
                         result_info.append(checked_val)
-                        info = result_info 
+                        info = result_info
                     else:
                         # Retrieve the index number of the title of the property for mapping to INEO. E.g. for MediaTypes that is 7.23 plain
                         info = process_vocabs(vocabs, vocab, val)
-                        debug(
-                            "retrieve_info",
-                            f"The vocab value from '{info_parts[2].strip()}': {val}",
-                            )
+                        logger.debug(f"The vocab value from '{info_parts[2].strip()}': {val}")
                         if info is not None:
                             vocabs_list.append(info)
                         if len(vocabs_list) > 0:
@@ -394,23 +380,22 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
                         else:
                             info = None
 
-
             if info is not None:
-                debug("retrieve_info", f"The value of '{path}' in the MD: {info}")
+                logger.debug(f"The value of '{path}' in the MD: {info}")
 
             res = info
             if res is not None:
                 break  # Exit the loop once a match is found
-    
+
         # This line checks if info_value starts with the prefix "err" ("<ruc:learn,err:there is no learn!")
         if info_value.startswith("err"):
-            msg = info_value.split(":")[1].strip() # "there is no learn!"
+            msg = info_value.split(":")[1].strip()  # "there is no learn!"
             # Print the error message to stderr
-            error(None, f"{msg}")
+            logger.debug(f"error message given by template.json: [{msg}]")
 
         # checks if info_value starts with the prefix "null" and indicates that the result should be set to "null".
         if info_value.startswith("null"):
-            debug("retrieve_info", f"Starting with 'null':{info_value}")
+            logger.debug(f"Starting with 'null':{info_value}")
             res = "null"
 
     return res
@@ -443,28 +428,28 @@ def main(current_id: str = ID, template_path: str = TOOLS_TEMPLATE, rumbledb_jso
     res: type = 'list', the result of combining the RUC and the MD based on the instructions set out in template.py. 
     
     """
-    
+
     # DSL template
-    global template
+    # global template
     with open(template_path, "r") as file:
         template = json.load(file)
 
     # Rich User Contents
     ruc = None
-    
+
     # Load RUC dictionary or create a minimal RUC object if not existent
     ruc_file_path = f"./data/rich_user_contents/{current_id}.json"
 
     if os.path.exists(ruc_file_path):
         with open(ruc_file_path, "r") as json_file:
             ruc = json.load(json_file)
-        debug("main", f"RUC contents: {ruc}")
+        logger.debug(f"RUC contents: {ruc}")
     else:
         ruc = create_minimal_ruc(current_id)
 
     # Combine codemeta/datasets and RUC using the template
     res = traverse_data(template, ruc, rumbledb_jsonl_path, current_id)
-    
+
     # Create folders if they don't exist
     tools_folder = 'processed_jsonfiles_tools'
     datasets_folder = 'processed_jsonfiles_datasets'
@@ -474,7 +459,7 @@ def main(current_id: str = ID, template_path: str = TOOLS_TEMPLATE, rumbledb_jso
 
     if not os.path.exists(datasets_folder):
         os.makedirs(datasets_folder)
-    
+
     # Iterate through the results and save JSON files accordingly
     processed_results = []
 
@@ -487,22 +472,14 @@ def main(current_id: str = ID, template_path: str = TOOLS_TEMPLATE, rumbledb_jso
             folder_name = datasets_folder
 
         processed_results.append(result)
-    
+
     filename = os.path.join(folder_name, f"{current_id}_processed.json")
-    
+
     with open(filename, 'w') as file:
         json.dump(processed_results, file, indent=2)
 
-    print("JSON files saved successfully.")
+    logger.info(f"JSON files saved successfully. {filename}")
 
 
 if __name__ == "__main__":
     main()
-
-
-
-
-    
-   
-    
-   

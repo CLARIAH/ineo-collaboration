@@ -2,14 +2,14 @@ import requests
 import json
 import logging
 import os
-from harvester import configure_logger
+from harvester import get_logger
 
+log_file_path = 'rating.log'
+log = get_logger(log_file_path, __name__)
 
 RUMBLEDB = "http://rumbledb:8001/jsoniq"
 JSONL_cc = "/data/codemeta.jsonl"
 JSONL_cc_ineo = "./data/codemeta.jsonl"
-log_file_path = 'rating.log'
-log = configure_logger(log_file_path)
 
 
 def get_ruc_ids(jsonl_file: str) -> list:

@@ -8,4 +8,4 @@ python-dotenv
 pytest 
 pandas
 icecream
-
+tqdm

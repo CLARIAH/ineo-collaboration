@@ -3,7 +3,7 @@ version: "3"
 services:
   python-run:
     build: .
-    image: ineo-sync:0.1
+    image: ineo-sync:latest
     container_name: ineo-sync
     volumes:
       - ./:/src
@@ -15,7 +15,9 @@ services:
     volumes:
       - ./data:/data 
     restart: unless-stopped
-    command: ["serve", "-p", "8001", "-h", "0.0.0.0"]
+    command: ["serve", "-p", "8001", "-h", "0.0.0.0", "--driver-memory", "6G", "--executor-memory", "6G"]
+    environment:
+      - JAVA_OPTS=-Xmx6g -Xms6g
     ports:
       - 8001:8001
     depends_on:

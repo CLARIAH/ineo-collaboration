@@ -4,11 +4,10 @@ import requests
 import sys
 from dotenv import load_dotenv
 import dotenv
-import template
-from harvester import configure_logger
+from harvester import get_logger
 
 log_file_path = 'ineo_sync.log'
-log = configure_logger(log_file_path)
+log = get_logger(log_file_path, __name__)
 
 """
 This file loads some environment variables from a .env file

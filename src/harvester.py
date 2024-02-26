@@ -1,6 +1,5 @@
 import os
 import re
-import logging
 import requests
 import hashlib
 import sqlite3
@@ -12,30 +11,14 @@ import yaml
 from typing import List, Optional, AnyStr, Union
 from bs4 import BeautifulSoup
 from datetime import datetime
+from utils import get_logger
+
+log_file_path = 'harvester.log'
+logger = get_logger(log_file_path, __name__)
 
 output_path_data = "./data"
 output_path_queries = "./queries"
 delete_path = "./deleted_documents"
-
-
-
-def configure_logger(log_file_path):
-    log = logging.getLogger(__name__)
-    log.setLevel(logging.DEBUG)
-
-    # Ensure the "logs" folder exists
-    logs_folder = "logs"
-    if not os.path.exists(logs_folder):
-        os.makedirs(logs_folder)
-
-    log_file_path = os.path.join(logs_folder, log_file_path)
-    file_handler = logging.FileHandler(log_file_path)
-    log_format = "%(asctime)s - %(levelname)s - %(message)s"
-    formatter = logging.Formatter(log_format)
-    file_handler.setFormatter(formatter)
-    log.addHandler(file_handler)
-
-    return log
 
 
 def create_folder(folder_name: str):
@@ -110,16 +93,16 @@ def extract_ruc(ruc_content: AnyStr) -> dict:
 
 def get_db_cursor(db_file_name=os.path.join(output_path_data, "ineo.db"), table_name="tools_metadata"):
     """
-    Get a cursor to the database
+    Get a cursor to the database SQLite3 file which is used to track the changes in the harvested files.
     """
     # init db and check if the table exists
     conn = init_check_db(db_file_name, table_name)
     if conn is None:
-        log.error("Error in creating the database connection!")
+        logger.error("Error in creating the database connection!")
         exit(1)
     # create a cursor
     c = conn.cursor()
-    return (c, conn)
+    return c, conn
 
 
 def get_canonical(file_name):
@@ -127,7 +110,7 @@ def get_canonical(file_name):
     Create a canonical version of the json file. 
     For ignoring fields that do not contain necessary changes for the MD5 to change.
     """
-    log.info(f"making canon file for {file_name}")
+    logger.debug(f"making canon file for {file_name}")
     canon_file = f"{file_name}.canon"
     with open(file_name, 'r') as json_file:
         data = json.load(json_file)
@@ -135,7 +118,7 @@ def get_canonical(file_name):
             data['review']['@id'] = '__canon_purge__'
             data['review']['datePublished'] = '__canon_purge__'
         else:
-            log.info("no review!")
+            logger.debug("no review!")
     with open(canon_file, 'w') as json_file:
         json.dump(data, json_file, indent=2)
     return canon_file
@@ -148,11 +131,11 @@ def get_md5(file_name):
     md5_file = file_name
     if file_name.endswith('codemeta.json'):
         md5_file = get_canonical(file_name)
-    hash_md5 = hashlib.md5()
+    hasher = hashlib.md5()
     with open(md5_file, 'rb') as file:
         for chunk in iter(lambda: file.read(4096), b""):
-            hash_md5.update(chunk)
-    return hash_md5.hexdigest()
+            hasher.update(chunk)
+    return hasher.hexdigest()
 
 
 def download_json_files(
@@ -181,7 +164,7 @@ def download_json_files(
         href = link.get('href')
         if href.endswith('.codemeta.json'):
             file_url = url + href
-            log.info(f"Downloading {file_url}")
+            logger.debug(f"Downloading {file_url}")
             response = requests.get(file_url)
             file_name = os.path.join(save_directory, href)
             files_list.append(file_name)
@@ -189,7 +172,7 @@ def download_json_files(
                 file.write(response.content)
             count += 1
 
-    log.info(f"Downloaded all the tools metadata! Total JSON files: {count}")
+    logger.info(f"Downloaded all the tools metadata! Total JSON files: {count}")
     return files_list
 
 
@@ -208,7 +191,7 @@ def backup_json_files(source_directory: str, backup_directory: str) -> None:
         backup_file = os.path.join(backup_directory, file_name)
         shutil.copyfile(source_file, backup_file)
 
-    log.info("Backup of previous JSON files created.")
+    logger.info("Backup of previous JSON files created.")
 
 
 def get_files(folder_name: str) -> Optional[List[str]]:
@@ -240,7 +223,7 @@ def add_to_jsonlines(read_from_file, write_to_file):
     """
     with open(read_from_file, 'r') as json_file:
         data = make_jsonline(json_file)
-        log.debug(f"writing {data} to {write_to_file}")
+        logger.debug(f"writing {data} to {write_to_file}")
         with jsonlines.open(write_to_file, 'a') as jsonlines_file:
             jsonlines_file.write(data)
 
@@ -266,7 +249,7 @@ def compare_lists(list1: Optional[List[str]], list2: Optional[List[str]]) -> Lis
         list1_list2 = list(set(list1_copy) - set(list2_copy))
         # diff = [f"{list1_path}/{x}" for x in list1_list2]
         diff = [x for x in list1_list2]
-    log.debug(f"list1 diff is {diff}")
+    logger.debug(f"list1 diff is {diff}")
 
     # getting elements in l2 not in l1
     diff2 = []
@@ -275,7 +258,7 @@ def compare_lists(list1: Optional[List[str]], list2: Optional[List[str]]) -> Lis
         list2_list1 = list(set(list2_copy) - set(list1_copy))
         # diff2 = [f"{list2_path}/{x}" for x in list2_list1]
         diff2 = [x for x in list2_list1]
-    log.debug(f"list2 diff is {diff2}")
+    logger.debug(f"list2 diff is {diff2}")
     return diff + diff2
 
 
@@ -300,6 +283,7 @@ def db_table_exists(conn: sqlite3.Connection, table_name: str) -> bool:
     if c.fetchone()[0] == 1:
         return True
     return False
+
 
 def get_id_from_ruc_file_name(file_name: str) -> str:
     full_file_name = file_name.split("/")[-1]
@@ -335,10 +319,10 @@ def process_list(ids: list, folder_name, db_file_name, table_name, diff_list, cu
 
         if md5 != previous_md5:
             if previous_md5 is not None:
-                log.info(f"File {file} has changed! Old hash was: {previous_md5}")
+                logger.debug(f"File {file} has changed! Old hash was: {previous_md5}")
             ids.append(get_id_from_file_name(file))
         else:
-            log.debug(f"File {file} has not changed.")
+            logger.debug(f"File {file} has not changed.")
         c.execute(f"INSERT INTO {table_name} (file_name, md5, timestamp) VALUES (?, ?, ?)",
                   (file, md5, current_timestamp))
         conn.commit()
@@ -353,7 +337,7 @@ def init_check_db(db_file_name: str, table_name: str) -> Optional[sqlite3.Connec
 
     # check if table exists
     if not db_table_exists(conn, table_name):
-        log.info(f"Table {table_name} does not exist, creating!")
+        logger.info(f"Table {table_name} does not exist, creating!")
         create_db_table(conn, table_name)
 
     return conn
@@ -378,11 +362,11 @@ def sync_ruc(github_url, github_dir):
 
     # Check if the ineo-content github repository directory exists
     if not os.path.exists(github_dir):
-        log.info(f"The github directory '{github_dir}' does not exist. Cloning...")
+        logger.info(f"The github directory '{github_dir}' does not exist. Cloning...")
         # Clone the repository
         subprocess.run(["git", "clone", github_url])
     else:
-        log.info(f"The github directory '{github_dir}' already exists. Pulling...")
+        logger.info(f"The github directory '{github_dir}' already exists. Pulling...")
 
         # cd ineo-content
         os.chdir(github_dir)
@@ -392,9 +376,9 @@ def sync_ruc(github_url, github_dir):
 
         # Check if the "Already up to date" message is in the output
         if "Already up to date." in result.stdout:
-            log.info("Repository is already up to date. The RUC have not changed")
+            logger.info("Repository is already up to date. The RUC have not changed")
         else:
-            log.info("Repository is not up to date.")
+            logger.info("Repository is not up to date.")
 
         # Change back to the previous working directory
         os.chdir(current_dir)
@@ -420,22 +404,22 @@ def get_ruc_contents() -> dict:
         with open(file_path, 'r') as file:
             contents: AnyStr = file.read()
             ruc_contents: dict = extract_ruc(contents)
-            log.info(f"Rich User Contents of {file_path} is:\n{ruc_contents}\n")
+            logger.debug(f"Rich User Contents of {file_path} is:\n{ruc_contents}\n")
             all_ruc_contents[filename] = ruc_contents
 
     # Check if the RUC filename is identical to the identifier and replace if not
-    modified_contents = {}  
+    modified_contents = {}
     for filename, ruc_data in all_ruc_contents.items():
         identifier = ruc_data.get('identifier', '').lower()  # Get the lowercase identifier from the RUC dictionary
         filename_ruc = os.path.splitext(filename)[0].lower()
         if filename_ruc != identifier:
-            log.info(f"Filename '{filename_ruc}' is not identical to the identifier '{identifier}'")
-            log.info("Replacing the filename with the identifier...")
-            modified_contents[identifier] = ruc_data  
+            logger.debug(f"Filename '{filename_ruc}' is not identical to the identifier '{identifier}'")
+            logger.debug("Replacing the filename with the identifier...")
+            modified_contents[identifier] = ruc_data
         else:
-            modified_contents[filename] = ruc_data  
+            modified_contents[filename] = ruc_data
 
-    all_ruc_contents = modified_contents 
+    all_ruc_contents = modified_contents
 
     return all_ruc_contents
 
@@ -460,6 +444,7 @@ def serialize_ruc_to_json(ruc_contents_dict, output_dir="./data") -> Union[dict,
 # Initialize a dictionary to store the absence count for each file_name
 absence_count = {}
 
+
 def get_matching_timesamps(db_file_name, table_name, threshold):
     """
     This function determines whether each file_name is present or absent based on the timestamp in the records. 
@@ -482,7 +467,8 @@ def get_matching_timesamps(db_file_name, table_name, threshold):
 
     # Iterate through distinct filenames and retrieve the top 3 records for each
     for file_name in distinct_filenames:
-        c.execute(f"SELECT * FROM tools_metadata WHERE file_name = ? ORDER BY timestamp DESC LIMIT {limit}", (file_name,))
+        c.execute(f"SELECT * FROM tools_metadata WHERE file_name = ? ORDER BY timestamp DESC LIMIT {limit}",
+                  (file_name,))
         records = c.fetchall()
 
         if records:
@@ -514,32 +500,33 @@ def get_matching_timesamps(db_file_name, table_name, threshold):
 
     return results
 
+
 def process_records_timestamps(records):
     for record in records:
         if record[-2]:  # Check if the record matches the current date
-            log.info(f"Record {record} matches the current date")
+            logger.info(f"Record {record} matches the current date")
         else:
             time_elapsed = record[-1]
             time_elapsed_in_days = time_elapsed.days
-            log.info(f"Record {record} does not match the current date. Time elapsed (days): {time_elapsed_in_days}")
+            logger.info(f"Record {record} does not match the current date. Time elapsed (days): {time_elapsed_in_days}")
+
 
 def create_minimal_ruc(ruc_file, ruc_contents_dict):
     """
     Create a minimal RUC (Rich User Contents) object with default values and save it to a JSON file.
     Used when there is no corresponding codemeta file for a RUC. 
     """
-    
+
     ruc_id = get_id_from_ruc_file_name(ruc_file)
     identifier_value = ruc_contents_dict[f'{ruc_id}.md']['identifier']
 
     ruc_template = {
-    "ruc": {"identifier": identifier_value}
+        "ruc": {"identifier": identifier_value}
     }
 
     # Write the JSON data to the file
     with open(ruc_file, 'w') as json_file:
         json.dump(ruc_template, json_file, indent=4)
-
 
 
 def datasets_are_valid_jsons(file_path):
@@ -570,7 +557,7 @@ def get_datasets(parsed_datasets_directory, dataset_file_path):
 
     # Get datasets
     if datasets_are_valid_jsons(dataset_file_path):
-        log.info(f"Getting and parsing datasets ...")
+        logger.info(f"Getting and parsing datasets ...")
         with open(dataset_file_path, 'r') as file:
             ineo_datasets = json.load(file)
 
@@ -583,13 +570,12 @@ def get_datasets(parsed_datasets_directory, dataset_file_path):
             with open(datasets_filename, 'w') as datasets_files:
                 json.dump(dataset, datasets_files, indent=2)
     else:
-        log.error("The JSON file does not have the expected structure.")
+        logger.error("The JSON file does not have the expected structure.")
+
 
 """
 main function
 """
-log_file_path = 'harvester.log'
-log = configure_logger(log_file_path) 
 
 
 def get_id_from_change_list(diff_list_ruc: list) -> list[str]:
@@ -602,17 +588,17 @@ def main(threshold: int) -> None:
     threshold: int : The number of iterations after which a file is considered absent.
     TODO: The threshold is implemented, but need test
     """
-    
+
     # Create the "data" folder if it doesn't exist
     data_folder = "data"
     if not os.path.exists(data_folder):
         os.makedirs(data_folder)
-    
+
     # Get and parse INEO datasets
     parsed_datasets_directory = './data/parsed_datasets'
     dataset_file_path = './data/datasets/vlo-response.json'
     get_datasets(parsed_datasets_directory, dataset_file_path)
-    
+
     # Serialize the RUC dictionary into JSON
     ruc_contents_dict = get_ruc_contents()
     serialize_ruc_to_json(ruc_contents_dict)
@@ -635,7 +621,6 @@ def main(threshold: int) -> None:
     ruc_download_dir = os.path.join(output_path_data, "rich_user_contents")
     datasets_download_dir = os.path.join(output_path_data, "parsed_datasets")
 
-
     # get the current timestamp to be used in the database and make sure all the files in the same batch have the same timestamp
     current_timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
 
@@ -646,13 +631,13 @@ def main(threshold: int) -> None:
     c.execute("SELECT * FROM tools_metadata ORDER BY timestamp DESC LIMIT 1")
     has_previous_batch = c.fetchone()
     if has_previous_batch is None:
-        log.debug("No codemeta previous batch exists in the database")
+        logger.debug("No codemeta previous batch exists in the database")
         previous_batch = None
         previous_timestamp = None
     else:
         previous_timestamp = has_previous_batch[2]
         if previous_timestamp is None:
-            log.error("Error in getting the previous batch!")
+            logger.error("Error in getting the previous batch!")
             exit(1)
 
         previous_batch = get_previous_batch(db_file_name, table_name_tools, previous_timestamp=previous_timestamp)
@@ -661,47 +646,46 @@ def main(threshold: int) -> None:
     c_ruc.execute("SELECT * FROM rich_user_contents ORDER BY timestamp DESC LIMIT 1")
     ruc_has_previous_batch = c_ruc.fetchone()
     if ruc_has_previous_batch is None:
-        log.debug("No rich_user_contents previous batch exists in the database")
+        logger.debug("No rich_user_contents previous batch exists in the database")
         ruc_previous_batch = None
         previous_timestamp = None
     else:
         previous_timestamp = ruc_has_previous_batch[2]
         if previous_timestamp is None:
-            log.error("Error in getting the previous rich_user_contents batch!")
+            logger.error("Error in getting the previous rich_user_contents batch!")
             exit(1)
 
         ruc_previous_batch = get_previous_batch(db_file_name, table_name_ruc, previous_timestamp=previous_timestamp)
-
 
     # Check for a previous batch in the "datasets" table
     c_datasets.execute("SELECT * FROM datasets ORDER BY timestamp DESC LIMIT 1")
     datasets_has_previous_batch = c_datasets.fetchone()
     if datasets_has_previous_batch is None:
-        log.debug("No datasets previous batch exists in the database")
+        logger.debug("No datasets previous batch exists in the database")
         datasets_previous_batch = None
         previous_timestamp = None
     else:
         previous_timestamp = datasets_has_previous_batch[2]
         if previous_timestamp is None:
-            log.error("Error in getting the previous datasets batch!")
+            logger.error("Error in getting the previous datasets batch!")
             exit(1)
 
-        datasets_previous_batch = get_previous_batch(db_file_name, table_name_datasets, previous_timestamp=previous_timestamp)
-
+        datasets_previous_batch = get_previous_batch(db_file_name, table_name_datasets,
+                                                     previous_timestamp=previous_timestamp)
 
     # after this line we have both dir1 and dir2, dir1 is the current batch and dir2 is the previous batch
     codemeta_current_batch = get_files(codemeta_download_dir)
     ruc_current_batch = get_files(ruc_download_dir)
     datasets_current_batch = get_files(datasets_download_dir)
-    
+
     if codemeta_current_batch is None:
-        log.error("No codemeta files found in the current batch!")
+        logger.error("No codemeta files found in the current batch!")
         exit(1)
     if ruc_current_batch is None:
-        log.error("No RUC files found in the current batch!")
+        logger.error("No RUC files found in the current batch!")
         exit(1)
     if datasets_current_batch is None:
-        log.error("No datasets files found in the current batch!")
+        logger.error("No datasets files found in the current batch!")
         exit(1)
 
     # compare the 2 lists and get the difference
@@ -711,7 +695,7 @@ def main(threshold: int) -> None:
 
     codemeta_ids: list = []
     datasets_ids: list = []
-    
+
     # Process the Codemeta json files
     codemeta_folder_name = "tools_metadata"
     process_list(codemeta_ids, codemeta_folder_name, db_file_name, table_name_tools, diff_list, current_timestamp, None)
@@ -751,10 +735,16 @@ def main(threshold: int) -> None:
                      ruc_previous_batch_dict)
 
     conn.commit()
-    
+
     # Process the datasets
     datasets_folder_name = "parsed_datasets"
-    process_list(datasets_ids, datasets_folder_name, db_file_name, table_name_datasets, diff_list_datasets, current_timestamp, None)
+    process_list(datasets_ids,
+                 datasets_folder_name,
+                 db_file_name,
+                 table_name_datasets,
+                 diff_list_datasets,
+                 current_timestamp,
+                 None)
 
     if datasets_has_previous_batch is not None:
         # get previous datasets batch from db
@@ -767,36 +757,39 @@ def main(threshold: int) -> None:
         datasets_batch = [x.split("/")[-1] for x in datasets_current_batch]
 
         # loop through current batch and compare with previous batch on hash value
-        process_list(datasets_ids, datasets_folder_name, db_file_name, table_name_datasets, datasets_batch, current_timestamp,
+        process_list(datasets_ids,
+                     datasets_folder_name,
+                     db_file_name,
+                     table_name_datasets,
+                     datasets_batch,
+                     current_timestamp,
                      datasets_previous_batch_dict)
 
     conn.commit()
 
     codemeta_ids = list(set(codemeta_ids))
     datasets_ids = list(set(datasets_ids))
-    
+
     # creating jsonl file for the tools
     for codemeta_id in codemeta_ids:
         codemeta_file = os.path.join(codemeta_download_dir, f"{codemeta_id}.codemeta.json")
         if not os.path.isfile(codemeta_file):
             create_minimal_ruc(codemeta_file, ruc_contents_dict)
-                
+
         add_to_jsonlines(codemeta_file, os.path.join(output_path_data, "codemeta.jsonl"))
-    
-    
+
     # creating jsonl file for the datasets
     for dataset_id in datasets_ids:
-        datasets_file = os.path.join(datasets_download_dir, f"{dataset_id}.json")          
+        datasets_file = os.path.join(datasets_download_dir, f"{dataset_id}.json")
         add_to_jsonlines(datasets_file, os.path.join(output_path_data, "datasets.jsonl"))
 
-
     # <<<DELETION SCENERIO >>>
-        
+
     # Search for inactive tools to delete in INEO (inactive after a tool is absent for three runs in the database)
     codemeta_records = get_matching_timesamps(db_file_name, table_name_tools, threshold)
     # Iterate through the absent records and compare the timestamps in the db with the current date 
     process_records_timestamps(codemeta_records)
-    
+
     ids_to_delete = []
     for file_name, count in absence_count.items():
         if count > threshold:
@@ -806,20 +799,18 @@ def main(threshold: int) -> None:
                 ids_to_delete.append(tool_id)
 
     if ids_to_delete:
-        log.debug(f"IDs of the tools to be deleted: {', '.join(ids_to_delete)}")
-        
+        logger.debug(f"IDs of the tools to be deleted: {', '.join(ids_to_delete)}")
+
         # Write the IDs to a JSON file in the "delete_tools" folder
         deleted_documents_folder = delete_path
         if not os.path.exists(deleted_documents_folder):
             os.makedirs(deleted_documents_folder)
-        
+
         file_path = os.path.join(delete_path, 'deleted_tool_ids.json')
         with open(file_path, 'w') as json_file:
             json.dump(ids_to_delete, json_file)
-            log.debug(f"JSON containing tools to be deleted saved to {file_path}")
-    
+            logger.debug(f"JSON containing tools to be deleted saved to {file_path}")
 
-if __name__ == '__main__':  
+
+if __name__ == '__main__':
     main(threshold=3)
-    
-    
