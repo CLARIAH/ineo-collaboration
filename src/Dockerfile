@@ -1,6 +1,6 @@
 FROM python:3.11-slim-buster
 
-RUN apt update && apt install -y cron curl vim git
+RUN apt update && apt install -y cron curl vim git screen iputils-ping net-tools
 
 WORKDIR /src
 COPY .env ./.env
@@ -9,6 +9,7 @@ COPY queries ./queries
 COPY dsqueries ./dsqueries
 
 COPY main.py ./main.py
+COPY utils.py ./utils.py
 COPY harvester.py ./harvester.py
 COPY ineo_sync.py ./ineo_sync.py
 COPY ineo_get_properties.py ./ineo_get_properties.py
