@@ -19,13 +19,11 @@ services:
       - traefik-public
 
   rumbledb:
-    image: rumbledb/rumble:latest
+    image: registry.diginfra.net/tsd/rumbledb:test
     container_name: rumbledb
     volumes:
       - ineo-sync-data:/data
     restart: unless-stopped
-    command: ["serve", "-p", "8001", "-h", "0.0.0.0", "--driver-memory", "2G", "--executor-memory", "2G"]
-    environment:
-      - JAVA_OPTS=-Xmx2g -Xms2g
+    command: ["serve", "-p", "8001", "-h", "0.0.0.0"]
     networks:
       - traefik-public
