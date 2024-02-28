@@ -8,6 +8,7 @@ import json
 import shutil
 import subprocess
 import yaml
+import dotenv
 from typing import List, Optional, AnyStr, Union
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -19,6 +20,13 @@ logger = get_logger(log_file_path, __name__)
 output_path_data = "./data"
 output_path_queries = "./queries"
 delete_path = "./deleted_documents"
+
+# Solr API
+dotenv.load_dotenv()
+solr_url = dotenv.get_key(".env", "SOLR_URL")
+base_query = {"q": "koninklijke bibliotheek"}  # replace with your actual query
+username = dotenv.get_key(".env", "USERNAME")
+password = dotenv.get_key(".env", "PASSWORD")
 
 
 def create_folder(folder_name: str):
@@ -529,26 +537,44 @@ def create_minimal_ruc(ruc_file, ruc_contents_dict):
         json.dump(ruc_template, json_file, indent=4)
 
 
-def datasets_are_valid_jsons(file_path):
+def run_solr_query(solr_url, base_query, username, password, start=0, rows=1000) -> dict:
+    """
+    Run a query on the Solr API and return the response as a dictionary.
+    The response is in JSON format and chopped into batches of 1000 records.
+
+    return: dict
+    """
+    query = base_query.copy()  # copy the base query
+    query["start"] = start  # set the starting record number
+    query["rows"] = rows  # set the number of records to return
+
+    response = requests.get(solr_url, params=query, auth=(username, password))
     try:
-        with open(file_path, 'r') as file:
-            ineo_datasets = json.load(file)
-            # Check if the necessary keys are present
-            if 'response' in ineo_datasets and 'docs' in ineo_datasets['response']:
-                return True
-            else:
-                return False
-    except (json.JSONDecodeError, KeyError) as e:
-        return False
+        return response.json()
+    except ValueError:
+        return {}
 
 
-def query_solr_api(solr_url, query, output_file):
-    """
-    This function queries the Solr API and writes the results to a file.
-    """
-    response = requests.get(solr_url, params=query)
-    with open(output_file, 'w') as file:
-        file.write(response.text)
+def store_solr_response(solr_url, base_query, username, password, filename):
+    i: int = 0
+    num_docs: int = 0
+    docs: list = []
+    while True:  # keep fetching batches until no more documents are found
+        result = run_solr_query(solr_url, base_query, username, password, start=i*1000, rows=1000)
+        if "response" in result.keys() and result['response']['docs']:
+            if i == 0:
+                num_docs = result['response']['numFound']
+            docs.extend(result["response"]["docs"])
+            logger.debug(f"Batch {i+1}: Found {len(docs)} documents.")
+            i += 1
+        else:
+            logger.info(f"Batch {i+1}: Finished!.")
+            break
+
+    logger.info(f"Expecting {num_docs} in solr.")
+    logger.info(f"Total documents found: {len(docs)}")
+    with open(filename, "w") as f:
+        json.dump(docs, f)
 
 
 def get_datasets(parsed_datasets_directory, dataset_file_path):
@@ -565,21 +591,16 @@ def get_datasets(parsed_datasets_directory, dataset_file_path):
         os.makedirs(parsed_datasets_directory)
 
     # Get datasets
-    if datasets_are_valid_jsons(dataset_file_path):
-        logger.info(f"Getting and parsing datasets ...")
-        with open(dataset_file_path, 'r') as file:
-            ineo_datasets = json.load(file)
+    logger.info(f"Getting and parsing datasets ...")
+    with open(dataset_file_path, 'r') as file:
+        docs = json.load(file)
 
-        # Extract individual datasets from the 'docs' array
-        docs = ineo_datasets['response']['docs']
-        for index, dataset in enumerate(docs, start=1):
-            # Create a filename for each document in the parsed_datasets folder and save
-            datasets_filename = os.path.join(parsed_datasets_directory, f"dataset_{index}.json")
-
-            with open(datasets_filename, 'w') as datasets_files:
-                json.dump(dataset, datasets_files, indent=2)
-    else:
-        logger.error("The JSON file does not have the expected structure.")
+    # Extract individual datasets from the 'docs' array
+    for doc in docs:
+        index = docs.index(doc) + 1
+        dataset_filename = os.path.join(parsed_datasets_directory, f"dataset_{index}.json")
+        with open(dataset_filename, 'w') as dataset_file:
+            json.dump(doc, dataset_file, indent=2)
 
 
 def get_id_from_change_list(diff_list_ruc: list) -> list[str]:
@@ -601,7 +622,9 @@ def main(threshold: int) -> None:
     # Get and parse INEO datasets
     parsed_datasets_directory = './data/parsed_datasets'
     dataset_file_path = './data/datasets/vlo-response.json'
+    store_solr_response(solr_url, base_query, username, password, dataset_file_path)
     get_datasets(parsed_datasets_directory, dataset_file_path)
+    logger.debug(f"Datasets are saved in {parsed_datasets_directory}")
 
     # Serialize the RUC dictionary into JSON
     ruc_contents_dict = get_ruc_contents()
