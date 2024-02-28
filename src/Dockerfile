@@ -1,5 +1,6 @@
 FROM python:3.11-slim-buster
 
+STOPSIGNAL SIGKILL
 RUN apt update && apt install -y cron curl vim git screen iputils-ping net-tools
 
 WORKDIR /src
