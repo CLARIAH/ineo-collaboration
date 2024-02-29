@@ -170,7 +170,6 @@ if __name__ == "__main__":
             call_template(JSONL_datasets, 'datasets')
 
         logger.info("Done preparation. Going to sync with INEO ...")
-        exit(0)
 
         # Templates are ready, sync with the INEO api.
         # Also, researchdomains and researchactivities are further processed here.
