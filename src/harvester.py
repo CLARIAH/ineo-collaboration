@@ -17,6 +17,13 @@ from utils import get_logger
 log_file_path = 'harvester.log'
 logger = get_logger(log_file_path, __name__)
 
+try:
+    from base_query import base_query_dict
+    logger.info(f"base_query.py found! {base_query_dict}")
+except ImportError:
+    base_query_dict = {"q": "koninklijke bibliotheek"}
+    logger.info(f"base_query.py not found! Using default base query: {base_query_dict}")
+
 output_path_data = "./data"
 output_path_queries = "./queries"
 delete_path = "./deleted_documents"
@@ -24,7 +31,7 @@ delete_path = "./deleted_documents"
 # Solr API
 dotenv.load_dotenv()
 solr_url = dotenv.get_key(".env", "SOLR_URL")
-base_query = {"q": "koninklijke bibliotheek"}  # replace with your actual query
+base_query = base_query_dict  # define your base query in the base_query.py
 username = dotenv.get_key(".env", "USERNAME")
 password = dotenv.get_key(".env", "PASSWORD")
 
