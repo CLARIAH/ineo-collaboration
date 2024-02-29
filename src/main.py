@@ -94,7 +94,7 @@ def call_template(jsonl_file: str, template_type: str = 'tools'):
         template_path = TOOLS_TEMPLATE if template_type == 'tools' else DATASETS_TEMPLATE
         rumbledb_jsonl_path = JSONL_tools_rdb if template_type == 'tools' else JSONL_datasets_rdb
 
-        logger.info(f"Making a json file for INEO for {current_id} with template [{template_path}]...")
+        logger.debug(f"Making a json file for INEO for {current_id} with template [{template_path}]...")
 
         try:
             templating(current_id, template_path, rumbledb_jsonl_path)

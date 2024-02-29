@@ -563,6 +563,11 @@ def run_solr_query(solr_url, base_query, username, password, start=0, rows=1000)
 
 
 def store_solr_response(solr_url, base_query, username, password, filename):
+    # make sure folder exists
+    path = os.path.dirname(filename)
+    if not os.path.exists(path):
+        create_folder(path)
+
     i: int = 0
     num_docs: int = 0
     docs: list = []
@@ -606,6 +611,7 @@ def get_datasets(parsed_datasets_directory, dataset_file_path):
     for doc in docs:
         index = docs.index(doc) + 1
         dataset_filename = os.path.join(parsed_datasets_directory, f"dataset_{index}.json")
+        logger.debug(f"Saving dataset {index} to {dataset_filename}")
         with open(dataset_filename, 'w') as dataset_file:
             json.dump(doc, dataset_file, indent=2)
 
