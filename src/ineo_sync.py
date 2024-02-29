@@ -4,10 +4,10 @@ import requests
 import sys
 from dotenv import load_dotenv
 import dotenv
-from harvester import get_logger
+from harvester import get_logger, get_files
 
 log_file_path = 'ineo_sync.log'
-log = get_logger(log_file_path, __name__)
+logger = get_logger(log_file_path, __name__)
 
 """
 This file loads some environment variables from a .env file
@@ -25,6 +25,18 @@ delete_path = "./deleted_documents"
 
 # Define the header with the Authorization token 
 header = {'Authorization': f'Bearer {api_token}'}
+
+"""
+This dictionary is used to keep track of the number of times a resource has failed to be 'actioned' against INEO API.
+It's possible structure is as follows:
+{
+    "path/to/resource1.json": 1,
+    "path/to/resource2.json": 2,
+    "path/to/resource3.json": 3,
+    "path/to/resource4.json": 4
+} 
+"""
+ineo_api_error = {}
 
 
 def get_id_json(folder_path) -> list:
@@ -47,11 +59,11 @@ def get_id_json(folder_path) -> list:
                         if id_value is not None:
                             ineo_ids.append(id_value)
                         else:
-                            log.error(f"ERROR: File {filename} does not contain an 'id' field.")
+                            logger.error(f"ERROR: File {filename} does not contain an 'id' field.")
                     else:
-                        log.error(f"ERROR: File {filename} does not have the expected INEO structure.")
+                        logger.error(f"ERROR: File {filename} does not have the expected INEO structure.")
                 except json.JSONDecodeError as e:
-                    log.error(f"Error reading processed JSON from file {filename}: {str(e)}")
+                    logger.error(f"Error reading processed JSON from file {filename}: {str(e)}")
     # The unique "id" values from all processed JSON files to be fed or updated into INEO
     return ineo_ids
 
@@ -95,20 +107,20 @@ def check_properties(id, folder_path, vocabs) -> None:
                         # the value of the processed.jsonfile is replaced with the property from INEO (so TextualAndContentAnalysis)
                     matches = [entry for entry in properties if entry['link'].lower() == domain.lower()]
                     if matches:
-                        log.info(f"Match found: {domain}")
+                        logger.info(f"Match found: {domain}")
                         corresponding_link = matches[0]['link']
                         updated_research_domains.append(corresponding_link)
                     else:
                         # Check if the domain is in the titles (mapping subjects datasets)
                         matches_in_titles = [entry for entry in properties if domain.lower() in entry['title'].lower()]
                         if matches_in_titles:
-                            log.info(f"Match found in title: {domain}")
+                            logger.info(f"Match found in title: {domain}")
                             corresponding_entry = matches_in_titles[0]
                             updated_research_domains.append(corresponding_entry['link'])
                         else:
-                            log.info(f"No match found for: {domain}")
+                            logger.info(f"No match found for: {domain}")
                             non_matches.append(domain)
-                            log.info(f"no matches for: {non_matches}")
+                            logger.info(f"no matches for: {non_matches}")
 
                 # Update the researchDomains value in the data
                 processed_files[0]['document']['properties'][f'{vocabs}'] = updated_research_domains
@@ -139,14 +151,14 @@ def get_document(ids: list[str], processed_jsonfiles: list[str]) -> tuple[list, 
             if get_response.text == '[]':
                 resource_exists(get_response, id, ids_to_create)
             else:
-                log.info(f"{id} is present in INEO")
-                log.info(get_response.text)
+                logger.info(f"{id} is present in INEO")
+                logger.info(get_response.text)
                 json_data = load_processed_document(id, processed_jsonfiles)
                 processed_document.append(json_data)
                 ids_to_update.append(id)
         else:
-            log.error("Error retrieving the resource from INEO")
-            log.info(get_response.text)
+            logger.error("Error retrieving the resource from INEO")
+            logger.info(get_response.text)
     
     return processed_document, ids_to_create, ids_to_update
 
@@ -157,7 +169,7 @@ def resource_exists(get_response, id, ids_to_create):
     if the resource does not exist.
     """
     if get_response.text == '[]':
-        log.debug(f"{id} does not exist in INEO.")
+        logger.debug(f"{id} does not exist in INEO.")
         # Append the ID to the list of resources to create in INEO
         ids_to_create.append(id)
 
@@ -174,10 +186,10 @@ def handle_empty(ids, processed_jsonfiles, force_yes=False):
         if not force_yes:
             confirmation = input(f"Are you sure you want to create {id}? (y/n): ")
             if confirmation.lower() != 'y':
-                log.info(f"Creation of {id} canceled.")
+                logger.info(f"Creation of {id} canceled.")
                 continue
         
-        log.info(f"Sending {id} to INEO...")
+        logger.info(f"Sending {id} to INEO...")
         file_name = f"{id}_processed.json"
         file_path = os.path.join(processed_jsonfiles, file_name)
   
@@ -186,12 +198,12 @@ def handle_empty(ids, processed_jsonfiles, force_yes=False):
             create_response = requests.post(api_url, json=new_document, headers=header)
         
         if create_response.status_code == 200:
-            log.info(f"Creation of {id} is successful")
-            log.info(create_response.text)
-            log.info(f"New resource available here: https://ineo-git-feature-api-resource-eightmedia.vercel.app/resources/{id}")
+            logger.info(f"Creation of {id} is successful")
+            logger.debug(create_response.text)
+            logger.info(f"New resource available here: https://ineo-git-feature-api-resource-eightmedia.vercel.app/resources/{id}")
         else:
-            log.error(f"Creation of {id} has failed")
-            log.info(create_response.text)
+            logger.error(f"Creation of {id} has failed")
+            logger.debug(create_response.text)
 
 
 def update_document(documents, ids, force_yes=False):
@@ -209,21 +221,21 @@ def update_document(documents, ids, force_yes=False):
         if not force_yes:
             confirmation = input(f"Are you sure you want to update {id}? (y/n): ")
             if confirmation.lower() != 'y':
-                log.info(f"Update of {id} canceled.")
+                logger.info(f"Update of {id} canceled.")
                 continue
         
-        log.info(f"Updating tool {id}...")
+        logger.info(f"Updating tool {id}...")
         # change default operation "create" into "update"
         document[0]["operation"] = "update"
         update_response = requests.post(api_url, json=document, headers=header)
         
         if update_response.status_code == 200:
-            log.info(f"Update of {id} is successful")
-            log.info(update_response.text)
-            log.info(f"Updated resource available here: https://ineo-git-feature-api-resource-eightmedia.vercel.app/resources/{id}")
+            logger.info(f"Update of {id} is successful")
+            logger.info(update_response.text)
+            logger.info(f"Updated resource available here: https://ineo-git-feature-api-resource-eightmedia.vercel.app/resources/{id}")
         else:
-            log.error(f"Error updating {ids}")
-            log.info(update_response.text)
+            logger.error(f"Error updating {ids}")
+            logger.info(update_response.text)
 
 
 class ToolStillPresentError(Exception):
@@ -248,6 +260,7 @@ def create_delete_template():
         json.dump(delete_template, json_file, indent=4)
 
     return delete_template 
+
 
 def delete_document(delete_list, force_yes=False):
     """
@@ -275,22 +288,65 @@ def delete_document(delete_list, force_yes=False):
         if not force_yes:
             confirmation = input(f"Are you sure you want to delete {id}? (y/n): ")
             if confirmation.lower() != 'y':
-                log.info(f"Deletion of resource with id {id} canceled.")
+                logger.info(f"Deletion of resource with id {id} canceled.")
                 continue
         
-        log.info(f"Deleting resource {id}...")
+        logger.info(f"Deleting resource {id}...")
         update_response = requests.post(api_url, json=delete_template, headers=header)
         
         if update_response.status_code == 200:
             get_url = f"{api_url}{id}"
             get_response = requests.get(get_url, headers=header)
             if get_response.status_code == 200 and get_response.text == '[]':
-                log.info(f"Resource with id {id} deleted successfully.")
+                logger.info(f"Resource with id {id} deleted successfully.")
             else:
                 raise ToolStillPresentError(f"ERROR: {id} is still present in INEO")
         else:
-            log.error(f"ERROR: cannot delete {id}")
-            log.info(update_response.text)
+            logger.error(f"ERROR: cannot delete {id}")
+            logger.info(update_response.text)
+
+
+def call_ineo(ineo_packages: list, api_url: str, action: str = "POST") -> None:
+    """
+    This function calls the INEO API to create or update resources.
+
+    :param ineo_packages: list
+    :param api_url: str
+    :param action: str
+    :return: None
+    """
+    for ineo_package in ineo_packages:
+        with open(ineo_package, 'r') as json_file:
+            ineo_package_json = json.load(json_file)
+
+        if action == "POST":
+            response = requests.post(api_url, json=ineo_package_json, headers=header)
+        else:
+            logger.error("HTTP action not implemented yet, please use POST")
+            sys.exit(1)
+
+        if response.status_code != 200:
+            ineo_action: str = json.loads(ineo_package_json)[0]["operation"]
+            if ineo_action == "create":
+                ineo_package_json[0]["operation"] = "update"
+            elif ineo_action == "update":
+                ineo_package_json[0]["operation"] = "create"
+            elif ineo_action == "delete":
+                logger.error("Deletion not implemented yet")
+                continue
+            else:
+                logger.error("Unknown action")
+                continue
+
+            error_counter = ineo_api_error.get(ineo_package, 0)
+            if error_counter < 3:
+                ineo_api_error[ineo_package] = error_counter + 1
+                call_ineo(ineo_package, api_url)
+            else:
+                logger.error(f"Action on resource {ineo_package} failed.")
+                continue
+
+        logger.info(f"Action on resource {ineo_package} successful.")
 
 
 def main() -> None:
@@ -305,22 +361,34 @@ def main() -> None:
     for processed_id_ds in processed_document_ids_ds:
         check_properties(processed_id_ds, processed_jsonfiles_ds, vocabs="researchDomains")
 
-    # INEO sync tools
-    processed_documents, ids_to_create, ids_to_update = get_document(processed_document_ids, processed_jsonfiles)  # get tools
-    update_document(processed_documents, ids_to_update) # update tools
-    handle_empty(ids_to_create, processed_jsonfiles) # create new tools
+    # call ineo api on tools
+    ineo_packages: list | None = get_files(processed_jsonfiles)
+    if ineo_packages is None or len(ineo_packages) == 0:
+        logger.info("No packages found in the processed folder.")
+        exit(0)
+    else:
+        logger.info(f"Found {len(ineo_packages)} packages in the processed folder. Processing ...")
+        # TODO: enable the following lines to sync tools
+        # call_ineo(ineo_packages, api_url)
 
-    # INEO sync datasets
-    processed_documents_ds, ids_to_create_ds, ids_to_update_ds = get_document(processed_document_ids_ds, processed_jsonfiles_ds) # get datasets
-    update_document(processed_documents_ds, ids_to_update_ds) # update datasets
-    handle_empty(ids_to_create_ds, processed_jsonfiles_ds) # create datasets
+    # call ineo api on datasets
+    ineo_packages: list | None = get_files(processed_jsonfiles_ds)
+    if ineo_packages is None or len(ineo_packages) == 0:
+        logger.info("No packages found in the processed folder.")
+        exit(0)
+    else:
+        logger.info(f"Found {len(ineo_packages)} packages in the processed folder. Processing ...")
+        # TODO: remove slicing to sync full datasets
+        call_ineo(ineo_packages[:1], api_url)
 
-    exit()
-    
+    logger.info("Sync done, deletion skipped. returning none...")
+    return None
+
+    # TODO: implement deletion
     # Check if there are files to delete
     # imports a json file that contains the ids of the tools that needs to be deleted (outcome of harvester.py)
     if not os.path.exists(delete_path):
-        log.info(f"The folder {delete_path} does not exist, no tools to delete.")
+        logger.info(f"The folder {delete_path} does not exist, no tools to delete.")
         sys.exit(1)
     else:
         delete_file_path = f"{delete_path}/deleted_tool_ids.json"
@@ -329,7 +397,7 @@ def main() -> None:
             try:
                 delete_document(delete_list)
             except ToolStillPresentError as e:
-                log.error(str(e))
+                logger.error(str(e))
                 sys.exit(1) 
 
 

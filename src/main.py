@@ -104,8 +104,8 @@ def call_template(jsonl_file: str, template_type: str = 'tools'):
 
 
 def call_ineo_sync():
+    logger.info("Calling sync with INEO ...")
     ineo_sync.main()
-    logger.info("sync with INEO ...")
 
 
 if __name__ == "__main__":
@@ -174,8 +174,7 @@ if __name__ == "__main__":
         # Templates are ready, sync with the INEO api.
         # Also, researchdomains and researchactivities are further processed here.
         logger.info("Syncing with INEO ...")
-        # TODO: enable the line below to sync with INEO
-        # call_ineo_sync()
+        call_ineo_sync()
         logger.info("Sync with INEO completed ...")
         exit(0)
 
