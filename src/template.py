@@ -334,13 +334,13 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
                 response = requests.post(RUMBLEDB, data=query)
                 assert (
                         response.status_code == 200
-                ), f"Error running {query} on rumbledb: {response.text}"
+                ), f"HttpError {response.status_code} Error running {query} on rumbledb: {response.json()}"
 
                 # check whether the query run was successful
                 resp = json.loads(response.text)
                 if ("error-code" in resp) or ("error-message" in resp):
                     logger.error(f"Error running {query} on rumbledb: {response.text}")
-                    exit()
+                    return None
 
                 if len(resp["values"]) > 0:
                     if original_path:
