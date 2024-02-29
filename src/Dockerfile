@@ -9,13 +9,7 @@ COPY .env ./.env
 COPY queries ./queries
 COPY dsqueries ./dsqueries
 
-COPY main.py ./main.py
-COPY utils.py ./utils.py
-COPY harvester.py ./harvester.py
-COPY ineo_sync.py ./ineo_sync.py
-COPY ineo_get_properties.py ./ineo_get_properties.py
-COPY rating.py ./rating.py
-COPY template.py ./template.py
+COPY *.py ./
 
 COPY template_tools.json ./template_tools.json
 COPY template_datasets.json ./template_datasets.json
