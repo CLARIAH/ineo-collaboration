@@ -9,13 +9,14 @@ import shutil
 import subprocess
 import yaml
 import dotenv
+import logging
 from typing import List, Optional, AnyStr, Union
 from bs4 import BeautifulSoup
 from datetime import datetime
 from utils import get_logger
 
 log_file_path = 'harvester.log'
-logger = get_logger(log_file_path, __name__)
+logger = get_logger(log_file_path, __name__, level=logging.ERROR)
 
 try:
     from base_query import base_query_dict

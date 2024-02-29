@@ -18,7 +18,7 @@ RUMBLEDB = "http://rumbledb:8001/jsoniq"
 
 # location of the JSONL file within container ineo-sync
 JSONL_ineo = "./data/c3.jsonl"
-JSONL_datasets_ineo = "/data/datasets.jsonl"
+JSONL_datasets_ineo = "./data/datasets.jsonl"
 
 # location of the (same) JSONL file within container rumbledb
 JSONL = "/data/c3.jsonl"
@@ -41,10 +41,10 @@ def resolve_path(ruc, path):
     Function to resolve a path within a nested dictionary. It splits the path into steps, and if a step starts with "$", 
     it looks for a matching key in the dictionary to access the nested values.
     """
-    logger.debug("resolve_path", f"path[{path}]")
+    logger.debug(f"path[{path}]")
     steps = path.split("/")
     step = steps[0]
-    logger.debug("resolve_path", f"step[{step}]")
+    logger.debug(f"step[{step}]")
     if step.startswith("$"):
         step = step.replace("$", "")
         ruc_key = step
@@ -52,23 +52,23 @@ def resolve_path(ruc, path):
             if key.lower() == step.lower():
                 ruc_key = key
         step = ruc[ruc_key]
-        logger.debug("resolve_path", f"$step[{step}]")
+        logger.debug(f"$step[{step}]")
     ruc_key = None
     for key in ruc.keys():
-        logger.debug("resolve_path", f"key[{key}]")
+        logger.debug(f"key[{key}]")
         if key.lower() == step.lower():
             ruc_key = key
             if len(steps) == 1:
                 res = ruc[ruc_key]
-                logger.debug("resolve_path", f"res[{res}]")
+                logger.debug(f"res[{res}]")
                 return res
             else:
                 if isinstance(ruc[ruc_key], dict):
                     res = resolve_path(ruc[ruc_key], "/".join(steps[1:]))
-                    logger.debug("resolve_path", f"res[{res}]")
+                    logger.debug(f"res[{res}]")
                     return res
                 else:
-                    logger.debug("resolve_path", f"path is deeper, but dict not!")
+                    logger.debug(f"path is deeper, but dict not!")
                     return None
 
 
@@ -210,13 +210,13 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
 
     global vocabs
 
-    logger.info("retrieve_info", f"info[{info}]")
+    logger.info(f"info[{info}]")
     info_values = info.split(",")
     for info_value in info_values:
-        logger.debug("retrieve_info", f"info_value[{info_value}]")
+        logger.debug(f"info_value[{info_value}]")
         if info_value.startswith("ruc"):
             info_parts = info_value.split(":")
-            logger.debug("retrieve_info", f"info_parts[{info_parts}]")
+            logger.debug(f"info_parts[{info_parts}]")
 
             if len(info_parts) >= 2:
                 """
@@ -227,9 +227,7 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
                     template_key = template_key[:-2]
 
                 info = resolve_path(ruc, template_key)
-                logger.debug(
-                    "retrieve_info", f"The value of '{template_key}' in the RUC: {info}"
-                )
+                logger.debug(f"The value of '{template_key}' in the RUC: {info}")
 
             if info is not None and len(info_parts) > 2:
                 regex_str = info_parts[2].strip()
@@ -251,10 +249,10 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
                         else:
                             info.append(m.group(1))
                 elif match is not None:
-                    logger.debug("retrieve_info", f"The regex value of '{regex_str}': {info}")
+                    logger.debug(f"The regex value of '{regex_str}': {info}")
                     info.append(match.group(1))
                 else:
-                    logger.debug("retrieve_info", f"The regex value of '{regex_str}': {info}")
+                    logger.debug(f"The regex value of '{regex_str}': {info}")
                     info = None
 
             if info is not None and len(info_parts) > 3:
@@ -288,9 +286,9 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
 
         # The default values is defined in the template after the column
         if info_value.startswith("default"):
-            logger.debug("retrieve_info", f"Starting with {info_value}")
+            logger.debug(f"Starting with {info_value}")
             info_parts = info_value.split(":")
-            logger.debug("retrieve_info", f"info_parts[{info_parts}]")
+            logger.debug(f"info_parts[{info_parts}]")
 
             res = info_parts[1]
 
@@ -298,10 +296,10 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
         # First check if the JSONL file of codemeta is not empty   
         if info_value.startswith("md"):
             info = None
-            logger.info("retrieve_info", f"Starting with {info_value}")
+            logger.info(f"Starting with {info_value}")
 
             info_parts = info_value.split(":")
-            logger.debug("retrieve_info", f"info_parts[{info_parts}]")
+            logger.debug(f"info_parts[{info_parts}]")
 
             if len(info_parts) >= 2:
                 path = info_parts[1]
@@ -317,7 +315,7 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
                     # If the path starts with "@", this line extracts the file path by removing the "@" character. 
                     # For example, if path is "@queries/activities.rq", the path will be set to "queries/activities.rq". 
                     file = path[1:]
-                    logger.debug("path", f"path for the query[{file}]")
+                    logger.debug(f"path for the query[{file}]")
                     with open(file, "r") as file:
                         query = file.read()
                 if query is not None:
@@ -330,7 +328,7 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
                     else:
                         query = f'for $i in json-file("{rumbledb_jsonl_path}",10) where $i.identifier eq "{current_id}" return $i.{path}'
 
-                logger.debug("retrieve_info", f"rumbledb query[{query}]")
+                logger.debug(f"rumbledb query[{query}]")
                 response = requests.post(RUMBLEDB, data=query)
                 assert (
                         response.status_code == 200
