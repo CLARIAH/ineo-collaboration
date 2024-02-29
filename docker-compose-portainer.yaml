@@ -24,6 +24,6 @@ services:
     volumes:
       - ineo-sync-data:/data
     restart: unless-stopped
-    command: ["serve", "-p", "8001", "-h", "0.0.0.0", "-c", "10000"]
+    command: ["-c", "10000", "serve", "-p", "8001", "-h", "0.0.0.0"]
     networks:
       - traefik-public
