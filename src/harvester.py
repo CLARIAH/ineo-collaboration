@@ -13,7 +13,7 @@ import logging
 from typing import List, Optional, AnyStr, Union
 from bs4 import BeautifulSoup
 from datetime import datetime
-from utils import get_logger
+from utils import get_logger, get_files
 
 log_file_path = 'harvester.log'
 logger = get_logger(log_file_path, __name__, level=logging.ERROR)
@@ -208,20 +208,6 @@ def backup_json_files(source_directory: str, backup_directory: str) -> None:
         shutil.copyfile(source_file, backup_file)
 
     logger.info("Backup of previous JSON files created.")
-
-
-def get_files(folder_name: str) -> Optional[List[str]]:
-    """
-    get all the files in the folder
-    """
-    if not os.path.exists(folder_name):
-        return None
-    files_list = os.listdir(folder_name)
-    results: List[str] = []
-    for f in files_list:
-        if f.endswith('.json'):
-            results.append(f"{folder_name}/{f}")
-    return results
 
 
 def make_jsonline(jsonfile):
