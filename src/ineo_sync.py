@@ -362,6 +362,9 @@ def call_ineo_single_package(ineo_package: str, api_url: str, action: str = "POS
             return
 
     else:
+        print(
+            f"Updated resource available here: "
+            f"https://ineo-git-feature-api-resource-eightmedia.vercel.app/resources/{id}")
         logger.info(f"Action on resource {ineo_package} successful.")
 
 
