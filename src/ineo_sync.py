@@ -306,6 +306,65 @@ def delete_document(delete_list, force_yes=False):
             logger.info(update_response.text)
 
 
+def call_ineo_single_package(ineo_package: str, api_url: str, action: str = "POST") -> None:
+    """
+    This function calls the INEO API to create or update resources.
+
+    :param ineo_package: str
+    :param api_url: str
+    :param action: str
+    :return: None
+    """
+    try:
+        with open(ineo_package, 'r') as json_file:
+            ineo_package_json = json.load(json_file)
+    except Exception as e:
+        logger.error(f"Error reading JSON from file {ineo_package}: {str(e)}")
+        exit()
+    if action == "POST":
+        response = requests.post(api_url, json=ineo_package_json, headers=header)
+    else:
+        logger.error("HTTP action not implemented yet, please use POST")
+        sys.exit(1)
+
+    if response.status_code != 200:
+        ineo_action: str = ineo_package_json[0]["operation"]
+        logger.debug(f"Action {ineo_action} on resource {ineo_package} failed. Retrying ...")
+        logger.debug(f"Response: {response.status_code} - {response.text}")
+        if ineo_action == "create":
+            ineo_package_json[0]["operation"] = "update"
+            with open(ineo_package, 'w') as json_file:
+                json.dump(ineo_package_json, json_file)
+            with open(ineo_package, 'r') as json_file:
+                ineo_package_json = json.load(json_file)
+                logger.debug(f"new package: {ineo_package_json}")
+        elif ineo_action == "update":
+            ineo_package_json[0]["operation"] = "create"
+            with open(ineo_package, 'w') as json_file:
+                json.dump(ineo_package_json, json_file)
+            logger.debug(f"update action as well failed, giving up.")
+            return
+        elif ineo_action == "delete":
+            logger.error("Deletion not implemented yet")
+            return
+        else:
+            logger.error("Unknown action")
+            return
+
+        error_counter = ineo_api_error.get(ineo_package, 0)
+        if error_counter < 1:
+            ineo_api_error[ineo_package] = error_counter + 1
+            # TODO FIXME: recursion is not working as expected, ineo_package is a dot
+            logger.debug(f"Recursion on {ineo_package} ...")
+            call_ineo_single_package(ineo_package, api_url, action)
+        else:
+            logger.error(f"Action on resource {ineo_package} failed after {error_counter} time(s).")
+            return
+
+    else:
+        logger.info(f"Action on resource {ineo_package} successful.")
+
+
 def call_ineo(ineo_packages: list, api_url: str, action: str = "POST") -> None:
     """
     This function calls the INEO API to create or update resources.
@@ -316,37 +375,9 @@ def call_ineo(ineo_packages: list, api_url: str, action: str = "POST") -> None:
     :return: None
     """
     for ineo_package in ineo_packages:
-        with open(ineo_package, 'r') as json_file:
-            ineo_package_json = json.load(json_file)
-
-        if action == "POST":
-            response = requests.post(api_url, json=ineo_package_json, headers=header)
-        else:
-            logger.error("HTTP action not implemented yet, please use POST")
-            sys.exit(1)
-
-        if response.status_code != 200:
-            ineo_action: str = json.loads(ineo_package_json)[0]["operation"]
-            if ineo_action == "create":
-                ineo_package_json[0]["operation"] = "update"
-            elif ineo_action == "update":
-                ineo_package_json[0]["operation"] = "create"
-            elif ineo_action == "delete":
-                logger.error("Deletion not implemented yet")
-                continue
-            else:
-                logger.error("Unknown action")
-                continue
-
-            error_counter = ineo_api_error.get(ineo_package, 0)
-            if error_counter < 3:
-                ineo_api_error[ineo_package] = error_counter + 1
-                call_ineo(ineo_package, api_url)
-            else:
-                logger.error(f"Action on resource {ineo_package} failed.")
-                continue
-
-        logger.info(f"Action on resource {ineo_package} successful.")
+        # TODO FIXME: remove the following limiting line
+        if ineo_package == "./processed_jsonfiles_datasets/https_58__47__47_hdl.handle.net_47_10744_47_cd847d9d-0247-4a7f-a95c-e11231635cee_processed.json":
+            call_ineo_single_package(ineo_package, api_url, action)
 
 
 def main() -> None:
@@ -378,8 +409,7 @@ def main() -> None:
         exit(0)
     else:
         logger.info(f"Found {len(ineo_packages)} packages in the processed folder. Processing ...")
-        # TODO: remove slicing to sync full datasets
-        call_ineo(ineo_packages[:1], api_url)
+        call_ineo(ineo_packages, api_url)
 
     logger.info("Sync done, deletion skipped. returning none...")
     return None
