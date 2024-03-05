@@ -362,6 +362,7 @@ def call_ineo_single_package(ineo_package: str, api_url: str, action: str = "POS
             return
 
     else:
+        id: str = ineo_package_json[0]["document"]["id"]
         print(
             f"Updated resource available here: "
             f"https://ineo-git-feature-api-resource-eightmedia.vercel.app/resources/{id}")
@@ -378,9 +379,7 @@ def call_ineo(ineo_packages: list, api_url: str, action: str = "POST") -> None:
     :return: None
     """
     for ineo_package in ineo_packages:
-        # TODO FIXME: remove the following limiting line
-        if ineo_package == "./processed_jsonfiles_datasets/https_58__47__47_hdl.handle.net_47_10744_47_cd847d9d-0247-4a7f-a95c-e11231635cee_processed.json":
-            call_ineo_single_package(ineo_package, api_url, action)
+        call_ineo_single_package(ineo_package, api_url, action)
 
 
 def main() -> None:
