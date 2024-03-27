@@ -26,3 +26,13 @@ services:
     restart: unless-stopped
     networks:
       - traefik-public
+
+  basex:
+    image: registry.diginfra.net/tsd/basex:latest
+    container_name: basex
+    restart: unless-stopped
+    volumes:
+      - ineo-sync-data:/data
+      - ./basex_data:/basex/dbdata
+    networks:
+        - traefik-public
