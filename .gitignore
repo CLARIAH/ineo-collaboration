@@ -1,6 +1,7 @@
 **/.env
 **/.DS_Store
 .idea
+src/basex_data
 tools_metadata*/
 src/rumble_query.rq
 src/tools_metadata.db
