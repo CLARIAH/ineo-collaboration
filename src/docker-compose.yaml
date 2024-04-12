@@ -29,4 +29,13 @@ services:
       - python-run
     networks:
         - traefik-public
-  
+
+  basex:
+    image: registry.diginfra.net/tsd/basex:latest
+    container_name: basex
+    restart: unless-stopped
+    volumes:
+      - ./data:/data
+      - ./basex_data:/basex/dbdata
+    networks:
+      - traefik-public
