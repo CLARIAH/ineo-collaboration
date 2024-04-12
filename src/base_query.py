@@ -1,1 +1,1 @@
-base_query_dict = {"q": "koninklijke bibliotheek"}
+base_query = "ineo_record:true"

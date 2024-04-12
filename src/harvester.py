@@ -1,3 +1,4 @@
+import concurrent.futures
 import os
 import re
 import requests
@@ -10,7 +11,7 @@ import subprocess
 import yaml
 import dotenv
 import logging
-from typing import List, Optional, AnyStr, Union
+from typing import List, Optional, AnyStr, Union, Dict
 from bs4 import BeautifulSoup
 from datetime import datetime
 from utils import get_logger, get_files
@@ -19,11 +20,11 @@ log_file_path = 'harvester.log'
 logger = get_logger(log_file_path, __name__, level=logging.ERROR)
 
 try:
-    from base_query import base_query_dict
-    logger.info(f"base_query.py found! {base_query_dict}")
+    from base_query import base_query
+    logger.info(f"base_query.py found! {base_query}")
 except ImportError:
-    base_query_dict = {"q": "koninklijke bibliotheek"}
-    logger.info(f"base_query.py not found! Using default base query: {base_query_dict}")
+    base_query = "koninklijke bibliotheek"
+    logger.info(f"base_query.py not found! Using default base query: {base_query}")
 
 output_path_data = "./data"
 output_path_queries = "./queries"
@@ -32,7 +33,6 @@ delete_path = "./deleted_documents"
 # Solr API
 dotenv.load_dotenv()
 solr_url = dotenv.get_key(".env", "SOLR_URL")
-base_query = base_query_dict  # define your base query in the base_query.py
 username = dotenv.get_key(".env", "USERNAME")
 password = dotenv.get_key(".env", "PASSWORD")
 
@@ -531,52 +531,50 @@ def create_minimal_ruc(ruc_file, ruc_contents_dict):
         json.dump(ruc_template, json_file, indent=4)
 
 
-def run_solr_query(solr_url, base_query, username, password, start=0, rows=1000) -> dict:
+def _fetch_solr_records(query: str, solr_url: str, username, password, start=0, rows=10000) -> Dict:
     """
-    Run a query on the Solr API and return the response as a dictionary.
-    The response is in JSON format and chopped into batches of 1000 records.
-
-    return: dict
+    Retrieve Solr records in parallel with a given query.
     """
-    query = base_query.copy()  # copy the base query
-    query["start"] = start  # set the starting record number
-    query["rows"] = rows  # set the number of records to return
-
-    response = requests.get(solr_url, params=query, auth=(username, password))
-    try:
-        return response.json()
-    except ValueError:
-        return {}
-
-
-def store_solr_response(solr_url, base_query, username, password, filename):
-    # make sure folder exists
-    path = os.path.dirname(filename)
-    if not os.path.exists(path):
-        create_folder(path)
-
-    i: int = 0
-    num_docs: int = 0
-    docs: list = []
-    while True:  # keep fetching batches until no more documents are found
-        result = run_solr_query(solr_url, base_query, username, password, start=i*1000, rows=1000)
-        if "response" in result.keys() and result['response']['docs']:
-            if i == 0:
-                num_docs = result['response']['numFound']
-            docs.extend(result["response"]["docs"])
-            logger.debug(f"Batch {i+1}: Found {len(docs)} documents.")
-            i += 1
-        else:
-            logger.info(f"Batch {i+1}: Finished!.")
-            break
-
-    logger.info(f"Expecting {num_docs} in solr.")
-    logger.info(f"Total documents found: {len(docs)}")
-    with open(filename, "w") as f:
-        json.dump(docs, f)
+    params = {
+        "q": query,
+        "wt": "json",
+        "start": start,
+        "rows": rows,
+    }
+    response = requests.get(f"{solr_url}/select", params=params, auth=(username, password))
+    response.raise_for_status()  # Raise exception if the request failed
+    data = response.json()
+    return data["response"]
 
 
-def get_datasets(parsed_datasets_directory, dataset_file_path):
+def fetch_solr_records(query: str, solr_url: str, username: str, password: str, start=0, rows=10000) -> List[Dict]:
+    """
+    Retrieve Solr records in parallel with a given query.
+    """
+    # Retrieve the total number of records
+    response = _fetch_solr_records(query, solr_url, username, password, start=start, rows=0)
+    total_records = response["numFound"]
+    logger.info(f"Total records in Solr: {total_records}")
+
+    # Retrieve the records in parallel
+    records = []
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = []
+        for start in range(0, total_records, rows):
+            futures.append(
+                executor.submit(
+                    _fetch_solr_records, query, solr_url, username, password, start=start, rows=rows
+                )
+            )
+        for future in concurrent.futures.as_completed(futures):
+            records.extend(future.result()["docs"])
+    return records
+
+
+def store_solr_response(base_query: str, solr_url: str, username, password, parsed_datasets_directory: str):
+    """
+    Store the list of records from fetch_solr_records into individual JSON files.
+    """
     """
     Saves individual datasets as separate JSON files
 
@@ -591,8 +589,7 @@ def get_datasets(parsed_datasets_directory, dataset_file_path):
 
     # Get datasets
     logger.info(f"Getting and parsing datasets ...")
-    with open(dataset_file_path, 'r') as file:
-        docs = json.load(file)
+    docs: List[Dict] = fetch_solr_records(base_query, solr_url, username, password)
 
     # Extract individual datasets from the 'docs' array
     for doc in docs:
@@ -619,11 +616,9 @@ def main(threshold: int) -> None:
     if not os.path.exists(data_folder):
         os.makedirs(data_folder)
 
-    # Get and parse INEO datasets
+    # Get INEO records from Solr and save them as individual JSON files
     parsed_datasets_directory = './data/parsed_datasets'
-    dataset_file_path = './data/datasets/vlo-response.json'
-    store_solr_response(solr_url, base_query, username, password, dataset_file_path)
-    get_datasets(parsed_datasets_directory, dataset_file_path)
+    store_solr_response(base_query, solr_url,username, password, parsed_datasets_directory)
     logger.debug(f"Datasets are saved in {parsed_datasets_directory}")
 
     # Serialize the RUC dictionary into JSON
