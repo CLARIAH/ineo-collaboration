@@ -19,7 +19,7 @@ declare function functx:capitalize-first
  };
 
 for $i in js:map
-let $ID:="vurmpipe"
+let $ID:="{ID}"
 where $i/js:string[@key='identifier']=$ID
 return
   xml-to-json(

@@ -6,7 +6,7 @@ catering to different data types (string, object, array) within the codemeta fie
 declare namespace js="http://www.w3.org/2005/xpath-functions";
 
 for $i in js:map
-let $ID:="vurmpipe"
+let $ID:="{ID}"
 where $i/js:string[@key='identifier']=$ID
 for $item in $i/js:*[@key='programmingLanguage']
 return
