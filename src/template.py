@@ -324,9 +324,26 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
                 # This line generates a query string. It's a fallback query that is used when there is no external query file.
                 else:
                     if "datasets" in rumbledb_jsonl_path:
-                        query = f'for $i in json-file("{rumbledb_jsonl_path}",10) where $i.id eq "{current_id}" return $i.{path}'
+                        query = f"""
+                        declare namespace js="http://www.w3.org/2005/xpath-functions";
+
+                        for $i in js:map
+                        let $ID:="{current_id}"
+                         where $i/js:string[@key='id']=$ID
+                         return xml-to-json($i/js:*[@key='{path}'][1])
+                        """.format(current_id=current_id, path=path)
+                        # query = f'for $i in json-file("{rumbledb_jsonl_path}",10) where $i.id eq "{current_id}" return $i.{path}'
                     else:
-                        query = f'for $i in json-file("{rumbledb_jsonl_path}",10) where $i.identifier eq "{current_id}" return $i.{path}'
+                        # TODO: rewrite query to use xquery
+                        query = f"""
+                        declare namespace js="http://www.w3.org/2005/xpath-functions";
+
+                        for $i in js:map
+                        let $ID:="{current_id}"
+                         where $i/js:string[@key='identifier']=$ID
+                         return xml-to-json($i/js:*[@key='{path}'][1])
+                        """.format(current_id=current_id, path=path)
+                        # query = f'for $i in json-file("{rumbledb_jsonl_path}",10) where $i.identifier eq "{current_id}" return $i.{path}'
 
                 logger.debug(f"rumbledb query[{query}]")
                 response = requests.post(RUMBLEDB, data=query)
