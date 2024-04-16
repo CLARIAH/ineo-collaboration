@@ -3,9 +3,9 @@
         "operation": "<api",
         "document": {
             "id": "<ruc:identifier,md:identifier,err:there is no identifier!",
-            "title": "<md:@queries/name.rq,ruc:title",
+            "title": "<md:@queries/name.xq,ruc:title",
             "intro": "<ruc:$title,md:description,null",
-            "publishedAt": "<md:@queries/date.rq,null",
+            "publishedAt": "<md:@queries/date.xq,null",
             "media": {
                 "thumbnail": "<md:thumbnailUrl,null",
                 "slider": "<ruc:carousel[]:^/(.*):https://raw.githubusercontent.com/CLARIAH/ineo-content/master/$1,null"
@@ -26,10 +26,10 @@
                 }
             },
             "properties": {
-                "programmingLanguages": "<md:@queries/plangs.rq,null",
-                "learn": "<md:@queries/softwarehelp.rq,null",
-                "resourceHost": "<md:@queries/provider.rq,null",
-                "funding": "<md:@queries/funding.rq,null",
+                "programmingLanguages": "<md:@queries/plangs.xq,null",
+                "learn": "<md:@queries/softwarehelp.xq,null",
+                "resourceHost": "<md:@queries/provider.xq,null",
+                "funding": "<md:@queries/funding.xq,null",
                 "problemContact": "<md:@queries/issuetracker+maintainer.rq,null",
                 "informationTypes": [],
                 "languages": "<md:@queries/language.rq,null",
