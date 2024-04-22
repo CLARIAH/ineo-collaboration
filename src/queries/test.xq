@@ -1,55 +1,81 @@
-(: This query evaluates the structure of the funder and funding fields to create objects with "title" and "link" for fill funding in the template.
-If there's a funder field, it constructs an object with "title" as the name under funder and "link" as the url under funder.
-If funding is an object (
-  dictionary in jsoniq
-), it constructs an object with "title" as the name under funding or funding.funder and "link" as the url under funding or funding.funder.
-If funding is an array, it constructs an array of objects by iterating through each item in the funding array. 
-The [[1]] syntax is applied to these arrays, attempting to access the second value within each array.
-If none of the conditions above are met, it returns the string "null". :)
+(: This query essentially processes author data from a the jsonl file, extracts their names, affiliations, and associated links, 
+ensuring uniqueness in title-link pairs before returning the resulting JSON structure. It determines the author's title by checking various conditions 
+related to their affiliations and name. It constructs a string representing the author's name and affiliation(s) in different scenarios (whether it is an array or dictionary (object))
+
+More specifically, for the links, it first attempts to retrieve a link associated with the author:
+If a URL exists directly in the author data, it uses that.
+If not, it checks if there's an alternative link specified as "sameAs."
+If there's an @id present and it doesn't start with "https://tools.clariah.nl", it uses that as a link.
+Otherwise, it returns an empty sequence for the link.
+
+:)
 
 declare namespace js="http://www.w3.org/2005/xpath-functions";
 
-for $i in js:map
-let $ID:="alpinograph"
-where $i/js:string[@key='identifier']=$ID
-return
+let $ID:="frog"
 
-if (
-  exists(
-    $i/js:*[@key='funder']
+let $results := (
+ for $i in js:map
+  where $i/js:string[@key='identifier']=$ID
+return (
+  
+  for $author in $i/js:*[@key='author']
+  let $title := 
+  if (exists($author/js:*[@key='affiliation']) and $author/js:*[@key='affiliation']/js:*[@key='name']/self::js:array) then
+    for $name in $author/js:*[@key='affiliation']/js:*[@key='name']
+      where string($name/js:*[@key='@language']) = "en"
+      return 
+        $author/js:*[@key='givenName'] || " " || $author/js:*[@key='familyName'] || ", " || $name/js:*[@key='@value']
+  else if (exists($author/js:*[@key='affiliation']) and $author/js:*[@key='affiliation']/js:*[@key='name']/self::js:string) then
+    $author/js:*[@key='givenName'] || " " || $author/js:*[@key='familyName'] || ", " || $author/js:*[@key='affiliation']/js:*[@key='name']
+  else if (exists($author/js:*[@key='affiliation']) and $author/js:*[@key='affiliation']/js:*[@key='legalName']/self::js:string) then
+    $author/js:*[@key='givenName'] || " " || $author/js:*[@key='familyName'] || ", " || $author/js:*[@key='affiliation']/js:*[@key='legalName']
+  else if (exists($author/js:*[@key='affiliation']) and $author/js:*[@key='affiliation']/self::js:array) then
+    for $name in $author/js:*[@key='affiliation'][1]
+    return 
+      $author/js:*[@key='givenName'] || " " || $author/js:*[@key='familyName'] || ", " || $name/js:*[@key='name']
+  else
+    $author/js:*[@key='givenName'] || " " || $author/js:*[@key='familyName']
+  
+  return 
+    <js:array>
+      <js:map>
+        <js:string key='title'>{$title}</js:string>
+        <js:string key='link'>{
+          (
+            $author/js:*[@key="url"], 
+            $author/js:*[@key="sameAs"], 
+            $author/js:*[@key="@id"][not(starts-with(., "https://tools.clariah.nl"))], 
+            ()
+          )[1]
+        }</js:string>
+      </js:map>
+    </js:array>
   )
-) then
+)
 
-<js:array>
-<js:map>
-          <js:string key="title">{
-  string(
-    $i/js:*[@key='funder']/js:*[@key='name']
+let $uniqueValues :=
+  for $result in distinct-values(
+    for $r in $results
+    return concat(
+      string($r/js:*[@key="title"]),
+      "|",
+      string-join(
+        for $link in $r/js:*[@key="link"]
+        return if ($link/self::xs:string) then $link else (),
+        "|"
+      )
+    )
   )
-}</js:string>
-          <js:string key="link">{
-  string(
-    $i/js:*[@key='funder']/js:*[@key='url']
-  )
-}</js:string>
-</js:map>
-</js:array>
-
-else if ($i/js:*[@key='funding']::js:array) then
-<js:array>
-<js:map>
-
-</js:map>
-</js:array>
-[{
-  "title": [$i/js:*[@key='funding']/js:*[@key='name'],$i/js:*[@key='funding']/js:*[@key='funder']/js:*[@key='name']][[1]], "link": [$i/js:*[@key='funding']/js:*[@key='url'], $i/js:*[@key='funding']/js:*[@key='funder']/js:*[@key='url']][[1]]
-}]
-else if (
-  $i/js:*[@key='funding'] instance of array
-) then [
-for $item in $i/js:*[@key='funding']/*
-return {
-  "title": $item/js:*[@key='name'], "link": $item/js:*[@key='url']
-}]
-
-else "null"
+  let $title := substring-before($result, "|")
+  let $link := substring-after($result, "|")
+  group by $title
+    return 
+      <js:map>
+        <js:string key='title'>{$title}</js:string>
+        <js:string key='link'>{$link}</js:string> 
+      </js:map>
+(:if $link is empty string, original query returns emtpy array :)
+return 
+  <js:array>{$uniqueValues}</js:array>
+  
