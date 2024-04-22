@@ -37,5 +37,7 @@ services:
     volumes:
       - ./data:/data
       - ./basex_data:/basex/dbdata
+    ports:
+      - "8080:8080"
     networks:
       - traefik-public
