@@ -1,9 +1,10 @@
-import harvester
+import requests
 import rating
 import ineo_sync
 import ineo_get_properties
 import json
 import logging
+import harvester
 from tqdm import tqdm
 from template import main as templating
 from harvester import get_logger
@@ -50,11 +51,11 @@ def is_empty(file_path: str) -> bool:
     try:
         with open(file_path, 'r') as jsonl_file:
             for line in jsonl_file:
-                if line.strip():  
-                    return False  
-            return True  
+                if line.strip():
+                    return False
+            return True
     except FileNotFoundError:
-        return True 
+        return True
 
 
 def get_ids_from_jsonl(jsonl_file: str) -> list[str]:
@@ -108,7 +109,172 @@ def call_ineo_sync():
     ineo_sync.main()
 
 
-if __name__ == "__main__":
+def _call_basex(query: str, host: str, port: int, user: str, password: str, action: str,
+                db: str = None, content_type: str = "application/json") -> requests.Response:
+    """
+    This function calls the basex query
+
+    query (str): The query to be executed
+    host (str): The host of the basex server
+    port (int): The port of the basex server
+    user (str): The user of the basex server
+    password (str): The password of the basex server
+
+    return (str): The response of the basex query
+    """
+    if db:
+        url: str = f"http://{user}:{password}@{host}:{port}/rest/{db}"
+    else:
+        url: str = f"http://{user}:{password}@{host}:{port}/rest"
+    logger.info(f"{url=}")
+
+    response = None
+
+    logger.info(f"Executing the basex query: {query} on {url=} with {action=} ...")
+    if action == "get":
+        response = requests.get(url, data=query, headers={"Content-Type": content_type})
+    elif action == "post":
+        response = requests.post(url, data=query, headers={"Content-Type": content_type})
+    else:
+        raise Exception(f"Invalid action {action}; Valid actions are 'get' and 'post'")
+
+    if response.status_code < 200 or response.status_code > 299:
+        logger.error(f"Failed to execute the basex query: {query}")
+
+    return response
+
+
+def _call_basex_with_file(file_path: str,
+                          host: str,
+                          port: int,
+                          user: str,
+                          password: str,
+                          action: str,
+                          db: str) -> requests.Response:
+    """
+    This function calls the basex query
+
+    file_path (str): The file path to the query to be executed
+    host (str): The host of the basex server
+    port (int): The port of the basex server
+    user (str): The user of the basex server
+    password (str): The password of the basex server
+
+    return (str): The response of the basex query
+    """
+    with open(file_path, "r") as file:
+        content = file.read()
+        content = content.replace("<js:", "&lt;js:")
+        content = content.replace("</js:", "&lt;/js:")
+        query = """
+        <query>
+            <text>
+                {query}
+            </text>
+        </query>
+        """.format(query=content)
+        response = _call_basex(query, host, port, user, password, action, db)
+    return response
+
+
+def prepare_basex_tables(table_name: str,
+                         folder: str,
+                         host: str = "localhost",
+                         port: int = 8080,
+                         user: str = "admin",
+                         password: str = "pass",
+                         action: str = "post") -> None:
+    """
+    This function prepares the basex tables for the tools and datasets
+
+    table_name (str): The name of the table to be created
+    folder (str): The folder containing the json files to be inserted into the basex table
+
+    return (None)
+    """
+    logger.info(f"Preparing basex table {table_name} with folder {folder} ...")
+    content_type: str = "application/xml"
+
+    content = """
+    <query>
+        <text><![CDATA[
+    import module namespace db = "http://basex.org/modules/db";
+
+    db:create(
+      "{table_name}",
+      "{folder}",
+      (),
+      map {{
+        "createfilter": "*.json",
+        "parser": "json",
+        "jsonparser": "format=basic,liberal=yes,encoding=UTF-8"
+      }}
+    )
+    ]]></text>
+    </query>
+    """.format(table_name=table_name, folder=folder)
+
+    # Create the basex table
+    response = _call_basex(content, host, port, user, password, action, content_type=content_type)
+    if 199 < response.status_code < 300:
+        logger.info(f"Basex table {table_name} created with folder {folder} ...")
+    else:
+        logger.error(f"Failed to create the basex table {table_name} with folder {folder} ...")
+        logger.error(f"Response: {response.text}")
+        raise Exception(f"Failed to create the basex table {table_name} with folder {folder} ...")
+
+
+def get_ids_from_basex_by_query(query_file: str,
+                                host: str = "localhost",
+                                port: int = 8080,
+                                user: str = "admin",
+                                password: str = "pass",
+                                db: str = "tools") -> list[str]:
+    """
+    This function gets the IDs from the basex table by executing a query
+
+    query_file (str): The file path to the query to be executed
+    table_name (str): The name of the table to be queried
+
+    return (list[str]): The list of IDs from the basex table
+    """
+    logger.info(f"Getting IDs from basex table {db} by executing the query {query_file} ...")
+    response = _call_basex_with_file(file_path=query_file,
+                                     host=host,
+                                     port=port,
+                                     user=user,
+                                     password=password,
+                                     action="post",
+                                     db=db)
+    if 199 < response.status_code < 300:
+        logger.info(f"Status: {response.status_code} Got IDs from basex table {db} by executing the query {query_file} ...")
+        return response.text
+    else:
+        logger.error(f"Failed to get IDs from basex table {db} by executing the query {query_file} ...")
+        raise Exception(f"Failed to get IDs from basex table {db} by executing the query {query_file} ...")
+
+
+def basex_test():
+    # prepare basex tables
+    # for tools
+    tools_table_name: str = "tools"
+    tools_folder: str = "./data/tools_metadata"
+    prepare_basex_tables(tools_table_name, tools_folder)
+    # for datasets
+    datasets_table_name: str = "datasets"
+    datasets_folder: str = "./data/parsed_datasets"
+    prepare_basex_tables(datasets_table_name, datasets_folder)
+
+    # get the IDs of the datasets and tools from basex query
+    query_file: str = "./queries/rating.xq"
+    query_file_admin: str = "./queries/norating.xq"
+    # tools_to_INEO_xq: list[str] = get_ids_from_basex_by_query(query_file)
+    # print(f"tools_to_INEO_xq: {tools_to_INEO_xq}")
+    datasets_to_INEO_xq: list[str] = get_ids_from_basex_by_query(query_file, db=datasets_table_name)
+    print(f"datasets_to_INEO_xq: {datasets_to_INEO_xq}")
+
+
+def main():
     """
     The main function of the program. 
     Harvest codemeta tools, Rich User Contents files and datasets
@@ -140,7 +306,7 @@ if __name__ == "__main__":
     # TODO: datasets.jsonl is seemingly generated from all the harvested datasets. Does it always contains all?
     tools_to_INEO: list[str] = get_ids_from_jsonl(JSONL_c3)
     datasets_to_INEO: list[str] = get_ids_from_jsonl(JSONL_datasets)
-    
+
     # Check the IDs of the datasets
     num_ids = len(datasets_to_INEO)
     has_duplicates = len(datasets_to_INEO) != len(set(datasets_to_INEO))
@@ -215,9 +381,9 @@ if __name__ == "__main__":
         deleted_documents_path = "./deleted_documents"
         if os.path.exists(deleted_documents_path) and os.path.isdir(deleted_documents_path):
             shutil.copytree(deleted_documents_path, os.path.join(backup_folder, "deleted_documents_backup"))
-            
+
         logger.info("backups created, clearing folders for the next run...")
-        
+
         # Clear the processed_jsonfiles folder
         shutil.rmtree("processed_jsonfiles")
         shutil.rmtree(deleted_documents_path)
@@ -231,7 +397,7 @@ if __name__ == "__main__":
                     os.remove(item_path)
                 elif os.path.isdir(item_path):
                     shutil.rmtree(item_path)
-        
+
         # Add the current timestamp to the list
         backup_timestamps.append(timestamp)
 
@@ -243,5 +409,11 @@ if __name__ == "__main__":
             oldest_backup_path = os.path.join(main_backup_folder, f"backup_{oldest_backup}")
 
             shutil.rmtree(oldest_backup_path)
-        
+
         logger.info("All done!")
+
+
+if __name__ == "__main__":
+    basex_test()
+    exit("done")
+    main()
