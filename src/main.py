@@ -179,7 +179,7 @@ def _call_basex_with_file(file_path: str,
 
 def prepare_basex_tables(table_name: str,
                          folder: str,
-                         host: str = "localhost",
+                         host: str = "basex",
                          port: int = 8080,
                          user: str = "admin",
                          password: str = "pass",
@@ -225,7 +225,7 @@ def prepare_basex_tables(table_name: str,
 
 
 def get_ids_from_basex_by_query(query_file: str,
-                                host: str = "localhost",
+                                host: str = "basex",
                                 port: int = 8080,
                                 user: str = "admin",
                                 password: str = "pass",
@@ -268,9 +268,9 @@ def basex_test():
     # get the IDs of the datasets and tools from basex query
     query_file: str = "./queries/rating.xq"
     query_file_admin: str = "./queries/norating.xq"
-    # tools_to_INEO_xq: list[str] = get_ids_from_basex_by_query(query_file)
-    # print(f"tools_to_INEO_xq: {tools_to_INEO_xq}")
-    datasets_to_INEO_xq: list[str] = get_ids_from_basex_by_query(query_file, db=datasets_table_name)
+    tools_to_INEO_xq: list[str] = get_ids_from_basex_by_query(query_file)
+    print(f"tools_to_INEO_xq: {tools_to_INEO_xq}")
+    datasets_to_INEO_xq: list[str] = get_ids_from_basex_by_query(query_file_admin)
     print(f"datasets_to_INEO_xq: {datasets_to_INEO_xq}")
 
 
@@ -290,15 +290,6 @@ def main():
     """
     # uncomment the line below to enable harvesting
     call_harvester()
-
-    """
-    Filter codemeta.jsonl for reviewRating > 3 (+ manual demand list and ruc without codemeta)
-    
-    Used folders:
-    - After calling this line, a c3.jsonl file will be generated in "./data/c3.jsonl", 
-    further processing will be done on this file
-    """
-    call_rating()
 
     """
     Getting all the IDs, which are going to be syned with INEO, from the generated c3.jsonl and ?datasets.jsonl? 
