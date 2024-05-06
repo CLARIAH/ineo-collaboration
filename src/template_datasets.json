@@ -3,8 +3,8 @@
         "operation": "<api",
         "document": {
             "id": "<md:id,ruc:identifier,err:there is no id!",
-            "title": "<md:@dsqueries/name.rq,ruc:title,null",
-            "intro": "<md:@dsqueries/description.rq,null",
+            "title": "<md:@dsqueries/name.xq,ruc:title,null",
+            "intro": "<md:@dsqueries/description.xq,null",
             "publishedAt": [],
             "media": {
                 "thumbnail": [],
@@ -22,12 +22,12 @@
             "properties": {
                 "programmingLanguages": [],
                 "learn": [],
-                "resourceHost": "<md:@dsqueries/host.rq,null",
+                "resourceHost": "<md:@dsqueries/host.xq,null",
                 "funding": [],
                 "problemContact": [],
-                "informationTypes": "<md:@dsqueries/infotype.rq:informationTypes,null",
-                "languages": "<md:@dsqueries/language.rq,null",
-                "access": "<md:@dsqueries/access.rq,null",
+                "informationTypes": "<md:@dsqueries/infotype.xq:informationTypes,null",
+                "languages": "<md:@dsqueries/language.xq,null",
+                "access": "<md:@dsqueries/access.xq,null",
                 "sourceCodeLocation": [],
                 "researchContact": [],
                 "generalContact": [],
@@ -36,14 +36,14 @@
                 "versions": [],
                 "standards": [],
                 "resourceOwner": "<md:rightsHolder,null",
-                "link": "<md:@dsqueries/link.rq,null",
-                "intro": "<md:@dsqueries/description.rq,null",
+                "link": "<md:@dsqueries/link.xq,null",
+                "intro": "<md:@dsqueries/description.xq,null",
                 "researchActivities": [],
                 "researchDomains": "<md:subject,null",
-                "mediaTypes": "<md:@dsqueries/mediatype.rq:mediaTypes,null",
+                "mediaTypes": "<md:@dsqueries/mediatype.xq:mediaTypes,null",
                 "provenance": [],
                 "community": [],
-                "development": "<md:@dsqueries/creator.rq,null"
+                "development": "<md:@dsqueries/creator.xq,null"
             }
         }
     }
