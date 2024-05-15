@@ -1,6 +1,8 @@
 # Resources api
 
-The api is available at https://ineo-resources-api-5b568b0ad6eb.herokuapp.com.
+The production api is available at https://ineo-resources-api-5b568b0ad6eb.herokuapp.com.
+
+Pull Requests to the "main" branch will automatically deploy a review app at Heroku. They can be accessed through this url pattern: ineo-api-pr-123.herokuapp.com – where "pr-123" represents GitHubs pull request number. All review apps use the "development" dataset.
 
 ## Authorization
 
@@ -232,15 +234,15 @@ Only the `id` is needed to delete a resource.
 | link  | Url to the website of the resource.     |
 | intro | A short description about the resource. |
 
-| Name                 | Value                                                                                                   |
-| -------------------- | ------------------------------------------------------------------------------------------------------- |
-| resourceTypes        | "Not yet available" or an array of `title` (Tools)                                                      |
-| researchActivities   | "Not yet available" or an array of `link` ("https://vocabs.dariah.eu/tadirah/namingConvention")         |
-| researchDomains      | "Not yet available" or an array of `link` ("https://w3id.org/nwo-research-fields#HistoryofScience")     |
-| informationTypes     | "Not yet available" or an array of `index title` ("1.22 Statistics")                                    |
-| mediaTypes           | "Not yet available" or an array of `index title` ("1.74 ecmascript")                                    |
-| status               | "Not yet available" or an array of `title` ("Active")                                                   |
-| languages            | "Not yet available" or an array of `title` ("Dutch")                                                    |
+| Name                 | Value                                                                                                    |
+| -------------------- | -------------------------------------------------------------------------------------------------------- |
+| resourceTypes        | "Not yet available" or an array of `title` (Tools)                                                       |
+| researchActivities   | "Not yet available" or an array of `link` ("https://vocabs.dariah.eu/tadirah/namingConvention")          |
+| researchDomains      | "Not yet available" or an array of `link` ("https://w3id.org/nwo-research-fields#HistoryofScience")      |
+| informationTypes     | "Not yet available" or an array of `index title` ("1.22 Statistics")                                     |
+| mediaTypes           | "Not yet available" or an array of `index title` ("1.74 ecmascript")                                     |
+| status               | "Not yet available" or an array of `title` ("Active")                                                    |
+| languages            | "Not yet available" or an array of `title` ("Dutch")                                                     |
 | access               | an array of objects containing the title and optionally a url `[ { "title": "string", "link": "url" } ]` |
 | versions             | an array of objects containing the title and optionally a url `[ { "title": "string", "link": "url" } ]` |
 | programmingLanguages | an array of objects containing the title and optionally a url `[ { "title": "string", "link": "url" } ]` |
