@@ -15,22 +15,22 @@ let $results := (
 
   return
     let $consumesFormats :=
-      if ($i/js:*[@key='targetProduct']/js:map/js:*[@key='consumesData']/self::js:array) then
-      for $data in $i/js:*[@key='targetProduct']/js:map/js:*[@key='consumesData']
+      if ($i/js:*[@key='targetProduct']/js:*[@key='consumesData']/self::js:array) then
+      for $data in $i/js:*[@key='targetProduct']/js:*[@key='consumesData']/*
       return
       $data/js:*[@key='encodingFormat']
-      else if ($i/js:*[@key='targetProduct']/js:map/js:*[@key='consumesData']/self::js:map) then
-      $i/js:*[@key='targetProduct']/js:map/js:*[@key='consumesData']/js:*[@key='encodingFormat']
+      else if ($i/js:*[@key='targetProduct']/js:*[@key='consumesData']/self::js:map) then
+      $i/js:*[@key='targetProduct']/js:*[@key='consumesData']/js:*[@key='encodingFormat']
       else
       ()
 
     let $producesFormats :=
-    if ($i/js:*[@key='targetProduct']/js:map/js:*[@key='producesData']/self::js:array) then
-    for $data in $i/js:*[@key='targetProduct']/js:map/js:*[@key='producesData']
-    return
-    $data/js:*[@key='encodingFormat']
-    else if ($i/js:*[@key='targetProduct']/js:map/js:*[@key='producesData']/self::js:map) then
-    $i/js:*[@key='targetProduct']/js:*[@key='producesData']/js:map/js:*[@key='encodingFormat']
+    if ($i/js:*[@key='targetProduct']/js:*[@key='producesData']/self::js:array) then
+      for $data in $i/js:*[@key='targetProduct']/js:*[@key='producesData']/*
+      return
+      $data/js:*[@key='encodingFormat']
+    else if ($i/js:*[@key='targetProduct']/js:*[@key='producesData']/self::js:map) then
+      $i/js:*[@key='targetProduct']/js:*[@key='producesData']/js:*[@key='encodingFormat']
     else
     ()
     return ($consumesFormats, $producesFormats)
@@ -43,4 +43,14 @@ let $splitValues :=
   for $component in tokenize($value, "/")
   return $component
 
-return [distinct-values($splitValues)]
+let $distinct-results := distinct-values($splitValues)
+return
+if (empty($distinct-results)) then ""
+else
+xml-to-json(
+  <js:array>{
+    for $item in $distinct-results
+    return
+    <js:string>{$item}</js:string>
+  }</js:array>
+)

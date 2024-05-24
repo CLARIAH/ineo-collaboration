@@ -6,22 +6,29 @@ declare namespace js="http://www.w3.org/2005/xpath-functions";
 
 let $ID:="{ID}"
 
-
 let $resourceRef :=
     (for $i in js:map
     where $i/js:string[@key='id']=$ID
    return $i/js:*[@key="_resourceRef"])
 
+
 let $landingPageRef :=
-  (    for $i in js:map
+  (for $i in js:map
     where $i/js:string[@key='id']=$ID
-   return parse-json($i/js:*[@key="_landingPageRef"])('url'))
+    let $landingPageRef := $i/js:*[@key="_landingPageRef"]
+    return if (exists($landingPageRef)) then parse-json($landingPageRef)('url') else ()
+  )
 
 let $parsed :=
   (for $resource in $resourceRef
-   let $jsonObject := parse-json($resource)
+  return
+  try {
+   let $jsonObject := parse-json(normalize-space($resource))
    where contains($jsonObject('url'), "dx.doi.org") or contains($jsonObject('url'), "data.beeldengeluid")
-   return $jsonObject('url'))
+   return $jsonObject('url')
+
+} catch * { () }
+)
 
 let $selflink :=
   (for $i in js:map
@@ -29,6 +36,10 @@ let $selflink :=
    return $i/js:*[@key="_selfLink"])
 
 return
+xml-to-json(
+<js:string>{
   if (exists($parsed)) then $parsed
   else if (exists($landingPageRef)) then $landingPageRef
-else $selflink
+else string($selflink)
+}</js:string>
+)

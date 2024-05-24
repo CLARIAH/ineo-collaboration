@@ -14,4 +14,4 @@ let $name :=
         return $i/js:*[@key='name']
     )[1]
 
-return string($name)
+return xml-to-json(<js:string>{string($name)}</js:string>)

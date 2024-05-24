@@ -35,4 +35,14 @@ let $results := (
     return ($consumesFormats, $producesFormats)
   else ()
 )
-return [distinct-values($results)]
+let $distinct-results := distinct-values($results)
+return
+if (empty($distinct-results)) then ""
+else
+xml-to-json(
+  <js:array>{
+    for $item in $distinct-results
+    return
+    <js:string>{$item}</js:string>
+  }</js:array>
+)

@@ -17,4 +17,14 @@ let $splitValues :=
   for $component in tokenize($value, "/")
   return $component
 
-return [distinct-values($splitValues)]
+let $distinct-results := distinct-values($splitValues)
+return
+if (empty($distinct-results)) then ""
+else
+xml-to-json(
+  <js:array>{
+    for $item in $distinct-results
+    return
+    <js:string>{$item}</js:string>
+  }</js:array>
+)

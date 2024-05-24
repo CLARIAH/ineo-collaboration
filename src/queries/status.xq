@@ -17,8 +17,8 @@ xml-to-json(
       for $item in ($i/js:map[@key='developmentStatus'], $i/js:array[@key='developmentStatus']/js:map)
       return
       (
-        $item/js:string[@key='skos:prefLabel'][.="WIP"]/replace(., "^WIP$", "Work in Progress"),
-        $item/js:string[@key='skos:prefLabel']
-      )[1]
+        <js:string>{$item/js:string[@key='skos:prefLabel'][.="WIP"]/replace(., "^WIP$", "Work in Progress")}</js:string>,
+        $item/js:string[@key='skos:prefLabel'][.!="WIP"]
+      )
   }</js:array>
 )

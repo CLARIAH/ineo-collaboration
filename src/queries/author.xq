@@ -19,7 +19,7 @@ let $results := (
   where $i/js:string[@key='identifier']=$ID
 return (
 
-  for $author in $i/js:*[@key='author']
+ for $author in ($i/js:map[@key='author'],$i/js:array[@key="author"]/js:map)
   let $title :=
   if (exists($author/js:*[@key='affiliation']) and $author/js:*[@key='affiliation']/js:*[@key='name']/self::js:array) then
     for $name in $author/js:*[@key='affiliation']/js:*[@key='name']
@@ -41,13 +41,13 @@ return (
     <js:array>
       <js:map>
         <js:string key='title'>{$title}</js:string>
-        <js:string key='link'>{
+        <js:string key='link'>{string(
           (
             $author/js:*[@key="url"],
             $author/js:*[@key="sameAs"],
             $author/js:*[@key="@id"][not(starts-with(., "https://tools.clariah.nl"))],
             ()
-          )[1]
+          )[1])
         }</js:string>
       </js:map>
     </js:array>
@@ -56,13 +56,13 @@ return (
 
 let $uniqueValues :=
   for $result in distinct-values(
-    for $r in $results
+    for $r in $results/js:map
     return concat(
       string($r/js:*[@key="title"]),
       "|",
       string-join(
         for $link in $r/js:*[@key="link"]
-        return if ($link/self::xs:string) then $link else (),
+        return if ($link/self::js:string) then $link else (),
         "|"
       )
     )
@@ -75,6 +75,5 @@ let $uniqueValues :=
         <js:string key='title'>{$title}</js:string>
         <js:string key='link'>{$link}</js:string>
       </js:map>
-(:if $link is empty string, original query returns emtpy array :)
 return
-  <js:array>{$uniqueValues}</js:array>
+  xml-to-json(<js:array>{$uniqueValues}</js:array>)

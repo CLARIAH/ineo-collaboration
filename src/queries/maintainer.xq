@@ -14,26 +14,29 @@ let $results :=
   where $i/js:string[@key='identifier']=$ID
   return
   let $maintainers := $i/js:*[@key='maintainer']
-  for $maintainer in ($maintainers/self::js:array/*)
+  for $maintainer in ($maintainers/self::js:map,$maintainers/self::js:array/js:map)
   return
       <js:map>
         <js:string key="title">{string($maintainer/js:string[@key='givenName'])}&#x00A0;{string($maintainer/js:string[@key='familyName'])}</js:string>
         <js:string key="link">{
           (
-            $maintainer/js:*[@key='email'][starts-with((self::js:string, self::js:array/js:string[1])[1], 'mailto:')],
-            concat("mailto:", ($maintainer/js:*[@key='email']/self::js:string, $maintainer/js:*[@key='email']/self::js:array/js:string[1])[1]),
-            $maintainer/js:string[@key='sameAs'],
-            $maintainer/js:string[@key='@id'],
+            string($maintainer/js:*[@key='email'][starts-with((self::js:string, self::js:array/js:string[1])[1], 'mailto:')]),
+            (concat("mailto:", ($maintainer/js:*[@key='email']/self::js:string, $maintainer/js:*[@key='email']/self::js:array/js:string[1])[1]))[.!="mailto:"],
+            string($maintainer/js:string[@key='sameAs']),
+            string($maintainer/js:string[@key='@id']),
             ""
-          )[1]
+          )[normalize-space(.)!=""][1]
 
         }
         </js:string>
       </js:map>
 
-return xml-to-json(
-  <js:array>{
+return
+xml-to-json(
+  <js:array>
+  {
     for $person in distinct-values($results/string(js:string[@key='title']))
     return $results[js:string[@key='title'][.=$person]][1]
-  }</js:array>
+  }
+  </js:array>
 )

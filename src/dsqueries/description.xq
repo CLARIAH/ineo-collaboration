@@ -1,7 +1,6 @@
 (: This query extracts the "description" field (list), which will be mapped to the intro fields in INEO. The query iterates over each descriptions and filters
 those descriptions that contains specific language code {code:eng}", "{code:und}" and "{code:lbe}"). The replace function then removes the langauge codes and newsline characters from each
 descriptions. The descriptions are then merges and normalized, removing multiple consecutive spaces within the string.
-let $ID:="https_58__47__47_hdl.handle.net_47_10744_47_ca210971-0e15-47bb-bc3f-292afa7ff07c"
 :)
 
 declare namespace js="http://www.w3.org/2005/xpath-functions";
@@ -23,4 +22,4 @@ let $english := (
 
 let $mergedString := normalize-space(string-join($english, ""))
 
-return $mergedString
+return xml-to-json(<js:string>{$mergedString}</js:string>)

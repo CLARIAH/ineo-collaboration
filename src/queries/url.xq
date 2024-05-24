@@ -16,7 +16,7 @@ let $ID:="{ID}"
 for $i in js:map
 where $i/js:string[@key='identifier']=$ID
 return
-string(
+xml-to-json(
 
 (
   $i/js:*[@key='targetProduct']/js:*[@key='url'][$i/js:*[@key='targetProduct']/js:map/js:*[@key='@type'][.="WebApplication"]],
@@ -25,25 +25,3 @@ string(
   $i/js:*[@key='codeRepository']
 )[1]
 )
-
-
-
-(:
-if (exists($i.targetProduct)) then
-    if ($i.targetProduct."@type" eq "WebApplication" or $i.targetProduct."@type" eq "WebSite") then
-        if (exists($i.targetProduct.url)) then
-            $i.targetProduct.url
-        else if (exists($i.url) and $i.url instance of object and exists($i.url.url)) then
-            $i.url.url
-        else
-            $i.codeRepository
-else
-    if (exists($i.url) and $i.url instance of object and exists($i.url.url)) then
-        $i.url.url
-    else
-        $i.codeRepository
-
-else($i.codeRepository)
-:)
-
-

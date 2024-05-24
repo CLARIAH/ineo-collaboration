@@ -12,7 +12,7 @@ return
 
 xml-to-json(
 if (
-  $providerNames/self::xs:string
+  $providerNames/self::js:string
 ) then
         <js:array>
         <js:map>
