@@ -31,7 +31,7 @@
                 "sourceCodeLocation": [],
                 "researchContact": [],
                 "generalContact": [],
-                "resourceTypes": "<default:Data",
+                "resourceTypes": ["<default:Data"],
                 "status": "<md:lifeCycleStatus:status,null",
                 "versions": [],
                 "standards": [],
