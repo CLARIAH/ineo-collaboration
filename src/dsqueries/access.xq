@@ -10,7 +10,7 @@ For the link it uses the "license". If "license" does not exists, it returns an 
 
 declare namespace js="http://www.w3.org/2005/xpath-functions";
 
-let $ID:="{ID}"
+let $ID:="NDE_32_Partners_47_https_archief_nl_id_dataset_toegang_3_04_16_157.xml"
 
 let $licensetype :=
   (for $i in js:map
@@ -78,21 +78,21 @@ xml-to-json(
   else if (contains($formattedAccess, "PUB")) then
   <js:array>
     <js:map>
-      <js:string key="title">"Public"</js:string>
+      <js:string key="title">Public</js:string>
       <js:string key="link">{string($license)}</js:string>
     </js:map>
   </js:array>
   else if (contains($formattedAccess, "ACA")) then
   <js:array>
     <js:map>
-      <js:string key="title">"Academic"</js:string>
+      <js:string key="title">Academic</js:string>
       <js:string key="link">{string($license)}</js:string>
     </js:map>
   </js:array>
   else if (contains($formattedAccess, "RES")) then
   <js:array>
     <js:map>
-      <js:string key="title">"Restricted for individual"</js:string>
+      <js:string key="title">Restricted for individual</js:string>
       <js:string key="link">{string($license)}</js:string>
     </js:map>
   </js:array>
