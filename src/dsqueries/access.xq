@@ -45,21 +45,21 @@ xml-to-json(
   else if (contains($formattedAccess, "PUB")) then
     <js:array>
     <js:map>
-      <js:string key="title">"Public"</js:string>
+      <js:string key="title">Public</js:string>
       <js:string key="link">{string($license)}</js:string>
     </js:map>
   </js:array>
   else if (contains($formattedAccess, "ACA")) then
   <js:array>
     <js:map>
-      <js:string key="title">"Academic"</js:string>
+      <js:string key="title">Academic</js:string>
       <js:string key="link">{string($license)}</js:string>
     </js:map>
   </js:array>
   else if (contains($formattedAccess, "RES")) then
   <js:array>
     <js:map>
-      <js:string key="title">"Restricted for individual"</js:string>
+      <js:string key="title">Restricted for individual</js:string>
       <js:string key="link">{string($license)}</js:string>
     </js:map>
   </js:array>
