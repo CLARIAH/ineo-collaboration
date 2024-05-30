@@ -8,12 +8,11 @@ let $languages := (
     return $i/js:*[@key="_languageName"]
 )
 
-let $filteredLanguages := (
-    for $language in distinct-values($languages)
+let $filteredLanguages :=
+    for $language in distinct-values($languages/*)
     where $language ne "Unspecified" and $language ne "Unknown"
     return <js:string>{$language}</js:string>
-)
 
 return xml-to-json(
-<js:array>{$filteredLanguages}</js:array>
+  <js:array>{$filteredLanguages}</js:array>
 )
