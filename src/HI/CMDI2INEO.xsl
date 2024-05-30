@@ -11,34 +11,36 @@
     <xsl:output method="text" encoding="UTF-8"/>
     
     <!--<xsl:param name="js-uri" select="()"/>-->
-    <xsl:param name="js-uri" select="'file:/Users/menzowi/Documents/Projects/CLARIAH/INEO/HI/RUC/hi_bgb.json'"/>
-    <xsl:param name="js-doc" select="unparsed-text($js-uri)"/>
+    <xsl:param name="js-dir" select="'file:/Users/menzowi/Documents/Projects/CLARIAH/INEO/ineo-collaboration/src/HI/RUC/'"/>
+    <xsl:param name="js-ext" select="'.json'"/>
+    <xsl:param name="js-uri" select="concat($js-dir,//cmd:Components/cmd:HI/cmd:ID,$js-ext)"/>
+    <xsl:param name="js-doc" select="if (js:unparsed-text-available($js-uri)) then (unparsed-text($js-uri)) else ()"/>
     <xsl:param name="js-xml" select="js:json-to-xml($js-doc)"/>
     
     <xsl:param name="type" select="'Data'"/>
     
-    <xsl:param name="vocabs" select="'file:/Users/menzowi/Documents/Projects/CLARIAH/INEO/HI/vocabs/'"/>
+    <xsl:param name="vocabs" select="'file:/Users/menzowi/Documents/Projects/CLARIAH/INEO/ineo-collaboration/src/HI/vocabs/'"/>
     <xsl:param name="vocabs-ext" select="'.json'"/>
     
     <xsl:function name="cl:lookupLink" as="xs:string?">
         <xsl:param name="val"/>
         <xsl:param name="vocab"/>
         <xsl:variable name="vocab-xml" select="js:json-to-xml(unparsed-text(concat($vocabs,$vocab,$vocabs-ext)))"/>
-        <xsl:sequence select="$vocab-xml//js:map[lower-case(normalize-space(js:string[@key='title']))=lower-case(normalize-space($val))]/js:string[@key='link']"/>
+        <xsl:sequence select="($vocab-xml//js:map[lower-case(normalize-space(js:string[@key='title']))=lower-case(normalize-space($val))]/js:string[@key='link'])[1]"/>
     </xsl:function>
     
     <xsl:function name="cl:lookupIndex" as="xs:string?">
         <xsl:param name="val"/>
         <xsl:param name="vocab"/>
         <xsl:variable name="vocab-xml" select="js:json-to-xml(unparsed-text(concat($vocabs,$vocab,$vocabs-ext)))"/>
-        <xsl:sequence select="$vocab-xml//js:map[lower-case(normalize-space(js:string[@key='title']))=lower-case(normalize-space($val))]/concat(js:string[@key='index'],' ',js:string[@key='title'])"/>
+        <xsl:sequence select="($vocab-xml//js:map[lower-case(normalize-space(js:string[@key='title']))=lower-case(normalize-space($val))]/concat(js:string[@key='index'],' ',js:string[@key='title']))[1]"/>
     </xsl:function>
   
     <xsl:function name="cl:lookupTitle" as="xs:string?">
         <xsl:param name="val"/>
         <xsl:param name="vocab"/>
         <xsl:variable name="vocab-xml" select="js:json-to-xml(unparsed-text(concat($vocabs,$vocab,$vocabs-ext)))"/>
-        <xsl:sequence select="$vocab-xml//js:map[lower-case(normalize-space(js:string[@key='title']))=lower-case(normalize-space($val))]/js:string[@key='title']"/>
+        <xsl:sequence select="($vocab-xml//js:map[lower-case(normalize-space(js:string[@key='title']))=lower-case(normalize-space($val))]/js:string[@key='title'])[1]"/>
     </xsl:function>
     
     <xsl:template match="/">
@@ -262,10 +264,10 @@
                                 <xsl:for-each select="//cmd:Components/cmd:HI/cmd:INEO/cmd:contactForGeneralQuestions[normalize-space(.)!='']">
                                     <js:map>
                                         <js:string key="title">
-                                            <xsl:value-of select="."/>
+                                            <xsl:value-of select="replace(.,'(.*) [^ ]+@[^ ]+','$1')"/>
                                         </js:string>
                                         <js:string key="link">
-                                            <xsl:value-of select="."/>
+                                            <xsl:value-of select="replace(.,'.* ([^ ]+@[^ ]+)','$1')"/>
                                         </js:string>
                                     </js:map>
                                 </xsl:for-each>
@@ -274,10 +276,10 @@
                                 <xsl:for-each select="//cmd:Components/cmd:HI/cmd:INEO/cmd:contactForResearchQuestions[normalize-space(.)!='']">
                                     <js:map>
                                         <js:string key="title">
-                                            <xsl:value-of select="."/>
+                                            <xsl:value-of select="replace(.,'(.*) [^ ]+@[^ ]+','$1')"/>
                                         </js:string>
                                         <js:string key="link">
-                                            <xsl:value-of select="."/>
+                                            <xsl:value-of select="replace(.,'.* ([^ ]+@[^ ]+)','$1')"/>
                                         </js:string>
                                     </js:map>
                                 </xsl:for-each>
@@ -286,10 +288,10 @@
                                 <xsl:for-each select="//cmd:Components/cmd:HI/cmd:INEO/cmd:contactForReportingAProblem[normalize-space(.)!='']">
                                     <js:map>
                                         <js:string key="title">
-                                            <xsl:value-of select="."/>
+                                            <xsl:value-of select="replace(.,'(.*) [^ ]+@[^ ]+','$1')"/>
                                         </js:string>
                                         <js:string key="link">
-                                            <xsl:value-of select="."/>
+                                            <xsl:value-of select="replace(.,'.* ([^ ]+@[^ ]+)','$1')"/>
                                         </js:string>
                                     </js:map>
                                 </xsl:for-each>
