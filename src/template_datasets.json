@@ -35,7 +35,7 @@
                 "status": "<md:lifeCycleStatus:status,null",
                 "versions": [],
                 "standards": [],
-                "resourceOwner": "<md:rightsHolder,null",
+                "resourceOwner": "<md:@dsqueries/rightsholder.xq,null",
                 "link": "<md:@dsqueries/link.xq,null",
                 "intro": "<md:@dsqueries/description.xq,null",
                 "researchActivities": [],
