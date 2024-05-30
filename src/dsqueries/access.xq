@@ -10,7 +10,7 @@ For the link it uses the "license". If "license" does not exists, it returns an 
 
 declare namespace js="http://www.w3.org/2005/xpath-functions";
 
-let $ID:="NDE_32_Partners_47_https_archief_nl_id_dataset_toegang_3_04_16_157.xml"
+let $ID:="{ID}"
 
 let $licensetype :=
   (for $i in js:map

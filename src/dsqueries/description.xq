@@ -16,7 +16,7 @@ let $description := (
 
 let $english := (
     for $item in $description
- where contains($item, "{code:nld}") or contains($item, "{code:und}")
+ where contains($item, "{code:eng}") or contains($item, "{code:und}")
     return replace(replace($item, "\{code:[^}]+\}", " "), "\n", " ")
 )
 
