@@ -1,11 +1,15 @@
 import logging
 import os
+import re
 import sys
+import requests
 from typing import List, Optional
+
+utils_logger_level = logging.ERROR
 
 
 def get_logger(log_file: str, logger_name: str,
-               level: int = logging.DEBUG, logs_folder: str = "logs") -> logging.Logger:
+               level: int = utils_logger_level, logs_folder: str = "logs") -> logging.Logger:
     logger = logging.getLogger(logger_name)
     logger.setLevel(level)
 
@@ -50,3 +54,162 @@ def get_files(folder_name: str, file_postfix: str = "json") -> Optional[List[str
         if f.endswith('.json'):
             results.append(os.path.join(folder_name, f))
     return results
+
+
+def call_basex(query: str, host: str, port: int, user: str, password: str, action: str,
+               db: str = None, content_type: str = "application/json", http_caller=requests) -> requests.Response:
+    """
+    This function calls the basex query
+
+    query (str): The query to be executed
+    host (str): The host of the basex server
+    port (int): The port of the basex server
+    user (str): The user of the basex server
+    password (str): The password of the basex server
+
+    return (str): The response of the basex query
+    """
+    logger = get_logger("basex.log", "basex")
+
+    if db:
+        url: str = f"http://{user}:{password}@{host}:{port}/rest/{db}"
+    else:
+        url: str = f"http://{user}:{password}@{host}:{port}/rest"
+
+    logger.info(f"Executing the basex query: {query} on {url=} with {action=} ...")
+    if action == "get":
+        response = http_caller.get(url, data=query, headers={"Content-Type": content_type})
+    elif action == "post":
+        response = http_caller.post(url, data=query, headers={"Content-Type": content_type})
+    else:
+        raise Exception(f"Invalid action {action}; Valid actions are 'get' and 'post'")
+
+    if response.status_code < 200 or response.status_code > 299:
+        logger.error(f"Failed to execute the basex query: {query}")
+
+    return response
+
+
+def call_basex_with_file(file_path: str,
+                         host: str,
+                         port: int,
+                         user: str,
+                         password: str,
+                         action: str,
+                         db: str) -> requests.Response:
+    """
+    This function calls the basex query
+
+    file_path (str): The file path to the query to be executed
+    host (str): The host of the basex server
+    port (int): The port of the basex server
+    user (str): The user of the basex server
+    password (str): The password of the basex server
+
+    return (str): The response of the basex query
+    """
+    with open(file_path, "r") as file:
+        content = file.read()
+        content = content.replace("<js:", "&lt;js:")
+        content = content.replace("</js:", "&lt;/js:")
+        query = """
+        <query>
+            <text>
+                {query}
+            </text>
+        </query>
+        """.format(query=content)
+        response = call_basex(query, host, port, user, password, action, db)
+    return response
+
+
+def call_basex_with_query(query: str,
+                          host: str,
+                          port: int,
+                          user: str,
+                          password: str,
+                          action: str,
+                          db: str,
+                          content_type: str = "application/json",
+                          http_caller=requests
+                          ) -> requests.Response:
+    """
+    This function calls the basex query
+
+    file_path (str): The file path to the query to be executed
+    host (str): The host of the basex server
+    port (int): The port of the basex server
+    user (str): The user of the basex server
+    password (str): The password of the basex server
+
+    return (str): The response of the basex query
+    """
+    query = query.replace("<js:", "&lt;js:")
+    query = query.replace("</js:", "&lt;/js:")
+    query = """
+    <query>
+        <text>
+            {query}
+        </text>
+    </query>
+    """.format(query=query)
+    response = call_basex(query, host, port, user, password, action, db, content_type, http_caller)
+    return response
+
+
+def get_ids_from_basex_by_query(query_file: str,
+                                host: str = "basex",
+                                port: int = 8080,
+                                user: str = "admin",
+                                password: str = "pass",
+                                db: str = "tools") -> list[str]:
+    """
+    This function gets the IDs from the basex table by executing a query
+
+    query_file (str): The file path to the query to be executed
+    table_name (str): The name of the table to be queried
+
+    return (list[str]): The list of IDs from the basex table
+    """
+    logger = get_logger("basex.log", "basex")
+    logger.info(f"Getting IDs from basex table {db} by executing the query {query_file} ...")
+    response = call_basex_with_file(file_path=query_file,
+                                    host=host,
+                                    port=port,
+                                    user=user,
+                                    password=password,
+                                    action="post",
+                                    db=db)
+    if 199 < response.status_code < 300:
+        logger.info(
+            f"Status: {response.status_code} Got IDs from basex table {db} by executing the query {query_file} ...")
+        return response.text
+    else:
+        logger.error(f"Failed to get IDs from basex table {db} by executing the query {query_file} ...")
+        raise Exception(f"Failed to get IDs from basex table {db} by executing the query {query_file} ...")
+
+
+def remove_html_tags(text):
+    """Remove html tags from a string"""
+    clean = re.compile('<.*?>')
+    return re.sub(clean, '', text)
+
+
+def shorten_text(text: str, limit: int, more_characters: str = "...") -> str:
+    """
+    Shorten the text to a given limit and add more characters if the text is longer than the limit.
+    """
+    return text[:limit] + more_characters if len(text) > limit else text
+
+
+def shorten_list_or_string(long_text: str | list, limit: int, more_characters: str):
+    """
+    Shorten the text to the given limit and add more_characters at the end.
+    """
+    if isinstance(long_text, list):
+        shortened = [shorten_text(elem, limit, more_characters) for elem in long_text]
+    elif isinstance(long_text, str):
+        shortened = shorten_text(long_text, limit, more_characters)
+    else:
+        raise TypeError(f"Name field is not a string or a list: {type(long_text)} - {long_text}")
+    return shortened
