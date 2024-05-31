@@ -4,8 +4,9 @@ import re
 import sys
 import requests
 from typing import List, Optional
+from markdown_plain_text.extention import convert_to_plain_text
 
-utils_logger_level = logging.ERROR
+utils_logger_level = logging.DEBUG
 
 
 def get_logger(log_file: str, logger_name: str,
@@ -199,6 +200,7 @@ def shorten_text(text: str, limit: int, more_characters: str = "...") -> str:
     """
     Shorten the text to a given limit and add more characters if the text is longer than the limit.
     """
+    text = convert_to_plain_text(text)
     return text[:limit] + more_characters if len(text) > limit else text
 
 

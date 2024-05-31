@@ -8,3 +8,5 @@ python-dotenv
 pytest 
 icecream
 tqdm
+markdown
+git+https://github.com/kostyachum/python-markdown-plain-text.git#egg=plain-text-markdown-extention
