@@ -6,7 +6,7 @@ import requests
 from typing import List, Optional
 from markdown_plain_text.extention import convert_to_plain_text
 
-utils_logger_level = logging.DEBUG
+utils_logger_level = logging.WARNING
 
 
 def get_logger(log_file: str, logger_name: str,
