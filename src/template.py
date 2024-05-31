@@ -1,13 +1,16 @@
 import sys
 import json
-import requests
 import re
 import os
 import logging
-from utils import get_logger
+from datetime import datetime
 
-logger = get_logger("template.log", __name__, level=logging.ERROR)
+import requests
+from utils import get_logger, call_basex, call_basex_with_file, call_basex_with_query
 
+logger = get_logger("template.log", __name__, level=logging.WARNING)
+
+basex_session = requests.Session()
 """
 This script is designed to process JSON data using a template and retrieve information based on a set of rules defined in the template. 
 https://github.com/CLARIAH/clariah-plus/blob/main/requirements/software-metadata-requirements.md
@@ -72,7 +75,7 @@ def resolve_path(ruc, path):
                     return None
 
 
-def traverse_data(template, ruc, rumbledb_jsonl_path, current_id):
+def traverse_data(template, ruc, template_type: str, current_id):
     """
     This function traverses and processes the template. 
     
@@ -91,10 +94,10 @@ def traverse_data(template, ruc, rumbledb_jsonl_path, current_id):
             if isinstance(value, str) and value.startswith("<"):
                 # Extract the information after the '<'
                 info = value.split("<")[1]
-                value = retrieve_info(info, ruc, rumbledb_jsonl_path, current_id)
+                value = retrieve_info(info, ruc, template_type, current_id)
             else:
                 # dealing with nested dictionaries or lists
-                value = traverse_data(value, ruc, rumbledb_jsonl_path, current_id)
+                value = traverse_data(value, ruc, template_type, current_id)
             if value is not None:
                 if value == "null":
                     res[key] = None
@@ -108,10 +111,10 @@ def traverse_data(template, ruc, rumbledb_jsonl_path, current_id):
             if isinstance(item, str) and item.startswith("<"):
                 # Extract the information after the '<'
                 info = item.split("<")[1]
-                item = retrieve_info(info, ruc, rumbledb_jsonl_path, current_id)
+                item = retrieve_info(info, ruc, template_type, current_id)
             else:
                 # dealing nested dictionaries or lists
-                item = traverse_data(item, ruc, rumbledb_jsonl_path, current_id)
+                item = traverse_data(item, ruc, template_type, current_id)
             if item is not None:
                 if item == "null":
                     res.append(None)
@@ -177,12 +180,12 @@ def process_vocabs(vocabs, vocab, val):
 vocabs = {}
 
 
-def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | None | str:
+def retrieve_info(info, ruc, template_type: str, current_id) -> list | str | None | str:
     """
-    
-    This scripts parses and processes a set of input instructions from template.json (info, e.g. md:@queries/domains.rq:researchDomains,null) 
+
+    This scripts parses and processes a set of input instructions from template.json (info, e.g. md:@queries/domains.rq:researchDomains,null)
     The function returns the result of processing these instructions (res), which could be a list, a string, or None.
-    
+
     The input instruction is further split using commas as delimiters (info_values), and different components of the instruction are processed. 
     This means that the order of the instruction is important: the loop is exited if a result is found. 
         
@@ -310,6 +313,7 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
                     path = path[:-2]  # Remove the '[]' suffix
 
                 query = None
+                file = None
                 # Checking if the path starts with "@" character. If it does, it indicates that the path refers to a file path containing a query.
                 if path.startswith("@"):
                     # If the path starts with "@", this line extracts the file path by removing the "@" character. 
@@ -319,11 +323,11 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
                     with open(file, "r") as file:
                         query = file.read()
                 if query is not None:
-                    query = query.replace("{JSONL}", rumbledb_jsonl_path)
+                    # query = query.replace("{JSONL}", rumbledb_jsonl_path)
                     query = query.replace("{ID}", current_id)
                 # This line generates a query string. It's a fallback query that is used when there is no external query file.
                 else:
-                    if "datasets" in rumbledb_jsonl_path:
+                    if "datasets" == template_type:
                         query = f"""
                         declare namespace js="http://www.w3.org/2005/xpath-functions";
 
@@ -333,8 +337,7 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
                          return xml-to-json($i/js:*[@key='{path}'][1])
                         """.format(current_id=current_id, path=path)
                         # query = f'for $i in json-file("{rumbledb_jsonl_path}",10) where $i.id eq "{current_id}" return $i.{path}'
-                    else:
-                        # TODO: rewrite query to use xquery
+                    elif "tools" == template_type:
                         query = f"""
                         declare namespace js="http://www.w3.org/2005/xpath-functions";
 
@@ -343,25 +346,44 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
                          where $i/js:string[@key='identifier']=$ID
                          return xml-to-json($i/js:*[@key='{path}'][1])
                         """.format(current_id=current_id, path=path)
+                    else:
+                        raise TypeError(
+                            f"Invalid template type {template_type}; Valid types are 'datasets' and 'tools'")
                         # query = f'for $i in json-file("{rumbledb_jsonl_path}",10) where $i.identifier eq "{current_id}" return $i.{path}'
 
-                logger.debug(f"rumbledb query[{query}]")
-                response = requests.post(RUMBLEDB, data=query)
+                logger.debug(f"basex query[{query}]")
+
+                dbname = "datasets" if "datasets" == template_type else "tools"
+
+                # timing the query call
+                response = call_basex_with_query(query,
+                                                 "basex",
+                                                 8080,
+                                                 "admin",
+                                                 "pass",
+                                                 "post",
+                                                 dbname
+                                                 )
                 assert (
                         response.status_code == 200
-                ), f"HttpError {response.status_code} Error running {query} on rumbledb: {response.json()}"
+                ), f"HttpError {response.status_code} Error running {query} on basex: {response.text}"
 
                 # check whether the query run was successful
-                resp = json.loads(response.text)
-                if ("error-code" in resp) or ("error-message" in resp):
-                    logger.error(f"Error running {query} on rumbledb: {response.text}")
-                    return None
-
-                if len(resp["values"]) > 0:
-                    if original_path:
-                        info = resp["values"]
+                try:
+                    if response.text is not None and len(response.text) > 0:
+                        resp = json.loads(response.text)
                     else:
-                        info = resp["values"][0]
+                        resp = None
+                except json.JSONDecodeError:
+                    # resp = "" + response.text
+                    logger.error(f"Error running {query} on basex: {response.text}")
+                    raise
+
+                if resp is not None and len(resp) > 0:
+                    if isinstance(resp, str) or isinstance(resp, list):
+                        info = resp
+                    else:
+                        raise TypeError(f"Invalid response type {type(resp)}. Allowed types are list and str.")
                 else:
                     info = None
 
@@ -380,20 +402,24 @@ def retrieve_info(info, ruc, rumbledb_jsonl_path, current_id) -> list | str | No
                 for val in info:
                     checked_val = checking_vocabs(val)
                     logger.debug(vocab, val)
-                    if checked_val is not None and checked_val.startswith("https://w3id.org/nwo-research-fields#"):
-                        result_info.append(checked_val)
-                        info = result_info
-                    else:
-                        # Retrieve the index number of the title of the property for mapping to INEO. E.g. for MediaTypes that is 7.23 plain
-                        info = process_vocabs(vocabs, vocab, val)
-                        logger.debug(f"The vocab value from '{info_parts[2].strip()}': {val}")
-                        if info is not None:
-                            vocabs_list.append(info)
-                        if len(vocabs_list) > 0:
-                            unique_list = list(set(vocabs_list))
-                            info = unique_list
+                    try:
+                        if checked_val is not None and checked_val.startswith("https://w3id.org/nwo-research-fields#"):
+                            result_info.append(checked_val)
+                            info = result_info
                         else:
-                            info = None
+                            # Retrieve the index number of the title of the property for mapping to INEO. E.g. for MediaTypes that is 7.23 plain
+                            info = process_vocabs(vocabs, vocab, val)
+                            logger.debug(f"The vocab value from '{info_parts[2].strip()}': {val}")
+                            if info is not None:
+                                vocabs_list.append(info)
+                            if len(vocabs_list) > 0:
+                                unique_list = list(set(vocabs_list))
+                                info = unique_list
+                            else:
+                                info = None
+                    except Exception as ex:
+                        logger.error(f"Error processing vocabs {info_parts} - {val}: {ex}")
+                        exit("error found")
 
             if info is not None:
                 logger.debug(f"The value of '{path}' in the MD: {info}")
@@ -430,7 +456,7 @@ def create_minimal_ruc(current_id: str) -> dict:
     return ruc
 
 
-def main(current_id: str = ID, template_path: str = TOOLS_TEMPLATE, rumbledb_jsonl_path: str = TOOLS_TEMPLATE):
+def main(current_id: str = ID, template_path: str = TOOLS_TEMPLATE, template_type: str = "tools"):
     """
     Main function
     
@@ -444,6 +470,7 @@ def main(current_id: str = ID, template_path: str = TOOLS_TEMPLATE, rumbledb_jso
     
     """
 
+    logger.error(f"### Processing {current_id} of type {template_type} with {template_path}")
     # DSL template
     # global template
     with open(template_path, "r") as file:
@@ -463,7 +490,7 @@ def main(current_id: str = ID, template_path: str = TOOLS_TEMPLATE, rumbledb_jso
         ruc = create_minimal_ruc(current_id)
 
     # Combine codemeta/datasets and RUC using the template
-    res = traverse_data(template, ruc, rumbledb_jsonl_path, current_id)
+    res = traverse_data(template, ruc, template_type, current_id)
 
     # Create folders if they don't exist
     tools_folder = 'processed_jsonfiles_tools'

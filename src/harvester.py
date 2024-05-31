@@ -11,10 +11,10 @@ import subprocess
 import yaml
 import dotenv
 import logging
-from typing import List, Optional, AnyStr, Union, Dict
+from typing import List, Optional, AnyStr, Union, Dict, Tuple
 from bs4 import BeautifulSoup
 from datetime import datetime
-from utils import get_logger, get_files
+from utils import get_logger, get_files, remove_html_tags, shorten_list_or_string
 
 log_file_path = 'harvester.log'
 logger = get_logger(log_file_path, __name__, level=logging.ERROR)
@@ -35,6 +35,11 @@ dotenv.load_dotenv()
 solr_url = dotenv.get_key(".env", "SOLR_URL")
 username = dotenv.get_key(".env", "USERNAME")
 password = dotenv.get_key(".env", "PASSWORD")
+
+# title should be 67 characters with 3 dots, and description should be 297 characters with 3 dots
+title_limit: int = 67
+description_limit: int = 297
+more_characters: str = "..."
 
 
 def create_folder(folder_name: str):
@@ -184,8 +189,14 @@ def download_json_files(
             response = requests.get(file_url)
             file_name = os.path.join(save_directory, href)
             files_list.append(file_name)
-            with open(file_name, 'wb') as file:
-                file.write(response.content)
+            # loads binary response content as string and dump it to json file
+            with open(file_name, 'w') as file:
+                content = response.content.decode('utf-8')
+                content_json = json.loads(content)
+                # shorten name and description
+                content_json["name"] = shorten_list_or_string(content_json.get("name", ""), title_limit, more_characters)
+                content_json["description"] = shorten_list_or_string(content_json.get("description", ""), description_limit, more_characters)
+                json.dump(content_json, file, indent=2)
             count += 1
 
     logger.info(f"Downloaded all the tools metadata! Total JSON files: {count}")
@@ -294,7 +305,19 @@ def get_id_from_ruc_file_name(file_name: str) -> str:
 
 
 def get_id_from_file_name(file_name: str) -> str:
-    return file_name.split(".")[0].split("/")[-1]
+    parts = file_name.split(".")[0:-1]
+    parts = ".".join(parts)
+    # return file_name.split(".")[0:-1].split("/")[-1]
+    return parts.split("/")[-1]
+
+
+def get_id_from_field(file_name: str) -> str:
+    with open(file_name, 'r') as json_file:
+        data = json.load(json_file)
+        result: str = data.get('identifier', data.get('id', None))
+        if result is None:
+            raise Exception(f"Could not find identifier or id in {file_name}")
+        return result
 
 
 def process_list(ids: list, folder_name, db_file_name, table_name, diff_list, current_timestamp,
@@ -322,7 +345,8 @@ def process_list(ids: list, folder_name, db_file_name, table_name, diff_list, cu
         if md5 != previous_md5:
             if previous_md5 is not None:
                 logger.debug(f"File {file} has changed! Old hash was: {previous_md5}")
-            ids.append(get_id_from_file_name(file))
+            ids.append(get_id_from_field(file))
+            logger.debug(f"### Adding {ids[-1]}")
         else:
             logger.debug(f"File {file} has not changed.")
         c.execute(f"INSERT INTO {table_name} (file_name, md5, timestamp) VALUES (?, ?, ?)",
@@ -374,6 +398,8 @@ def sync_ruc(github_url, github_dir):
         os.chdir(github_dir)
 
         # Run git pull and capture the output
+        result = subprocess.run(["git", "stash"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        result = subprocess.run(["git", "stash", "clear"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         result = subprocess.run(["git", "pull"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
         # Check if the "Already up to date" message is in the output
@@ -439,6 +465,18 @@ def serialize_ruc_to_json(ruc_contents_dict, output_dir="./data") -> Union[dict,
         subfolder_path = os.path.join(output_dir, ruc_subfolder)
         os.makedirs(subfolder_path, exist_ok=True)
         json_file_path = os.path.join(subfolder_path, os.path.splitext(filename)[0] + ".json")
+        org_title = ruc_contents.get("title", "")
+        # shorten title and description
+        ruc_contents["title"] = shorten_list_or_string(org_title, title_limit, more_characters)
+        org_description = ruc_contents.get(org_title, None)
+        if org_description is not None:
+            if org_title == ruc_contents["title"]:
+                # if the title is not shortened, use it as key to retrieve the description
+                ruc_contents[org_title] = shorten_list_or_string(org_description, description_limit, more_characters)
+            else:
+                ruc_contents[ruc_contents["title"]] = shorten_list_or_string(org_description, description_limit, more_characters)
+                _ = ruc_contents.pop(org_title)
+
         with open(json_file_path, "w") as json_file:
             json.dump(ruc_contents, json_file)
 
@@ -593,24 +631,51 @@ def store_solr_response(base_query: str, solr_url: str, username, password, pars
 
     # Extract individual datasets from the 'docs' array
     for doc in docs:
-        index = docs.index(doc) + 1
-        dataset_filename = os.path.join(parsed_datasets_directory, f"dataset_{index}.json")
-        logger.debug(f"Saving dataset {index} to {dataset_filename}")
-        with open(dataset_filename, 'w') as dataset_file:
-            json.dump(doc, dataset_file, indent=2)
+        # remove HTML tags from the description field
+        temp_list = []
+        for elem in doc.get("description", []):
+            temp_list.append(remove_html_tags(elem))
+        doc["description"] = temp_list
+        # shorten title and description
+        doc["name"] = shorten_list_or_string(doc.get("name", ""), title_limit, more_characters)
+        doc["description"] = shorten_list_or_string(doc.get("description", ""), description_limit, more_characters)
+
+        current_id = doc.get("id", None)
+        if current_id is not None:
+            dataset_filename = os.path.join(parsed_datasets_directory, f"{current_id}.json")
+        else:
+            raise Exception(f"Dataset {doc} does not have an 'id' field!")
+        logger.debug(f"Saving dataset to {dataset_filename}")
+        try:
+            with open(dataset_filename, 'w') as dataset_file:
+                json.dump(doc, dataset_file, indent=2)
+        except Exception as ex:
+            logger.error(f"Error saving dataset to {dataset_filename}: {ex}")
+            print(doc)
+            exit()
 
 
 def get_id_from_change_list(diff_list_ruc: list) -> list[str]:
     return [x.split(".")[0] for x in diff_list_ruc if x.endswith('.json')]
 
 
-def main(threshold: int) -> None:
+def harvest(threshold: int) -> Tuple:
     """
     This script downloads the latest Codemeta JSON files and Rich User Content (RUC) from Github,
     threshold: int : The number of iterations after which a file is considered absent.
     TODO: The threshold is implemented, but need test
     """
+    # TODO: remove the testing block
+    # TODO FIXME: there are 18523 datasets json files, however, only 8092 are being processed as id in the datasets.json file?
+    if os.path.exists("tools.json") and os.path.exists("datasets.json"):
+        logger.info("tools.json and datasets.json exist! Reading the ids from the files.")
+        with open("tools.json", "r") as f:
+            codemeta_ids = json.load(f)
+        with open("datasets.json", "r") as f:
+            datasets_ids = json.load(f)
+        return codemeta_ids, datasets_ids
 
+    logger.info("tools.json and datasets.json do not exist! Fetching the ids from harvest.")
     # Create the "data" folder if it doesn't exist
     data_folder = "data"
     if not os.path.exists(data_folder):
@@ -618,7 +683,7 @@ def main(threshold: int) -> None:
 
     # Get INEO records from Solr and save them as individual JSON files
     parsed_datasets_directory = './data/parsed_datasets'
-    store_solr_response(base_query, solr_url,username, password, parsed_datasets_directory)
+    store_solr_response(base_query, solr_url, username, password, parsed_datasets_directory)
     logger.debug(f"Datasets are saved in {parsed_datasets_directory}")
 
     # Serialize the RUC dictionary into JSON
@@ -790,20 +855,12 @@ def main(threshold: int) -> None:
     conn.commit()
 
     codemeta_ids = list(set(codemeta_ids))
+    with open("tools.json", "w") as f:
+        json.dump(codemeta_ids, f)
     datasets_ids = list(set(datasets_ids))
-
-    # creating jsonl file for the tools
-    for codemeta_id in codemeta_ids:
-        codemeta_file = os.path.join(codemeta_download_dir, f"{codemeta_id}.codemeta.json")
-        if not os.path.isfile(codemeta_file):
-            create_minimal_ruc(codemeta_file, ruc_contents_dict)
-
-        add_to_jsonlines(codemeta_file, os.path.join(output_path_data, "codemeta.jsonl"))
-
-    # creating jsonl file for the datasets
-    for dataset_id in datasets_ids:
-        datasets_file = os.path.join(datasets_download_dir, f"{dataset_id}.json")
-        add_to_jsonlines(datasets_file, os.path.join(output_path_data, "datasets.jsonl"))
+    with open("datasets.json", "w") as f:
+        json.dump(datasets_ids, f)
+    return codemeta_ids, datasets_ids
 
     # <<<DELETION SCENERIO >>>
 
@@ -835,4 +892,4 @@ def main(threshold: int) -> None:
 
 
 if __name__ == '__main__':
-    main(threshold=3)
+    harvest(threshold=3)
