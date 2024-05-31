@@ -1,13 +1,16 @@
 import os
+import time
 import json
 import requests
 import sys
+import logging
 from dotenv import load_dotenv
 import dotenv
 from harvester import get_logger, get_files
 
 log_file_path = 'ineo_sync.log'
 logger = get_logger(log_file_path, __name__)
+BULK_SIZE = 1000
 
 """
 This file loads some environment variables from a .env file
@@ -18,9 +21,13 @@ The .env file will be checked in into the private repo later
 load_dotenv()
 
 api_token: str = dotenv.get_key('.env', 'API_TOKEN')
+# TODO: old dev api, kept for time being for reference
 api_url = "https://ineo-resources-api-5b568b0ad6eb.herokuapp.com/resources/"
+# New dev api
+api_url: str = dotenv.get_key('.env', 'API_URL')
 processed_jsonfiles = "./processed_jsonfiles_tools"
 processed_jsonfiles_ds = "./processed_jsonfiles_datasets"
+processed_jsonfiles_huygens = "./processed_jsonfiles_huygens"
 delete_path = "./deleted_documents"
 
 # Define the header with the Authorization token 
@@ -200,7 +207,8 @@ def handle_empty(ids, processed_jsonfiles, force_yes=False):
         if create_response.status_code == 200:
             logger.info(f"Creation of {id} is successful")
             logger.debug(create_response.text)
-            logger.info(f"New resource available here: https://ineo-git-feature-api-resource-eightmedia.vercel.app/resources/{id}")
+            # logger.info(f"New resource available here: https://ineo-git-feature-api-resource-eightmedia.vercel.app/resources/{id}")
+            logger.info(f"New resource available here: https://ineo-git-development-eightmedia.vercel.app/resources/{id}")
         else:
             logger.error(f"Creation of {id} has failed")
             logger.debug(create_response.text)
@@ -306,7 +314,33 @@ def delete_document(delete_list, force_yes=False):
             logger.info(update_response.text)
 
 
-def call_ineo_single_package(ineo_package: str, api_url: str, action: str = "POST") -> None:
+def call_ineo_single_package(ineo_package: list[dict], api_url: str, action: str = "POST") -> None:
+    """
+    This function calls the INEO API to create or update resources.
+
+    :param ineo_package: list[dict], a single ineo package, a list with a single dictionary element
+    :param api_url: str
+    :param action: str
+    :return: None
+    """
+    ineo_package_json = json.dumps(ineo_package)
+    ineo_action: str = ineo_package[0]["operation"]
+    ineo_id: str = ineo_package[0]["document"]["id"]
+
+    if action == "POST":
+        response = requests.post(api_url, json=ineo_package_json, headers=header)
+    else:
+        logger.error("HTTP action not implemented yet, please use POST")
+        sys.exit(1)
+
+    if response.status_code == 200:
+        logger.info(f"{ineo_id} {ineo_action} successfully.")
+    else:
+        logger.error(f"Action {ineo_action} on resource {ineo_package} failed....")
+        logger.error(f"Response: {response.status_code} - {response.text}")
+
+
+def call_ineo_single_package_from_file(ineo_package: str, api_url: str, action: str = "POST") -> None:
     """
     This function calls the INEO API to create or update resources.
 
@@ -356,7 +390,7 @@ def call_ineo_single_package(ineo_package: str, api_url: str, action: str = "POS
             ineo_api_error[ineo_package] = error_counter + 1
             # TODO FIXME: recursion is not working as expected, ineo_package is a dot
             logger.debug(f"Recursion on {ineo_package} ...")
-            call_ineo_single_package(ineo_package, api_url, action)
+            call_ineo_single_package_from_file(ineo_package, api_url, action)
         else:
             logger.error(f"Action on resource {ineo_package} failed after {error_counter} time(s).")
             return
@@ -367,9 +401,10 @@ def call_ineo_single_package(ineo_package: str, api_url: str, action: str = "POS
             f"Updated resource available here: "
             f"https://ineo-git-feature-api-resource-eightmedia.vercel.app/resources/{id}")
         logger.info(f"Action on resource {ineo_package} successful.")
+    print(f"#### Response {response.status_code} - {response.text}")
 
 
-def call_ineo(ineo_packages: list, api_url: str, action: str = "POST") -> None:
+def call_ineo_with_files(ineo_packages: list, api_url: str, action: str = "POST") -> None:
     """
     This function calls the INEO API to create or update resources.
 
@@ -379,39 +414,107 @@ def call_ineo(ineo_packages: list, api_url: str, action: str = "POST") -> None:
     :return: None
     """
     for ineo_package in ineo_packages:
-        call_ineo_single_package(ineo_package, api_url, action)
+        call_ineo_single_package_from_file(ineo_package, api_url, action)
 
 
-def main() -> None:
+def call_ineo_bulk(ineo_package: list, api_url: str) -> None:
+    """
+    This function calls the INEO API to create or update resources in bulk.
+
+    :param ineo_package: list
+    :param api_url: str
+    :param action: str
+    :return: None
+    """
+    try:
+        response = requests.post(api_url, json=ineo_package, headers=header)
+    except Exception as e:
+        logger.error(f"Error calling INEO API: {str(e)}")
+        exit(1)
+
+    if response.status_code != 200:
+        logger.error(f"Action on resources failed.")
+
+    print(f"#### Response {response.status_code} - {api_url} - {response.text}")
+
+
+def sync_with_ineo(record_type: str = "tools", limit: int = 0, remove_first: bool = False) -> None:
+    """
+    This function syncs either tools or datasets with ineo depends on the parameters passed.
+
+    :param record_type: str
+    :param limit: int limit the amount of packages to sync
+    :param remove_first: bool remove the packages first before syncing
+    :return: None
+
+    """
     # check tool properties and replace with INEO property if match is found
-    processed_document_ids = get_id_json(processed_jsonfiles)
+    if record_type == "tools":
+        processed_files = processed_jsonfiles
+    elif record_type == "datasets":
+        processed_files = processed_jsonfiles_ds
+    elif record_type == "huygens":
+        processed_files = processed_jsonfiles_huygens
+    else:
+        logger.error(f"Record type {record_type} not implemented yet.")
+        sys.exit(1)
+
+    processed_document_ids = get_id_json(processed_files)
     for processed_id in processed_document_ids:
-        check_properties(processed_id, processed_jsonfiles, vocabs="researchDomains")
-        check_properties(processed_id, processed_jsonfiles, vocabs="researchActivities")
-    
-    # check datasets properties and replace with INEO property if match is found
-    processed_document_ids_ds = get_id_json(processed_jsonfiles_ds)
-    for processed_id_ds in processed_document_ids_ds:
-        check_properties(processed_id_ds, processed_jsonfiles_ds, vocabs="researchDomains")
+        if record_type in ["tools", "datasets"]:
+            check_properties(processed_id, processed_files, vocabs="researchDomains")
+        if record_type == "tools":
+            check_properties(processed_id, processed_files, vocabs="researchActivities")
 
-    # call ineo api on tools
-    ineo_packages: list | None = get_files(processed_jsonfiles)
+    # call ineo api on given record type
+    if limit > 0:
+        logger.debug(f"Limiting the number of {record_type} packages to sync to {limit}")
+        ineo_packages: list = get_files(processed_files)[:limit]
+    else:
+        logger.debug(f"Syncing all {record_type} packages.")
+        ineo_packages: list | None = get_files(processed_files)
+
     if ineo_packages is None or len(ineo_packages) == 0:
-        logger.info("No packages found in the processed folder.")
+        logger.info(f"No packages found in the {record_type} processed folder.")
         exit(0)
     else:
-        logger.info(f"Found {len(ineo_packages)} packages in the processed folder. Processing ...")
-        # TODO: enable the following lines to sync tools
-        # call_ineo(ineo_packages, api_url)
+        logger.info(f"Found {len(ineo_packages)} packages in the {record_type}. Syncing ...")
+        bulk_package: list = []
+        for package in ineo_packages:
+            with open(package, 'r') as json_file:
+                ineo_package = json.load(json_file)
+                bulk_package.append(ineo_package[0])
 
-    # call ineo api on datasets
-    ineo_packages: list | None = get_files(processed_jsonfiles_ds)
-    if ineo_packages is None or len(ineo_packages) == 0:
-        logger.info("No packages found in the processed folder.")
-        exit(0)
-    else:
-        logger.info(f"Found {len(ineo_packages)} packages in the processed folder. Processing ...")
-        call_ineo(ineo_packages, api_url)
+        if remove_first:
+            bulk_delete_package: list = bulk_package.copy()
+            logger.info(f"{remove_first=}, deleting {len(bulk_package)} {record_type} packages.")
+            print(f"{remove_first=}, deleting {len(bulk_package)} {record_type} packages.")
+            for package in bulk_delete_package:
+                package["operation"] = "delete"
+            call_ineo_bulk(bulk_delete_package, api_url)
+            logger.info(f"Deleted {len(bulk_delete_package)} {record_type} packages.")
+
+        # Syncing the packages in bulk or batch
+        logger.info(f"Syncing in total {len(bulk_package)} {record_type} packages.")
+        print(f"Syncing in total {len(bulk_package)} {record_type} packages.")
+        if len(bulk_package) > BULK_SIZE:
+            logger.info(f"Syncing {len(bulk_package)} {record_type} packages in batches of size {BULK_SIZE}.")
+            print(f"Syncing {len(bulk_package)} {record_type} packages in batches of size {BULK_SIZE}.")
+            for i in range(0, len(bulk_package), BULK_SIZE):
+                logger.info(f"Syncing {i} to {i + BULK_SIZE} {record_type} packages.")
+                print(f"Syncing {i} to {i + BULK_SIZE} {record_type} packages.")
+                call_ineo_bulk(bulk_package[i:i + BULK_SIZE], api_url)
+                time.sleep(10)
+        else:
+            logger.info(f"Syncing {len(bulk_package)} {record_type} packages in bulk.")
+            print(f"Syncing {len(bulk_package)} {record_type} packages in bulk.")
+            call_ineo_bulk(bulk_package, api_url)
+
+
+def main(limit: int = 5, remove_before_create: bool = False) -> None:
+    sync_with_ineo("huygens", limit, remove_before_create)
+    sync_with_ineo("tools", limit, remove_before_create)
+    sync_with_ineo("datasets", limit, remove_before_create)
 
     logger.info("Sync done, deletion skipped. returning none...")
     return None
@@ -434,5 +537,6 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    exit("Please call from main")
+    # main()
     
