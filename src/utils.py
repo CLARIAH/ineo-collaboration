@@ -52,7 +52,7 @@ def get_files(folder_name: str, file_postfix: str = "json") -> Optional[List[str
     # If file_postfix is not None, return the files with the postfix
     results: List[str] = []
     for f in files_list:
-        if f.endswith('.json'):
+        if f.endswith(f".{file_postfix}"):
             results.append(os.path.join(folder_name, f))
     return results
 
