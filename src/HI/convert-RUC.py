@@ -1,10 +1,21 @@
-import yaml
-import re
 import os
-from typing import List, Optional, AnyStr, Union, Dict
-import logging
-from utils import get_logger, get_files
+import sys
+import re
+import yaml
 import json
+import logging
+from typing import AnyStr
+
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(parent_dir)
+from utils import get_logger, get_files
+
+log_file_path = 'convert-RUC.log'
+logger = get_logger(log_file_path, __name__, level=logging.ERROR)
+
+data_folder = f"{os.path.join(parent_dir, 'ineo-content', 'src', 'data')}"  # '/Users/menzowi/Documents/Projects/CLARIAH/INEO/ineo-content/src/data'
+print(f"data_folder: {data_folder}")
+
 
 def extract_ruc(ruc_content: AnyStr) -> dict:
     """"
@@ -67,16 +78,16 @@ def extract_ruc(ruc_content: AnyStr) -> dict:
 
     return dictionary
 
-log_file_path = 'convert-RUC.log'
-logger = get_logger(log_file_path, __name__, level=logging.ERROR)
-
-folder_path = '/Users/menzowi/Documents/Projects/CLARIAH/INEO/ineo-content/src/data'
 
 if __name__ == '__main__':
-    for filename in os.listdir(folder_path):
-            print(f"record[{filename}]")
-            file_path = os.path.join(folder_path, filename)
-            with open(file_path, 'r') as file:
-                contents: AnyStr = file.read()
-                ruc_contents: dict = extract_ruc(contents)
-                print(f"Rich User Contents of {file_path} is:\n{json.dumps(ruc_contents)}\n")
+    all_files: list = get_files(folder_name=data_folder, file_postfix='md')
+    for full_path in all_files:
+        print(f"### Processing {full_path}")
+        file_path = os.path.dirname(full_path)
+        file_name = os.path.basename(full_path).split('.')[0]
+        logger.info(f"{file_path=}, {file_name=}")
+        with open(full_path, 'r') as file:
+            contents = file.read()
+            ruc_contents: dict = extract_ruc(contents)
+            with open(f"{file_path}/{file_name}.json", 'w') as json_file:
+                json.dump(ruc_contents, json_file, indent=2)
