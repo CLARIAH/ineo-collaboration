@@ -244,7 +244,7 @@ def retrieve_info(info, ruc, template_type: str, current_id) -> list | str | Non
                 else:
                     match = regex.search(info)
 
-                info: list | None = []
+                info: list | str | None = []
                 if match is not None and isinstance(match, list):
                     for m in match:
                         if isinstance(m, str):
@@ -253,11 +253,12 @@ def retrieve_info(info, ruc, template_type: str, current_id) -> list | str | Non
                             info.append(m.group(1))
                 elif match is not None:
                     logger.debug(f"The regex value of '{regex_str}': {info}")
-                    info.append(match.group(1))
+                    info = match.group(1)
                 else:
                     logger.debug(f"The regex value of '{regex_str}': {info}")
                     info = None
 
+            org_info = info
             if info is not None and len(info_parts) > 3:
                 template_key = info_parts[1].strip().lower()
                 if template_key.endswith("[]"):
@@ -273,7 +274,7 @@ def retrieve_info(info, ruc, template_type: str, current_id) -> list | str | Non
                     # in case of string
                     text: str = info_parts[3].strip()
                     # text is changing type here to list
-                    text: str = text.replace("$1", info[0])
+                    text: str = text.replace("$1", info)
 
                 info = text
                 logger.debug(f"The text value of '{info_parts[3].strip()}': {info}")
