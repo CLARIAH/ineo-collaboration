@@ -50,7 +50,7 @@ def extract_ruc(ruc_content: AnyStr) -> dict:
 
     """
     re_fields = re.compile(r'^---(.*)---', flags=re.DOTALL)
-    re_descriptions = re.compile(r'---\n+#(.*?)\n\n(.*?)\n\n##', flags=re.DOTALL)
+    re_descriptions = re.compile(r'---\n+#(.*?)\n(.*?)\n\n##', flags=re.DOTALL)
     re_sections = re.compile(r'(?m)^(##\s+.*?)$(.*?)(?=^##\s|\Z)', flags=re.DOTALL | re.MULTILINE)
     re_name = re.compile(r'[^a-zA-Z]', flags=re.DOTALL)
 
