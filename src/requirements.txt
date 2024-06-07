@@ -10,3 +10,4 @@ icecream
 tqdm
 markdown
 git+https://github.com/kostyachum/python-markdown-plain-text.git#egg=plain-text-markdown-extention
+git+https://github.com/CLARIAH/pyFAT.git@develop#egg=pyfat
