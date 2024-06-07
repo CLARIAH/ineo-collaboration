@@ -438,7 +438,8 @@ def retrieve_info(info, ruc, template_type: str, current_id) -> list | str | Non
         # checks if info_value starts with the prefix "null" and indicates that the result should be set to "null".
         if info_value.startswith("null"):
             logger.debug(f"Starting with 'null':{info_value}")
-            res = "null"
+            # TODO FIXME: replace string "null" with None to check whether it is working
+            res = None
 
     return res
 
@@ -525,4 +526,11 @@ def main(current_id: str = ID, template_path: str = TOOLS_TEMPLATE, template_typ
 
 
 if __name__ == "__main__":
-    main()
+    current_id: str = sys.argv[1] if len(sys.argv) > 1 else ""
+    if current_id == "":
+        logger.error("No current_id provided")
+        exit(1)
+    print(f"### Processing {current_id} ###")
+    template_path: str = "./template_tools.json"
+    template_type: str = "tools"
+    main(current_id, template_path, template_type)
