@@ -22,7 +22,7 @@ load_dotenv()
 
 api_token: str = dotenv.get_key('.env', 'API_TOKEN')
 # TODO: old dev api, kept for time being for reference
-api_url = "https://ineo-resources-api-5b568b0ad6eb.herokuapp.com/resources/"
+# api_url = "https://ineo-resources-api-5b568b0ad6eb.herokuapp.com/resources/"
 # New dev api
 api_url: str = dotenv.get_key('.env', 'API_URL')
 processed_jsonfiles = "./processed_jsonfiles_tools"
@@ -98,7 +98,10 @@ def check_properties(id, folder_path, vocabs) -> None:
         with open(properties_file_path, "r") as json_file:
             properties = json.load(json_file)
             processed_files = load_processed_document(id, folder_path)
-            research_domains = processed_files[0]['document']['properties'][f'{vocabs}']
+            try:
+                research_domains = processed_files[0]['document']['properties'][f'{vocabs}']
+            except KeyError as e:
+                research_domains = None
             
             # Check if research_domains is not None
             if research_domains is not None:
@@ -427,6 +430,7 @@ def call_ineo_bulk(ineo_package: list, api_url: str) -> None:
     :return: None
     """
     try:
+        print(f"this is the api called: {api_url}")
         response = requests.post(api_url, json=ineo_package, headers=header)
     except Exception as e:
         logger.error(f"Error calling INEO API: {str(e)}")
@@ -511,10 +515,8 @@ def sync_with_ineo(record_type: str = "tools", limit: int = 0, remove_first: boo
             call_ineo_bulk(bulk_package, api_url)
 
 
-def main(limit: int = 5, remove_before_create: bool = False) -> None:
-    sync_with_ineo("huygens", limit, remove_before_create)
-    sync_with_ineo("tools", limit, remove_before_create)
-    sync_with_ineo("datasets", limit, remove_before_create)
+def main(record_type: str, limit: int = 5, remove_before_create: bool = False) -> None:
+    sync_with_ineo(record_type, limit, remove_before_create)
 
     logger.info("Sync done, deletion skipped. returning none...")
     return None
@@ -537,6 +539,7 @@ def main(limit: int = 5, remove_before_create: bool = False) -> None:
 
 
 if __name__ == "__main__":
-    exit("Please call from main")
+    # exit("Please call from main")
+    main(limit=1)
     # main()
     
