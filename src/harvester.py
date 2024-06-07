@@ -14,7 +14,8 @@ import logging
 from typing import List, Optional, AnyStr, Union, Dict, Tuple
 from bs4 import BeautifulSoup
 from datetime import datetime
-from utils import get_logger, get_files, remove_html_tags, shorten_list_or_string
+from utils import get_logger, get_files, remove_html_tags, shorten_list_or_string, get_id_from_file_name
+from reduce_id import reduce_id
 
 log_file_path = 'harvester.log'
 logger = get_logger(log_file_path, __name__, level=logging.ERROR)
@@ -40,6 +41,8 @@ password = dotenv.get_key(".env", "PASSWORD")
 title_limit: int = 67
 description_limit: int = 297
 more_characters: str = "..."
+# ID length limit
+id_limit: int = 128
 
 
 def create_folder(folder_name: str):
@@ -302,13 +305,6 @@ def get_id_from_ruc_file_name(file_name: str) -> str:
     full_file_name = file_name.split("/")[-1]
     id_part = full_file_name.split(".")[0]
     return id_part
-
-
-def get_id_from_file_name(file_name: str) -> str:
-    parts = file_name.split(".")[0:-1]
-    parts = ".".join(parts)
-    # return file_name.split(".")[0:-1].split("/")[-1]
-    return parts.split("/")[-1]
 
 
 def get_id_from_field(file_name: str) -> str:
@@ -640,11 +636,14 @@ def store_solr_response(base_query: str, solr_url: str, username, password, pars
         doc["name"] = shorten_list_or_string(doc.get("name", ""), title_limit, more_characters)
         doc["description"] = shorten_list_or_string(doc.get("description", ""), description_limit, more_characters)
 
-        current_id = doc.get("id", None)
-        if current_id is not None:
-            dataset_filename = os.path.join(parsed_datasets_directory, f"{current_id}.json")
-        else:
-            raise Exception(f"Dataset {doc} does not have an 'id' field!")
+        # get the id of the dataset and shorten it to 128 characters if it is longer
+        current_id: str | None = doc.get("id", None)
+        if current_id is None:
+            raise Exception(f"Dataset {doc} does not have 'id'!")
+        if len(current_id) > id_limit:
+            current_id = current_id[:id_limit]
+
+        dataset_filename = os.path.join(parsed_datasets_directory, f"{current_id}.json")
         logger.debug(f"Saving dataset to {dataset_filename}")
         try:
             with open(dataset_filename, 'w') as dataset_file:
@@ -666,7 +665,6 @@ def harvest(threshold: int) -> Tuple:
     TODO: The threshold is implemented, but need test
     """
     # TODO: remove the testing block
-    # TODO FIXME: there are 18523 datasets json files, however, only 8092 are being processed as id in the datasets.json file?
     if os.path.exists("tools.json") and os.path.exists("datasets.json"):
         logger.info("tools.json and datasets.json exist! Reading the ids from the files.")
         with open("tools.json", "r") as f:
@@ -684,6 +682,8 @@ def harvest(threshold: int) -> Tuple:
     # Get INEO records from Solr and save them as individual JSON files
     parsed_datasets_directory = './data/parsed_datasets'
     store_solr_response(base_query, solr_url, username, password, parsed_datasets_directory)
+    print("reducing id")
+    reduce_id(parsed_datasets_directory, id_limit)
     logger.debug(f"Datasets are saved in {parsed_datasets_directory}")
 
     # Serialize the RUC dictionary into JSON

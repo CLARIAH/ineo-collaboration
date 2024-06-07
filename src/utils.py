@@ -201,6 +201,8 @@ def shorten_text(text: str, limit: int, more_characters: str = "...") -> str:
     Shorten the text to a given limit and add more characters if the text is longer than the limit.
     """
     text = convert_to_plain_text(text)
+    if text.startswith("{}"):
+        text = "{code:und}" + text[2:]
     return text[:limit] + more_characters if len(text) > limit else text
 
 
@@ -215,3 +217,10 @@ def shorten_list_or_string(long_text: str | list, limit: int, more_characters: s
     else:
         raise TypeError(f"Name field is not a string or a list: {type(long_text)} - {long_text}")
     return shortened
+
+
+def get_id_from_file_name(file_name: str) -> str:
+    parts = file_name.split(".")[0:-1]
+    parts = ".".join(parts)
+    # return file_name.split(".")[0:-1].split("/")[-1]
+    return parts.split("/")[-1]
