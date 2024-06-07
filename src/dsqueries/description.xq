@@ -11,7 +11,7 @@ let $ID:="{ID}"
 let $description := (
     for $i in js:map
     where $i/js:string[@key='id']=$ID
-    return $i/js:*[@key='description']
+    return $i/js:*[@key='description']/*
 )
 
 let $english := (

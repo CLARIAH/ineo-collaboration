@@ -8,8 +8,23 @@ followed by the domain (characters until the first "/"). The captured part inclu
 
 declare namespace js="http://www.w3.org/2005/xpath-functions";
 
-let $ID:="{ID}"
+let $ID:="doi_58_10.17026_47_dans-zeq-q3b7"
 
+    for $i in js:map
+    where $i/js:string[@key='id']=$ID
+
+    return
+    xml-to-json(
+<js:array>
+  <js:map>
+    <js:string key='title'>{
+      string($i/js:string[@key="dataProvider"])
+    }</js:string>
+    <js:null key='link' />
+  </js:map>
+</js:array>
+)
+(:
 let $urls :=
     for $i in js:map
     where $i/js:string[@key='id']=$ID
@@ -36,3 +51,4 @@ return
 </js:array>
 
 return xml-to-json($host)
+:)

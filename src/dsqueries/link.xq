@@ -15,7 +15,7 @@ let $resourceRef :=
 let $landingPageRef :=
   (for $i in js:map
     where $i/js:string[@key='id']=$ID
-    let $landingPageRef := $i/js:*[@key="_landingPageRef"]
+    let $landingPageRef := $i/js:*[@key="_landingPageRef"][1]
     return if (exists($landingPageRef)) then parse-json($landingPageRef)('url') else ()
   )
 
@@ -39,7 +39,7 @@ return
 xml-to-json(
 <js:string>{
   if (exists($parsed)) then $parsed
-  else if (exists($landingPageRef)) then $landingPageRef
+  else if (exists($landingPageRef)) then normalize-space(tokenize($landingPageRef, ",")[1])
 else string($selflink)
 }</js:string>
 )
