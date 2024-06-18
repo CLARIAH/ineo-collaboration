@@ -21,8 +21,6 @@ The .env file will be checked in into the private repo later
 load_dotenv()
 
 api_token: str = dotenv.get_key('.env', 'API_TOKEN')
-# TODO: old dev api, kept for time being for reference
-# api_url = "https://ineo-resources-api-5b568b0ad6eb.herokuapp.com/resources/"
 # New dev api
 api_url: str = dotenv.get_key('.env', 'API_URL')
 processed_jsonfiles = "./processed_jsonfiles_tools"
@@ -343,83 +341,6 @@ def call_ineo_single_package(ineo_package: list[dict], api_url: str, action: str
         logger.error(f"Response: {response.status_code} - {response.text}")
 
 
-def call_ineo_single_package_from_file(ineo_package: str, api_url: str, action: str = "POST") -> None:
-    """
-    This function calls the INEO API to create or update resources.
-
-    :param ineo_package: str
-    :param api_url: str
-    :param action: str
-    :return: None
-    """
-    try:
-        with open(ineo_package, 'r') as json_file:
-            ineo_package_json = json.load(json_file)
-    except Exception as e:
-        logger.error(f"Error reading JSON from file {ineo_package}: {str(e)}")
-        exit()
-    if action == "POST":
-        response = requests.post(api_url, json=ineo_package_json, headers=header)
-    else:
-        logger.error("HTTP action not implemented yet, please use POST")
-        sys.exit(1)
-
-    if response.status_code != 200:
-        ineo_action: str = ineo_package_json[0]["operation"]
-        logger.debug(f"Action {ineo_action} on resource {ineo_package} failed. Retrying ...")
-        logger.debug(f"Response: {response.status_code} - {response.text}")
-        if ineo_action == "create":
-            ineo_package_json[0]["operation"] = "update"
-            with open(ineo_package, 'w') as json_file:
-                json.dump(ineo_package_json, json_file)
-            with open(ineo_package, 'r') as json_file:
-                ineo_package_json = json.load(json_file)
-                logger.debug(f"new package: {ineo_package_json}")
-        elif ineo_action == "update":
-            ineo_package_json[0]["operation"] = "create"
-            with open(ineo_package, 'w') as json_file:
-                json.dump(ineo_package_json, json_file)
-            logger.debug(f"update action as well failed, giving up.")
-            return
-        elif ineo_action == "delete":
-            logger.error("Deletion not implemented yet")
-            return
-        else:
-            logger.error("Unknown action")
-            return
-
-        error_counter = ineo_api_error.get(ineo_package, 0)
-        if error_counter < 1:
-            ineo_api_error[ineo_package] = error_counter + 1
-            # TODO FIXME: recursion is not working as expected, ineo_package is a dot
-            logger.debug(f"Recursion on {ineo_package} ...")
-            call_ineo_single_package_from_file(ineo_package, api_url, action)
-        else:
-            logger.error(f"Action on resource {ineo_package} failed after {error_counter} time(s).")
-            return
-
-    else:
-        id: str = ineo_package_json[0]["document"]["id"]
-        print(
-            f"Updated resource available here: "
-            f"https://ineo-git-feature-api-resource-eightmedia.vercel.app/resources/{id}")
-        logger.info(f"Action on resource {ineo_package} successful.")
-    print(f"#### Response {response.status_code} - {response.text}")
-
-
-def call_ineo_with_files(ineo_packages: list, api_url: str, action: str = "POST") -> None:
-    """
-    This function calls the INEO API to create or update resources.
-
-    :param ineo_packages: list
-    :param api_url: str
-    :param action: str
-    :return: None
-    """
-    for ineo_package in ineo_packages:
-        call_ineo_single_package_from_file(ineo_package, api_url, action)
-
-
 def call_ineo_bulk(ineo_package: list, api_url: str) -> None:
     """
     This function calls the INEO API to create or update resources in bulk.
@@ -489,31 +410,24 @@ def sync_with_ineo(record_type: str = "tools", limit: int = 0, remove_first: boo
                 ineo_package = json.load(json_file)
                 bulk_package.append(ineo_package[0])
 
+        # delete records before creating new ones
         if remove_first:
             bulk_delete_package: list[dict] = []
             for package in bulk_package:
                 bulk_delete_package.append({"operation": "delete", "document": {"id": package["document"]["id"]}})
-            logger.info(f"{remove_first=}, deleting {len(bulk_delete_package)} {record_type} packages.")
-            print(f"{remove_first=}, deleting {len(bulk_delete_package)} {record_type} packages.")
             call_ineo_bulk(bulk_delete_package, api_url)
-            logger.info(f"Deleted {len(bulk_delete_package)} {record_type} packages.\n\nWaiting 10 seconds after deletion ...")
-            print(f"Deleted {len(bulk_delete_package)} {record_type} packages.\n\nWaiting 10 seconds after deletion ...")
             time.sleep(10)
 
         # Syncing the packages in bulk or batch
         logger.info(f"Syncing in total {len(bulk_package)} {record_type} packages.")
-        print(f"Syncing in total {len(bulk_package)} {record_type} packages.")
         if len(bulk_package) > BULK_SIZE:
             logger.info(f"Syncing {len(bulk_package)} {record_type} packages in batches of size {BULK_SIZE}.")
-            print(f"Syncing {len(bulk_package)} {record_type} packages in batches of size {BULK_SIZE}.")
             for i in range(0, len(bulk_package), BULK_SIZE):
                 logger.info(f"Syncing {i} to {i + BULK_SIZE} {record_type} packages.")
-                print(f"Syncing {i} to {i + BULK_SIZE} {record_type} packages.")
                 call_ineo_bulk(bulk_package[i:i + BULK_SIZE], api_url)
                 time.sleep(10)
         else:
             logger.info(f"Syncing {len(bulk_package)} {record_type} packages in bulk.")
-            print(f"Syncing {len(bulk_package)} {record_type} packages in bulk.")
             call_ineo_bulk(bulk_package, api_url)
 
 
