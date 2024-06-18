@@ -490,13 +490,15 @@ def sync_with_ineo(record_type: str = "tools", limit: int = 0, remove_first: boo
                 bulk_package.append(ineo_package[0])
 
         if remove_first:
-            bulk_delete_package: list = bulk_package.copy()
-            logger.info(f"{remove_first=}, deleting {len(bulk_package)} {record_type} packages.")
-            print(f"{remove_first=}, deleting {len(bulk_package)} {record_type} packages.")
-            for package in bulk_delete_package:
-                package["operation"] = "delete"
+            bulk_delete_package: list[dict] = []
+            for package in bulk_package:
+                bulk_delete_package.append({"operation": "delete", "document": {"id": package["document"]["id"]}})
+            logger.info(f"{remove_first=}, deleting {len(bulk_delete_package)} {record_type} packages.")
+            print(f"{remove_first=}, deleting {len(bulk_delete_package)} {record_type} packages.")
             call_ineo_bulk(bulk_delete_package, api_url)
-            logger.info(f"Deleted {len(bulk_delete_package)} {record_type} packages.")
+            logger.info(f"Deleted {len(bulk_delete_package)} {record_type} packages.\n\nWaiting 10 seconds after deletion ...")
+            print(f"Deleted {len(bulk_delete_package)} {record_type} packages.\n\nWaiting 10 seconds after deletion ...")
+            time.sleep(10)
 
         # Syncing the packages in bulk or batch
         logger.info(f"Syncing in total {len(bulk_package)} {record_type} packages.")
