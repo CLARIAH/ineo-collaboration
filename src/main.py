@@ -1,3 +1,8 @@
+import os.path
+from datetime import datetime
+from typing import Tuple
+
+import concurrent.futures
 import requests
 import rating
 import ineo_sync
@@ -7,7 +12,7 @@ import logging
 import harvester
 from tqdm import tqdm
 from template import main as templating
-from harvester import get_logger
+from utils import get_logger, call_basex, call_basex_with_file, call_basex_with_query
 
 log_file_path = 'main.log'
 logger = get_logger(log_file_path, __name__, level=logging.INFO)
@@ -25,9 +30,9 @@ TOOLS_TEMPLATE = "./template_tools.json"
 DATASETS_TEMPLATE = "./template_datasets.json"
 
 
-def call_harvester():
+def call_harvester(threshold: int = 3, debug: bool = False) -> Tuple:
     logger.info("Harvesting ...")
-    harvester.main(threshold=3)
+    return harvester.harvest(threshold=threshold, debug=debug)
 
 
 def call_rating():
@@ -82,99 +87,39 @@ def get_ids_from_jsonl(jsonl_file: str) -> list[str]:
     return all_ids
 
 
-def call_template(jsonl_file: str, template_type: str = 'tools'):
-    jsonl_ids = get_ids_from_jsonl(jsonl_file)
-
-    if not jsonl_ids:
-        logger.info("No IDs found in the JSONL file.")
-        return
-
-    logger.debug(f"Templating for {len(jsonl_ids)} {template_type} ...")
-    logger.debug(f"{jsonl_ids[:5]} ...")
-    for current_id in tqdm(jsonl_ids):
+def call_template_subprocess(ids: list, template_type: str = 'tools'):
+    for current_id in tqdm(ids):
         template_path = TOOLS_TEMPLATE if template_type == 'tools' else DATASETS_TEMPLATE
-        rumbledb_jsonl_path = JSONL_tools_rdb if template_type == 'tools' else JSONL_datasets_rdb
-
         logger.debug(f"Making a json file for INEO for {current_id} with template [{template_path}]...")
 
         try:
-            templating(current_id, template_path, rumbledb_jsonl_path)
-        except Exception as e:
+            if os.path.isfile(f"processed_jsonfiles_datasets/{current_id}_processed.json"):
+                continue
+            else:
+                templating(current_id, template_path, template_type)
+        except Exception:
             logger.error(f"Cannot template the file: [{current_id}] with template: [{template_path}]")
-            raise e
+            raise
 
 
-def call_ineo_sync():
+def split_list(input_list, num_sublists):
+    sublist_length = len(input_list) // num_sublists
+    return [input_list[i:i + sublist_length] for i in range(0, len(input_list), sublist_length)]
+
+
+def call_template(ids: list, template_type: str = 'tools', workers: int = 12):
+    if len(ids) <= 0:
+        logger.info(f"No IDs found for {template_type}. ids list contains {len(ids)} ids.")
+        return
+
+    logger.debug(f"Templating for {len(ids)} {template_type} ...")
+    logger.debug(f"first 5 ids: {ids[:5]} ...")
+    call_template_subprocess(ids, template_type)
+
+
+def call_ineo_sync(record_type: str, limit: int = 0, remove_before_create: bool = False):
     logger.info("Calling sync with INEO ...")
-    ineo_sync.main()
-
-
-def _call_basex(query: str, host: str, port: int, user: str, password: str, action: str,
-                db: str = None, content_type: str = "application/json") -> requests.Response:
-    """
-    This function calls the basex query
-
-    query (str): The query to be executed
-    host (str): The host of the basex server
-    port (int): The port of the basex server
-    user (str): The user of the basex server
-    password (str): The password of the basex server
-
-    return (str): The response of the basex query
-    """
-    if db:
-        url: str = f"http://{user}:{password}@{host}:{port}/rest/{db}"
-    else:
-        url: str = f"http://{user}:{password}@{host}:{port}/rest"
-    logger.info(f"{url=}")
-
-    response = None
-
-    logger.info(f"Executing the basex query: {query} on {url=} with {action=} ...")
-    if action == "get":
-        response = requests.get(url, data=query, headers={"Content-Type": content_type})
-    elif action == "post":
-        response = requests.post(url, data=query, headers={"Content-Type": content_type})
-    else:
-        raise Exception(f"Invalid action {action}; Valid actions are 'get' and 'post'")
-
-    if response.status_code < 200 or response.status_code > 299:
-        logger.error(f"Failed to execute the basex query: {query}")
-
-    return response
-
-
-def _call_basex_with_file(file_path: str,
-                          host: str,
-                          port: int,
-                          user: str,
-                          password: str,
-                          action: str,
-                          db: str) -> requests.Response:
-    """
-    This function calls the basex query
-
-    file_path (str): The file path to the query to be executed
-    host (str): The host of the basex server
-    port (int): The port of the basex server
-    user (str): The user of the basex server
-    password (str): The password of the basex server
-
-    return (str): The response of the basex query
-    """
-    with open(file_path, "r") as file:
-        content = file.read()
-        content = content.replace("<js:", "&lt;js:")
-        content = content.replace("</js:", "&lt;/js:")
-        query = """
-        <query>
-            <text>
-                {query}
-            </text>
-        </query>
-        """.format(query=content)
-        response = _call_basex(query, host, port, user, password, action, db)
-    return response
+    ineo_sync.main(record_type, limit, remove_before_create)
 
 
 def prepare_basex_tables(table_name: str,
@@ -215,7 +160,7 @@ def prepare_basex_tables(table_name: str,
     """.format(table_name=table_name, folder=folder)
 
     # Create the basex table
-    response = _call_basex(content, host, port, user, password, action, content_type=content_type)
+    response = call_basex(content, host, port, user, password, action, content_type=content_type)
     if 199 < response.status_code < 300:
         logger.info(f"Basex table {table_name} created with folder {folder} ...")
     else:
@@ -224,54 +169,19 @@ def prepare_basex_tables(table_name: str,
         raise Exception(f"Failed to create the basex table {table_name} with folder {folder} ...")
 
 
-def get_ids_from_basex_by_query(query_file: str,
-                                host: str = "basex",
-                                port: int = 8080,
-                                user: str = "admin",
-                                password: str = "pass",
-                                db: str = "tools") -> list[str]:
+def _init_basex():
     """
-    This function gets the IDs from the basex table by executing a query
-
-    query_file (str): The file path to the query to be executed
-    table_name (str): The name of the table to be queried
-
-    return (list[str]): The list of IDs from the basex table
+    # NOTE: The folder should be the path on basex container, which is mounted in docker compose file
     """
-    logger.info(f"Getting IDs from basex table {db} by executing the query {query_file} ...")
-    response = _call_basex_with_file(file_path=query_file,
-                                     host=host,
-                                     port=port,
-                                     user=user,
-                                     password=password,
-                                     action="post",
-                                     db=db)
-    if 199 < response.status_code < 300:
-        logger.info(f"Status: {response.status_code} Got IDs from basex table {db} by executing the query {query_file} ...")
-        return response.text
-    else:
-        logger.error(f"Failed to get IDs from basex table {db} by executing the query {query_file} ...")
-        raise Exception(f"Failed to get IDs from basex table {db} by executing the query {query_file} ...")
-
-
-def basex_test():
     # prepare basex tables
     # for tools
     tools_table_name: str = "tools"
-    tools_folder: str = "./data/tools_metadata"
+    tools_folder: str = "/data/tools_metadata"
     prepare_basex_tables(tools_table_name, tools_folder)
     # for datasets
     datasets_table_name: str = "datasets"
-    datasets_folder: str = "./data/parsed_datasets"
+    datasets_folder: str = "/data/parsed_datasets"
     prepare_basex_tables(datasets_table_name, datasets_folder)
-
-    # get the IDs of the datasets and tools from basex query
-    query_file: str = "./queries/rating.xq"
-    query_file_admin: str = "./queries/norating.xq"
-    tools_to_INEO_xq: list[str] = get_ids_from_basex_by_query(query_file)
-    print(f"tools_to_INEO_xq: {tools_to_INEO_xq}")
-    datasets_to_INEO_xq: list[str] = get_ids_from_basex_by_query(query_file_admin)
-    print(f"datasets_to_INEO_xq: {datasets_to_INEO_xq}")
 
 
 def main():
@@ -288,52 +198,44 @@ def main():
     - codemeta.jsonl and datasets.jsonl will be generated in ./data
     - deleted files will be moved to ./src/deleted_documents (which is a text file contains ids to be deleted)
     """
-    # uncomment the line below to enable harvesting
-    call_harvester()
+    tools_to_INEO, datasets_to_INEO = call_harvester(threshold=3, debug=False)
+    logger.info(f"Harvested {len(tools_to_INEO)} tools and {len(datasets_to_INEO)} datasets ...")
 
-    """
-    Getting all the IDs, which are going to be syned with INEO, from the generated c3.jsonl and ?datasets.jsonl? 
-    """
-    # TODO: datasets.jsonl is seemingly generated from all the harvested datasets. Does it always contains all?
-    tools_to_INEO: list[str] = get_ids_from_jsonl(JSONL_c3)
-    datasets_to_INEO: list[str] = get_ids_from_jsonl(JSONL_datasets)
-
-    # Check the IDs of the datasets
-    num_ids = len(datasets_to_INEO)
-    has_duplicates = len(datasets_to_INEO) != len(set(datasets_to_INEO))
-    if has_duplicates:
-        logger.debug(f"There are {num_ids} datasets IDs in total, and there are duplicates.")
-    else:
-        logger.debug(f"There are {num_ids} datasets IDs in total, and there are no duplicates.")
+    # init basex first
+    _init_basex()
 
     """
     Get INEO properties, e.g. research activities and domains from the INEO API
     """
     # TODO: properties are stored in json files, do they ever change??????????
-    # TODO: change function name
     call_get_properties()
 
-    # If the jsonl file is empty, there are no updates to be fed into INEO:
-    if is_empty(JSONL_c3) and is_empty(JSONL_datasets):
+    # If the id lists are empty, there are no updates to be fed into INEO:
+    if len(tools_to_INEO) == 0 and len(datasets_to_INEO) == 0:
         logger.info("No new updates in the JSONL files of RUC, Codemeta, and Datasets")
     else:
-        logger.info("At least one JSONL file is not empty, generating templates ...")
-        if not is_empty(JSONL_c3):
-            logger.info("Making template(s) for tools ...")
-            # TODO: make a enum for template_type
-            call_template(JSONL_c3, 'tools')
-        if not is_empty(JSONL_datasets):
-            logger.info("Making template(s) for datasets ...")
-            call_template(JSONL_datasets, 'datasets')
+        if len(tools_to_INEO) > 0:
+            logger.info(f"Making template(s) for {len(tools_to_INEO)} tools ...")
+            call_template(tools_to_INEO, 'tools')
+        if len(datasets_to_INEO) > 0:
+            logger.info(f"Making template(s) for {len(datasets_to_INEO)} datasets ...")
+            call_template(datasets_to_INEO, 'datasets')
 
         logger.info("Done preparation. Going to sync with INEO ...")
 
         # Templates are ready, sync with the INEO api.
         # Also, researchdomains and researchactivities are further processed here.
         logger.info("Syncing with INEO ...")
-        call_ineo_sync()
-        logger.info("Sync with INEO completed ...")
-        exit(0)
+        logger.info("Syncing datasets ...")
+        call_ineo_sync("datasets", 0, True)
+
+        logger.info("Syncing tools ...")
+        call_ineo_sync("tools", 0, False)
+
+        logger.info("Syncing Huuygens ...")
+        call_ineo_sync("huygens", 0, False)
+        logger.info("DONE!")
+        exit("All done!")
 
         # TODO: The code below does house keeping after the sync with INEO is completed.
         logger.info("sync completed. Begin backing-up and clearing of folders for the next run ...")
@@ -405,6 +307,4 @@ def main():
 
 
 if __name__ == "__main__":
-    basex_test()
-    exit("done")
     main()

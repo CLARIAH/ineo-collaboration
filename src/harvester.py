@@ -658,20 +658,20 @@ def get_id_from_change_list(diff_list_ruc: list) -> list[str]:
     return [x.split(".")[0] for x in diff_list_ruc if x.endswith('.json')]
 
 
-def harvest(threshold: int) -> Tuple:
+def harvest(threshold: int = 3, debug: bool = False) -> Tuple:
     """
     This script downloads the latest Codemeta JSON files and Rich User Content (RUC) from Github,
     threshold: int : The number of iterations after which a file is considered absent.
     TODO: The threshold is implemented, but need test
     """
-    # TODO: remove the testing block
-    if os.path.exists("tools.json") and os.path.exists("datasets.json"):
-        logger.info("tools.json and datasets.json exist! Reading the ids from the files.")
-        with open("tools.json", "r") as f:
-            codemeta_ids = json.load(f)
-        with open("datasets.json", "r") as f:
-            datasets_ids = json.load(f)
-        return codemeta_ids, datasets_ids
+    if debug:
+        if os.path.exists("tools.json") and os.path.exists("datasets.json"):
+            logger.info("tools.json and datasets.json exist! Reading the ids from the files.")
+            with open("tools.json", "r") as f:
+                codemeta_ids = json.load(f)
+            with open("datasets.json", "r") as f:
+                datasets_ids = json.load(f)
+            return codemeta_ids, datasets_ids
 
     logger.info("tools.json and datasets.json do not exist! Fetching the ids from harvest.")
     # Create the "data" folder if it doesn't exist
@@ -862,8 +862,7 @@ def harvest(threshold: int) -> Tuple:
         json.dump(datasets_ids, f)
     return codemeta_ids, datasets_ids
 
-    # <<<DELETION SCENERIO >>>
-
+    # TODO <<<DELETION SCENERIO >>>
     # Search for inactive tools to delete in INEO (inactive after a tool is absent for three runs in the database)
     codemeta_records = get_matching_timesamps(db_file_name, table_name_tools, threshold)
     # Iterate through the absent records and compare the timestamps in the db with the current date 
@@ -892,4 +891,4 @@ def harvest(threshold: int) -> Tuple:
 
 
 if __name__ == '__main__':
-    harvest(threshold=3)
+    harvest(threshold=3, debug=True)
