@@ -206,8 +206,8 @@ def main():
 
     """
     Get INEO properties, e.g. research activities and domains from the INEO API
+    If folder exsits and 2 or more json files present, the download of new properties is skipped
     """
-    # TODO: properties are stored in json files, do they ever change??????????
     call_get_properties()
 
     # If the id lists are empty, there are no updates to be fed into INEO:
