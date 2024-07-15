@@ -1,4 +1,4 @@
-FROM python:3.12-slim-bookworm
+FROM registry.huc.knaw.nl/dockerhub/library/python:3.12-slim-bookworm
 
 STOPSIGNAL SIGKILL
 
@@ -19,4 +19,4 @@ COPY template_datasets.json ./template_datasets.json
 COPY requirements.txt ./
 
 RUN pip install --no-cache-dir -r requirements.txt
-ENTRYPOINT [ "tail","-f","/dev/null"]
+ENTRYPOINT [ "python","/src/main.py"]
