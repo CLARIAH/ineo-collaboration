@@ -43,7 +43,12 @@ def main() -> None:
     This function retrieves the properties from the INEO API and saves them to a JSON file.
     """
     folder_properties = 'properties/'
-    if not os.path.exists(folder_properties):
+    if os.path.isdir(folder_properties):
+        # if folder exists and json files are present, return
+        if len(os.listdir(folder_properties)) > 1:
+            log.info(f"Properties already downloaded {folder_properties}")
+        return
+    else:
         os.makedirs(folder_properties)
 
     for url in urls_properties:
@@ -56,9 +61,8 @@ def main() -> None:
                 json.dump(properties, json_file, indent=4)
             log.info(f"JSON data for {url} saved to {file_path}")
         else:
-            log.info(f"Request for {url} failed with status code {response.status_code}")
             log.error(f"Request for {url} failed with status code {response.status_code}")
-            log.info(response.text)
+            log.debug(response.text)
 
 
 if __name__ == '__main__':
