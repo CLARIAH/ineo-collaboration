@@ -19,4 +19,5 @@ COPY template_datasets.json ./template_datasets.json
 COPY requirements.txt ./
 
 RUN pip install --no-cache-dir -r requirements.txt
-ENTRYPOINT [ "python","/src/main.py"]
+#ENTRYPOINT [ "python","/src/main.py"]
+ENTRYPOINT ["tail", "-f", "/dev/null"]
