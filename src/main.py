@@ -88,15 +88,12 @@ def get_ids_from_jsonl(jsonl_file: str) -> list[str]:
 
 
 def call_template_subprocess(ids: list, template_type: str = 'tools'):
+    template_path = TOOLS_TEMPLATE if template_type == 'tools' else DATASETS_TEMPLATE
     for current_id in tqdm(ids):
-        template_path = TOOLS_TEMPLATE if template_type == 'tools' else DATASETS_TEMPLATE
-        logger.debug(f"Making a json file for INEO for {current_id} with template [{template_path}]...")
 
         try:
-            if os.path.isfile(f"processed_jsonfiles_datasets/{current_id}_processed.json"):
-                continue
-            else:
-                templating(current_id, template_path, template_type)
+            logger.debug(f"Making a json file for INEO for {current_id} with template [{template_path}]...")
+            templating(current_id, template_path, template_type)
         except Exception:
             logger.error(f"Cannot template the file: [{current_id}] with template: [{template_path}]")
             raise
@@ -184,6 +181,23 @@ def _init_basex():
     prepare_basex_tables(datasets_table_name, datasets_folder)
 
 
+def move_old_files(old_folder: str, new_folder: str):
+    """
+    Move all files under old_folder to new_folder, keeping the old_folder itself intact.
+    """
+    # Ensure the new_folder exists
+    if not os.path.exists(new_folder):
+        os.makedirs(new_folder)
+
+    # Iterate over all files and directories in old_folder
+    for item in os.listdir(old_folder):
+        old_path = os.path.join(old_folder, item)
+
+        # Move only files, not directories
+        if os.path.isfile(old_path):
+            shutil.move(old_path, new_folder)
+
+
 def main():
     """
     The main function of the program. 
@@ -216,9 +230,17 @@ def main():
     else:
         if len(tools_to_INEO) > 0:
             logger.info(f"Making template(s) for {len(tools_to_INEO)} tools ...")
+            # move older files to backup folder
+            backup_folder = "./processed_jsonfiles_tools_backup"
+            move_old_files("./processed_jsonfiles_tools", backup_folder)
+            # call template for tools
             call_template(tools_to_INEO, 'tools')
         if len(datasets_to_INEO) > 0:
             logger.info(f"Making template(s) for {len(datasets_to_INEO)} datasets ...")
+            # move older files to backup folder
+            backup_folder = "./processed_jsonfiles_datasets_backup"
+            move_old_files("./processed_jsonfiles_datasets", backup_folder)
+            # call template for datasets
             call_template(datasets_to_INEO, 'datasets')
 
         logger.info("Done preparation. Going to sync with INEO ...")
@@ -230,10 +252,10 @@ def main():
         call_ineo_sync("datasets", 0, True)
 
         logger.info("Syncing tools ...")
-        call_ineo_sync("tools", 0, False)
+        call_ineo_sync("tools", 0, True)
 
-        logger.info("Syncing Huuygens ...")
-        call_ineo_sync("huygens", 0, False)
+        # logger.info("Syncing Huuygens ...")
+        # call_ineo_sync("huygens", 0, False)
         logger.info("DONE!")
         exit("All done!")
 

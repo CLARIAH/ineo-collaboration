@@ -416,7 +416,7 @@ def sync_with_ineo(record_type: str = "tools", limit: int = 0, remove_first: boo
             for package in bulk_package:
                 bulk_delete_package.append({"operation": "delete", "document": {"id": package["document"]["id"]}})
             call_ineo_bulk(bulk_delete_package, api_url)
-            time.sleep(10)
+            time.sleep(30)
 
         # Syncing the packages in bulk or batch
         logger.info(f"Syncing in total {len(bulk_package)} {record_type} packages.")

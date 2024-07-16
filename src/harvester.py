@@ -785,7 +785,6 @@ def harvest(threshold: int = 3, debug: bool = False) -> Tuple:
 
     # Process the Codemeta json files
     codemeta_folder_name = "tools_metadata"
-    process_list(codemeta_ids, codemeta_folder_name, db_file_name, table_name_tools, diff_list, current_timestamp, None)
 
     if has_previous_batch is not None:
         # get previous batch from db
@@ -800,12 +799,14 @@ def harvest(threshold: int = 3, debug: bool = False) -> Tuple:
         # loop through current batch and compare with previous batch using hash values
         process_list(codemeta_ids, codemeta_folder_name, db_file_name, table_name_tools, batch, current_timestamp,
                      previous_batch_dict)
+    else:
+        process_list(codemeta_ids, codemeta_folder_name, db_file_name, table_name_tools, diff_list, current_timestamp,
+                     None)
 
     conn.commit()
 
     # Process the Rich User Contents.
     ruc_folder_name = "rich_user_contents"
-    process_list(codemeta_ids, ruc_folder_name, db_file_name, table_name_ruc, diff_list_ruc, current_timestamp, None)
 
     if ruc_has_previous_batch is not None:
         # get previous RUC batch from db
@@ -820,18 +821,14 @@ def harvest(threshold: int = 3, debug: bool = False) -> Tuple:
         # loop through current batch and compare with previous batch on hash value
         process_list(codemeta_ids, ruc_folder_name, db_file_name, table_name_ruc, ruc_batch, current_timestamp,
                      ruc_previous_batch_dict)
+    else:
+        process_list(codemeta_ids, ruc_folder_name, db_file_name, table_name_ruc, diff_list_ruc, current_timestamp,
+                     None)
 
     conn.commit()
 
     # Process the datasets
     datasets_folder_name = "parsed_datasets"
-    process_list(datasets_ids,
-                 datasets_folder_name,
-                 db_file_name,
-                 table_name_datasets,
-                 diff_list_datasets,
-                 current_timestamp,
-                 None)
 
     if datasets_has_previous_batch is not None:
         # get previous datasets batch from db
@@ -851,6 +848,14 @@ def harvest(threshold: int = 3, debug: bool = False) -> Tuple:
                      datasets_batch,
                      current_timestamp,
                      datasets_previous_batch_dict)
+    else:
+        process_list(datasets_ids,
+                     datasets_folder_name,
+                     db_file_name,
+                     table_name_datasets,
+                     diff_list_datasets,
+                     current_timestamp,
+                     None)
 
     conn.commit()
 
