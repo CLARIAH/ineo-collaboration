@@ -15,7 +15,6 @@ from typing import List, Optional, AnyStr, Union, Dict, Tuple
 from bs4 import BeautifulSoup
 from datetime import datetime
 from utils import get_logger, get_files, remove_html_tags, shorten_list_or_string, get_id_from_file_name
-from reduce_id import reduce_id
 
 log_file_path = 'harvester.log'
 logger = get_logger(log_file_path, __name__, level=logging.ERROR)
@@ -135,6 +134,7 @@ def get_canonical(file_name):
     For ignoring fields that do not contain necessary changes for the MD5 to change.
     """
     logger.debug(f"making canon file for {file_name}")
+    print(f"making canon file for {file_name}")
     canon_file = f"{file_name}.canon"
     with open(file_name, 'r') as json_file:
         data = json.load(json_file)
@@ -323,7 +323,6 @@ def process_list(ids: list, folder_name, db_file_name, table_name, diff_list, cu
     The function compares MD5 hashes between the current batch and the previous batch.
 
     diff_list: list of files to process
-    jsonlines_file: jsonlines file to write to
     current_timestamp: timestamp of the current batch
     previous_batch_dict: Optional dictionary of previous batch
 
@@ -331,10 +330,10 @@ def process_list(ids: list, folder_name, db_file_name, table_name, diff_list, cu
     if previous batch dict is not none, then it will compare the md5 of the current file with the md5 of the previous batch
     """
     c, conn = get_db_cursor(db_file_name, table_name)
-    folder_name = folder_name
-    toolmeta_dir = os.path.join(output_path_data, folder_name)
+
     for file in diff_list:
-        file = os.path.normpath(os.path.join(toolmeta_dir, file))
+        file = os.path.normpath(os.path.join(folder_name, file))
+        logger.info(f"### Processing {file}")
         md5 = get_md5(file)
         previous_md5 = previous_batch_dict.get(file, None) if previous_batch_dict is not None else None
 
@@ -658,6 +657,117 @@ def get_id_from_change_list(diff_list_ruc: list) -> list[str]:
     return [x.split(".")[0] for x in diff_list_ruc if x.endswith('.json')]
 
 
+def reduce_id(input_path: str, id_limit: int = id_limit):
+    """
+    This function reduces the id length of the files in the input path and change its file name accordingly
+
+    input_path (str): The path of the files to be checked
+    id_limit (int): The limit of the id length
+
+    return: None
+    """
+    logger.debug(f"{input_path=}")
+    files = get_files(input_path)
+    logger.debug(f"### checking length of {len(files)} files in {input_path} ###")
+    counter: int = 0
+    for filename in files:
+        logger.debug(f"### checking {filename} ###")
+        current_id: str = get_id_from_file_name(filename)
+        if len(current_id) > id_limit:
+            counter += 1
+            print(f"\n\n### {filename} has id length {len(current_id)} > {id_limit}")
+            logger.info(f"\n\n### {filename} has id length {len(current_id)} > {id_limit}")
+            dir_name = os.path.dirname(filename)
+            # new id is the last 128 characters of the current id
+            new_current_id = current_id[-id_limit:]
+            new_filename = os.path.join(dir_name, f"{new_current_id}.json")
+            logger.debug(f"{new_current_id}")
+            logger.debug(f"{new_filename=}")
+            # get content and replace id with new id
+            with open(filename, "r") as f:
+                json_data = json.loads(f.read())
+            json_data["id"] = new_current_id
+            with open(filename, "w") as f:
+                json.dump(json_data, f, indent=4)
+            # Change the file name
+            os.rename(filename, new_filename)
+    if counter > 0:
+        print(f"### {counter} files have id length > {id_limit}")
+        logger.info(f"### {counter} files have id length > {id_limit}")
+
+
+def _harvest_datasets():
+    """
+    This function downloads the latest datasets from the Solr API and saves them as individual JSON files.
+    """
+    # Get INEO records from Solr and save them as individual JSON files
+    # current_path = os.path.dirname(os.path.abspath(__file__))
+    parsed_datasets_directory = './data/parsed_datasets'
+    store_solr_response(base_query, solr_url, username, password, parsed_datasets_directory)
+    logger.info("reducing id length according to the INEO standard")
+    reduce_id(parsed_datasets_directory, id_limit)
+    logger.debug(f"Datasets are saved in {parsed_datasets_directory}")
+
+
+def _harvest_ruc():
+    """
+    This function downloads the latest Rich User Content (RUC) from the Github repository "ineo-content".
+    """
+    ruc_contents_dict = get_ruc_contents()
+    serialize_ruc_to_json(ruc_contents_dict)
+
+
+def _harvest_tools_codemeta():
+    # download the codemeta files
+    _ = download_json_files()
+
+
+def get_changed_ids(db_file_name, db_table_name, current_timestamp, download_dir_part, diff_ids):
+    (c, conn) = get_db_cursor(db_file_name=db_file_name, table_name=db_table_name)
+    download_dir = os.path.join(output_path_data, download_dir_part)
+
+    # check if previous batch exists in the "tools_metadata" table
+    c.execute(f"SELECT * FROM {db_table_name} ORDER BY timestamp DESC LIMIT 1")
+    has_previous_batch = c.fetchone()
+    if has_previous_batch is None:
+        logger.debug(f"No {db_table_name} previous batch exists in the database")
+        previous_batch = None
+        previous_timestamp = None
+    else:
+        previous_timestamp = has_previous_batch[2]
+        if previous_timestamp is None:
+            logger.error("Error in getting the previous batch!")
+            exit(1)
+
+        previous_batch = get_previous_batch(db_file_name, db_table_name, previous_timestamp=previous_timestamp)
+
+    current_batch = get_files(download_dir)
+    if current_batch is None:
+        logger.error("No codemeta files found in the current batch!")
+        exit(1)
+
+    # compare the 2 lists and get the difference
+    diff_list = compare_lists(current_batch, previous_batch)
+
+    if has_previous_batch is not None:
+        # get previous batch from db
+        c.execute(f"SELECT file_name, md5 FROM {db_table_name} WHERE timestamp = ?", (previous_timestamp,))
+        previous_batch = c.fetchall()
+
+        # previous_batch_dict contains key value pair in the form of {file_name: md5}
+        previous_batch_dict = {x[0]: x[1] for x in previous_batch}
+
+        batch = [x.split("/")[-1] for x in current_batch]
+
+        # loop through current batch and compare with previous batch using hash values
+        process_list(diff_ids, download_dir, db_file_name, db_table_name, batch, current_timestamp, previous_batch_dict)
+    else:
+        process_list(diff_ids, download_dir, db_file_name, db_table_name, diff_list, current_timestamp, None)
+
+    conn.commit()
+    conn.close()
+
+
 def harvest(threshold: int = 3, debug: bool = False) -> Tuple:
     """
     This script downloads the latest Codemeta JSON files and Rich User Content (RUC) from Github,
@@ -674,197 +784,52 @@ def harvest(threshold: int = 3, debug: bool = False) -> Tuple:
             return codemeta_ids, datasets_ids
 
     logger.info("tools.json and datasets.json do not exist! Fetching the ids from harvest.")
+
+    """
+    Prepare the database and the tables before actual harvesting
+    """
     # Create the "data" folder if it doesn't exist
     data_folder = "data"
     if not os.path.exists(data_folder):
         os.makedirs(data_folder)
-
-    # Get INEO records from Solr and save them as individual JSON files
-    parsed_datasets_directory = './data/parsed_datasets'
-    store_solr_response(base_query, solr_url, username, password, parsed_datasets_directory)
-    print("reducing id")
-    reduce_id(parsed_datasets_directory, id_limit)
-    logger.debug(f"Datasets are saved in {parsed_datasets_directory}")
-
-    # Serialize the RUC dictionary into JSON
-    ruc_contents_dict = get_ruc_contents()
-    serialize_ruc_to_json(ruc_contents_dict)
-
+    # make sure the db exists for storing versioning info
     db_file_name = os.path.join(output_path_data, "ineo.db")
-
-    # Initialize the database connection and create the tables if they do not exist
-    table_name_ruc = "rich_user_contents"
-    (c_ruc, conn_ruc) = get_db_cursor(db_file_name=db_file_name, table_name=table_name_ruc)
-
-    table_name_tools = "tools_metadata"
-    (c, conn) = get_db_cursor(db_file_name=db_file_name, table_name=table_name_tools)
-
-    table_name_datasets = "datasets"
-    (c_datasets, conn_datasets) = get_db_cursor(db_file_name=db_file_name, table_name=table_name_datasets)
-
-    # download url and download dir are optional parameters, they have default value in the download_json_files function
-    download_url = ""
-    codemeta_download_dir = os.path.join(output_path_data, "tools_metadata")
-    ruc_download_dir = os.path.join(output_path_data, "rich_user_contents")
-    datasets_download_dir = os.path.join(output_path_data, "parsed_datasets")
-
     # get the current timestamp to be used in the database and make sure all the files in the same batch have the same timestamp
     current_timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
 
-    # download the codemeta files
-    _ = download_json_files()
+    """
+    Harvesting
+    """
+    # harvest datasets
+    logger.info("Harvesting datasets ...")
+    _harvest_datasets()
+    # harvest tools_codemeta
+    logger.info("Harvesting tools codemeta ...")
+    _harvest_tools_codemeta()
+    # harvest ruc
+    logger.info("Harvesting rich user content ...")
+    _harvest_ruc()
 
-    # check if previous batch exists in the "tools_metadata" table
-    c.execute("SELECT * FROM tools_metadata ORDER BY timestamp DESC LIMIT 1")
-    has_previous_batch = c.fetchone()
-    if has_previous_batch is None:
-        logger.debug("No codemeta previous batch exists in the database")
-        previous_batch = None
-        previous_timestamp = None
-    else:
-        previous_timestamp = has_previous_batch[2]
-        if previous_timestamp is None:
-            logger.error("Error in getting the previous batch!")
-            exit(1)
-
-        previous_batch = get_previous_batch(db_file_name, table_name_tools, previous_timestamp=previous_timestamp)
-
-    # Check for a previous batch in the "rich_user_contents" table
-    c_ruc.execute("SELECT * FROM rich_user_contents ORDER BY timestamp DESC LIMIT 1")
-    ruc_has_previous_batch = c_ruc.fetchone()
-    if ruc_has_previous_batch is None:
-        logger.debug("No rich_user_contents previous batch exists in the database")
-        ruc_previous_batch = None
-        previous_timestamp = None
-    else:
-        previous_timestamp = ruc_has_previous_batch[2]
-        if previous_timestamp is None:
-            logger.error("Error in getting the previous rich_user_contents batch!")
-            exit(1)
-
-        ruc_previous_batch = get_previous_batch(db_file_name, table_name_ruc, previous_timestamp=previous_timestamp)
-
-    # Check for a previous batch in the "datasets" table
-    c_datasets.execute("SELECT * FROM datasets ORDER BY timestamp DESC LIMIT 1")
-    datasets_has_previous_batch = c_datasets.fetchone()
-    if datasets_has_previous_batch is None:
-        logger.debug("No datasets previous batch exists in the database")
-        datasets_previous_batch = None
-        previous_timestamp = None
-    else:
-        previous_timestamp = datasets_has_previous_batch[2]
-        if previous_timestamp is None:
-            logger.error("Error in getting the previous datasets batch!")
-            exit(1)
-
-        datasets_previous_batch = get_previous_batch(db_file_name, table_name_datasets,
-                                                     previous_timestamp=previous_timestamp)
-
-    # after this line we have both dir1 and dir2, dir1 is the current batch and dir2 is the previous batch
-    codemeta_current_batch = get_files(codemeta_download_dir)
-    ruc_current_batch = get_files(ruc_download_dir)
-    datasets_current_batch = get_files(datasets_download_dir)
-
-    if codemeta_current_batch is None:
-        logger.error("No codemeta files found in the current batch!")
-        exit(1)
-    if ruc_current_batch is None:
-        logger.error("No RUC files found in the current batch!")
-        exit(1)
-    if datasets_current_batch is None:
-        logger.error("No datasets files found in the current batch!")
-        exit(1)
-
-    # compare the 2 lists and get the difference
-    diff_list = compare_lists(codemeta_current_batch, previous_batch)
-    diff_list_ruc = compare_lists(ruc_current_batch, ruc_previous_batch)
-    diff_list_datasets = compare_lists(datasets_current_batch, datasets_previous_batch)
-
+    """
+    Getting the changed ids after harvesting
+    """
     codemeta_ids: list = []
     datasets_ids: list = []
 
-    # Process the Codemeta json files
-    codemeta_folder_name = "tools_metadata"
+    get_changed_ids(db_file_name, "tools_metadata", current_timestamp, "tools_metadata", codemeta_ids)
+    get_changed_ids(db_file_name, "rich_user_contents", current_timestamp, "rich_user_contents", codemeta_ids)
+    get_changed_ids(db_file_name, "datasets", current_timestamp, "parsed_datasets", datasets_ids)
 
-    if has_previous_batch is not None:
-        # get previous batch from db
-        c.execute("SELECT file_name, md5 FROM tools_metadata WHERE timestamp = ?", (previous_timestamp,))
-        previous_batch = c.fetchall()
-
-        # previous_batch_dict contains key value pair in the form of {file_name: md5}
-        previous_batch_dict = {x[0]: x[1] for x in previous_batch}
-
-        batch = [x.split("/")[-1] for x in codemeta_current_batch]
-
-        # loop through current batch and compare with previous batch using hash values
-        process_list(codemeta_ids, codemeta_folder_name, db_file_name, table_name_tools, batch, current_timestamp,
-                     previous_batch_dict)
-    else:
-        process_list(codemeta_ids, codemeta_folder_name, db_file_name, table_name_tools, diff_list, current_timestamp,
-                     None)
-
-    conn.commit()
-
-    # Process the Rich User Contents.
-    ruc_folder_name = "rich_user_contents"
-
-    if ruc_has_previous_batch is not None:
-        # get previous RUC batch from db
-        c.execute("SELECT file_name, md5 FROM rich_user_contents WHERE timestamp = ?", (previous_timestamp,))
-        ruc_previous_batch = c.fetchall()
-
-        # previous_batch_dict contains key value pair in the form of {file_name: md5}
-        ruc_previous_batch_dict = {x[0]: x[1] for x in ruc_previous_batch}
-
-        ruc_batch = [x.split("/")[-1] for x in ruc_current_batch]
-
-        # loop through current batch and compare with previous batch on hash value
-        process_list(codemeta_ids, ruc_folder_name, db_file_name, table_name_ruc, ruc_batch, current_timestamp,
-                     ruc_previous_batch_dict)
-    else:
-        process_list(codemeta_ids, ruc_folder_name, db_file_name, table_name_ruc, diff_list_ruc, current_timestamp,
-                     None)
-
-    conn.commit()
-
-    # Process the datasets
-    datasets_folder_name = "parsed_datasets"
-
-    if datasets_has_previous_batch is not None:
-        # get previous datasets batch from db
-        c.execute("SELECT file_name, md5 FROM datasets WHERE timestamp = ?", (previous_timestamp,))
-        datasets_previous_batch = c.fetchall()
-
-        # previous_batch_dict contains key value pair in the form of {file_name: md5}
-        datasets_previous_batch_dict = {x[0]: x[1] for x in datasets_previous_batch}
-
-        datasets_batch = [x.split("/")[-1] for x in datasets_current_batch]
-
-        # loop through current batch and compare with previous batch on hash value
-        process_list(datasets_ids,
-                     datasets_folder_name,
-                     db_file_name,
-                     table_name_datasets,
-                     datasets_batch,
-                     current_timestamp,
-                     datasets_previous_batch_dict)
-    else:
-        process_list(datasets_ids,
-                     datasets_folder_name,
-                     db_file_name,
-                     table_name_datasets,
-                     diff_list_datasets,
-                     current_timestamp,
-                     None)
-
-    conn.commit()
-
+    """
+    Make sure the ids are unique and save them to the files for debugging
+    """
     codemeta_ids = list(set(codemeta_ids))
-    with open("tools.json", "w") as f:
-        json.dump(codemeta_ids, f)
     datasets_ids = list(set(datasets_ids))
-    with open("datasets.json", "w") as f:
-        json.dump(datasets_ids, f)
+    if debug:
+        with open("tools.json", "w") as f:
+            json.dump(codemeta_ids, f)
+        with open("datasets.json", "w") as f:
+            json.dump(datasets_ids, f)
     return codemeta_ids, datasets_ids
 
     # TODO <<<DELETION SCENERIO >>>
