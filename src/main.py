@@ -1,4 +1,5 @@
 import os.path
+import shutil
 from datetime import datetime
 from typing import Tuple
 
@@ -195,7 +196,28 @@ def move_old_files(old_folder: str, new_folder: str):
 
         # Move only files, not directories
         if os.path.isfile(old_path):
+            new_path = os.path.join(new_folder, item)
+            if os.path.isfile(new_path):
+                os.remove(new_path)
             shutil.move(old_path, new_folder)
+
+
+def template_tools(ineo_records: list, processed_folder: str, backup_folder: str, template: str) -> None:
+    """
+    This function creates ineo package using corresponding template for tools and datasets
+
+    ineo_records (list): The list of records to be templated
+    processed_folder (str): The folder to store the processed files
+    backup_folder (str): The folder to store the backup files
+    template (str): The type of template to be used
+
+    return (None)
+    """
+    logger.info(f"Making template(s) for {len(ineo_records)} tools ...")
+    # move older files to backup folder
+    move_old_files(processed_folder, backup_folder)
+    # call template for tools
+    call_template(ineo_records, template)
 
 
 def main():
@@ -212,7 +234,8 @@ def main():
     - codemeta.jsonl and datasets.jsonl will be generated in ./data
     - deleted files will be moved to ./src/deleted_documents (which is a text file contains ids to be deleted)
     """
-    tools_to_INEO, datasets_to_INEO = call_harvester(threshold=3, debug=False)
+    # TODO: change debug to False before deployment, rebuild the docker image and redeploy
+    tools_to_INEO, datasets_to_INEO = call_harvester(threshold=3, debug=True)
     logger.info(f"Harvested {len(tools_to_INEO)} tools and {len(datasets_to_INEO)} datasets ...")
 
     # init basex first
@@ -229,21 +252,13 @@ def main():
         logger.info("No new updates in the JSONL files of RUC, Codemeta, and Datasets")
     else:
         if len(tools_to_INEO) > 0:
-            logger.info(f"Making template(s) for {len(tools_to_INEO)} tools ...")
-            # move older files to backup folder
-            backup_folder = "./processed_jsonfiles_tools_backup"
-            move_old_files("./processed_jsonfiles_tools", backup_folder)
-            # call template for tools
-            call_template(tools_to_INEO, 'tools')
+            template_tools(tools_to_INEO, "./processed_jsonfiles_tools", "./processed_jsonfiles_tools_backup", "tools")
         if len(datasets_to_INEO) > 0:
-            logger.info(f"Making template(s) for {len(datasets_to_INEO)} datasets ...")
-            # move older files to backup folder
-            backup_folder = "./processed_jsonfiles_datasets_backup"
-            move_old_files("./processed_jsonfiles_datasets", backup_folder)
-            # call template for datasets
-            call_template(datasets_to_INEO, 'datasets')
+            template_tools(datasets_to_INEO, "./processed_jsonfiles_datasets", "./processed_jsonfiles_datasets_backup", "datasets")
 
         logger.info("Done preparation. Going to sync with INEO ...")
+        print("Done preparation. Going to sync with INEO ...")
+        exit(0)
 
         # Templates are ready, sync with the INEO api.
         # Also, researchdomains and researchactivities are further processed here.
@@ -325,7 +340,7 @@ def main():
 
             shutil.rmtree(oldest_backup_path)
 
-        logger.info("All done!")
+    logger.info("All done!")
 
 
 if __name__ == "__main__":
