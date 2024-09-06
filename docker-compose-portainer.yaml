@@ -18,15 +18,6 @@ services:
     networks:
       - traefik-public
 
-  rumbledb:
-    image: registry.diginfra.net/tsd/rumbledb:test
-    container_name: rumbledb
-    volumes:
-      - ineo-sync-data:/data
-    restart: unless-stopped
-    networks:
-      - traefik-public
-
   basex:
     image: registry.diginfra.net/tsd/basex:latest
     container_name: basex
