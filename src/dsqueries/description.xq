@@ -14,12 +14,10 @@ let $description := (
     return $i/js:*[@key='description']/*
 )
 
-let $english := (
-    for $item in $description
- where contains($item, "{code:eng}") or contains($item, "{code:und}")
-    return replace(replace($item, "\{code:[^}]+\}", " "), "\n", " ")
-)
+let $desc := (
+    $description[contains(., "{code:eng}")],
+    $description[contains(., "{code:nld}")],
+    $description[contains(., "{code:und}")]
+)[1]/replace(replace(., "\{code:[^}]+\}", ""), "\n", " ")
 
-let $mergedString := normalize-space(string-join($english, ""))
-
-return xml-to-json(<js:string>{$mergedString}</js:string>)
+return xml-to-json(<js:string>{$desc}</js:string>)

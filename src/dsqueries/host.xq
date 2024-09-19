@@ -8,7 +8,7 @@ followed by the domain (characters until the first "/"). The captured part inclu
 
 declare namespace js="http://www.w3.org/2005/xpath-functions";
 
-let $ID:="doi_58_10.17026_47_dans-zeq-q3b7"
+let $ID:="{ID}"
 
     for $i in js:map
     where $i/js:string[@key='id']=$ID
