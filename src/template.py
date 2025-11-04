@@ -15,10 +15,6 @@ basex_session = requests.Session()
 This script is designed to process JSON data using a template and retrieve information based on a set of rules defined in the template. 
 https://github.com/CLARIAH/clariah-plus/blob/main/requirements/software-metadata-requirements.md
 """
-
-RUMBLEDB = "http://rumbledb:8001/jsoniq"
-# RUMBLEDB = "http://localhost:8001/jsoniq"
-
 # location of the JSONL file within container ineo-sync
 JSONL_ineo = "./data/c3.jsonl"
 JSONL_datasets_ineo = "./data/datasets.jsonl"
@@ -471,8 +467,7 @@ def main(current_id: str = ID, template_path: str = TOOLS_TEMPLATE, template_typ
     res: type = 'list', the result of combining the RUC and the MD based on the instructions set out in template.py. 
     
     """
-
-    logger.error(f"### Processing {current_id} of type {template_type} with {template_path}")
+    logger.debug(f"### Processing {current_id} of type {template_type} with {template_path}")
     # DSL template
     # global template
     with open(template_path, "r") as file:
@@ -531,6 +526,6 @@ if __name__ == "__main__":
         logger.error("No current_id provided")
         exit(1)
     print(f"### Processing {current_id} ###")
-    template_path: str = "./template_tools.json"
-    template_type: str = "tools"
+    template_path: str = "./template_datasets.json"
+    template_type: str = "datasets"
     main(current_id, template_path, template_type)
