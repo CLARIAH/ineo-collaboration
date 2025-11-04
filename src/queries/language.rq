@@ -1,4 +1,4 @@
-(: This query works on extracting and organizing inLanguage properties associated with consumed (consumesData) and produced data (producesData) formats within the targetProduct field of codemeta :)
+(: This query works on extracting and organizing inLanguage properties associated with consumed (consumesData) and produced data (producesData) formats within the isSourceCodeOf field of codemeta :)
 
 
 
@@ -6,8 +6,8 @@ let $results := (
   for $i in json-file("{JSONL}", 10) 
   where $i.identifier eq "{ID}"
   return
-  if ($i.targetProduct instance of array) then
-    for $item in $i.targetProduct[]
+  if ($i.isSourceCodeOf instance of array) then
+    for $item in $i.isSourceCodeOf[]
     let $consumesFormats :=
       if ($item.consumesData instance of object) then
         $item.consumesData.inLanguage.name
@@ -23,12 +23,12 @@ let $results := (
         return $data.inLanguage.name
       else ()
     return ($consumesFormats, $producesFormats)
-  else if ($i.targetProduct instance of object) then
+  else if ($i.isSourceCodeOf instance of object) then
     let $consumesFormats :=
-      for $product in $i.targetProduct.consumesData[]
+      for $product in $i.isSourceCodeOf.consumesData[]
       return $product.inLanguage.name
     let $producesFormats :=
-      for $prod in $i.targetProduct.producesData[]
+      for $prod in $i.isSourceCodeOf.producesData[]
       return $prod.inLanguage.name
     return ($consumesFormats, $producesFormats)
   else ()
