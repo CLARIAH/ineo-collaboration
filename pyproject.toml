@@ -1,0 +1,12 @@
+[project]
+name = "ineo-collaboration"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.28.1",
+    "pyyaml>=6.0.3",
+    "rich>=14.2.0",
+    "typer>=0.20.0",
+]
