@@ -1,5 +1,8 @@
+import io
 import os.path
+import random
 import shutil
+import string
 from datetime import datetime
 from typing import Tuple
 
@@ -12,8 +15,13 @@ import json
 import logging
 import harvester
 from tqdm import tqdm
+
 from template import main as templating
 from utils import get_logger, call_basex, call_basex_with_file, call_basex_with_query
+
+import cProfile
+import pstats
+import functools
 
 log_file_path = 'main.log'
 logger = get_logger(log_file_path, __name__, level=logging.INFO)
@@ -29,6 +37,37 @@ JSONL_datasets_rdb = "/data/datasets.jsonl"
 # location of the templates for both tools and datasets
 TOOLS_TEMPLATE = "./template_tools.json"
 DATASETS_TEMPLATE = "./template_datasets.json"
+
+
+def profile(toprankers: int = 10):
+    def decorator_profile(func):
+        @functools.wraps(func)
+        def wrapper_profile(*args, **kwargs):
+            profiler = cProfile.Profile()
+            profiler.enable()
+            result = func(*args, **kwargs)
+            profiler.disable()
+            stats = pstats.Stats(profiler).sort_stats('cumtime')
+            stats.print_stats(toprankers)
+            exit(0)
+            return result
+        return wrapper_profile
+    return decorator_profile
+
+
+def profile_function(func, topranker: int = 10, *args, **kwargs):
+    profiler = cProfile.Profile()
+    profiler.enable()
+    result = func(*args, **kwargs)
+    profiler.disable()
+
+    s = io.StringIO()
+    sortby = pstats.SortKey.CUMULATIVE
+    ps = pstats.Stats(profiler, stream=s).sort_stats(sortby)
+    ps.print_stats(topranker)
+    print(s.getvalue())
+
+    return result
 
 
 def call_harvester(threshold: int = 3, debug: bool = False) -> Tuple:
@@ -87,17 +126,59 @@ def get_ids_from_jsonl(jsonl_file: str) -> list[str]:
 
     return all_ids
 
-
+"""
+Single processing version
+avg time: 1.95s
+"""
 def call_template_subprocess(ids: list, template_type: str = 'tools'):
     template_path = TOOLS_TEMPLATE if template_type == 'tools' else DATASETS_TEMPLATE
     for current_id in tqdm(ids):
-
         try:
             logger.debug(f"Making a json file for INEO for {current_id} with template [{template_path}]...")
+            # print(f"Making a json file for INEO for {current_id} with template [{template_path}]...")
             templating(current_id, template_path, template_type)
         except Exception:
             logger.error(f"Cannot template the file: [{current_id}] with template: [{template_path}]")
             raise
+
+"""
+multiprocessing version
+avg time: 3.5s
+"""
+# def process_id(args):
+#     current_id, template_path, template_type = args
+#     try:
+#         logger.debug(f"Making a json file for INEO for {current_id} with template [{template_path}]...")
+#         templating(current_id, template_path, template_type)
+#     except Exception:
+#         logger.error(f"Cannot template the file: [{current_id}] with template: [{template_path}]")
+#         raise
+#
+# def call_template_subprocess(ids: list, template_type: str = 'tools', workers: int = 4):
+#     template_path = TOOLS_TEMPLATE if template_type == 'tools' else DATASETS_TEMPLATE
+#     args = [(current_id, template_path, template_type) for current_id in ids]
+#
+#     with concurrent.futures.ProcessPoolExecutor(max_workers=workers) as executor:
+#         list(tqdm(executor.map(process_id, args), total=len(ids)))
+
+
+"""
+mutithreading version
+avg time: <2.8s
+"""
+# def call_template_subprocess(ids: list, template_type: str = 'tools'):
+#     template_path = TOOLS_TEMPLATE if template_type == 'tools' else DATASETS_TEMPLATE
+#
+#     def process_id(current_id):
+#         try:
+#             logger.debug(f"Making a json file for INEO for {current_id} with template [{template_path}]...")
+#             templating(current_id, template_path, template_type)
+#         except Exception:
+#             logger.error(f"Cannot template the file: [{current_id}] with template: [{template_path}]")
+#             raise
+#
+#     with concurrent.futures.ThreadPoolExecutor() as executor:
+#         list(tqdm(executor.map(process_id, ids), total=len(ids)))
 
 
 def split_list(input_list, num_sublists):
@@ -115,9 +196,9 @@ def call_template(ids: list, template_type: str = 'tools', workers: int = 12):
     call_template_subprocess(ids, template_type)
 
 
-def call_ineo_sync(record_type: str, limit: int = 0, remove_before_create: bool = False):
+def call_ineo_sync(record_type: str, limit: int = 0):
     logger.info("Calling sync with INEO ...")
-    ineo_sync.main(record_type, limit, remove_before_create)
+    ineo_sync.main(record_type, limit)
 
 
 def prepare_basex_tables(table_name: str,
@@ -213,11 +294,33 @@ def template_tools(ineo_records: list, processed_folder: str, backup_folder: str
 
     return (None)
     """
-    logger.info(f"Making template(s) for {len(ineo_records)} tools ...")
+    logger.info(f"Making template(s) for {len(ineo_records)} records ...")
     # move older files to backup folder
     move_old_files(processed_folder, backup_folder)
-    # call template for tools
+    # call template function
     call_template(ineo_records, template)
+
+
+def move_files_to_subfolders(folder_path: str, max_files_per_subfolder: int = 200):
+    # Ensure the folder exists
+    if not os.path.exists(folder_path):
+        raise FileNotFoundError(f"The folder {folder_path} does not exist")
+
+    # Get all files in the folder
+    files = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
+
+    # Function to generate a random folder name
+    def generate_random_folder_name(length: int = 8) -> str:
+        return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
+
+    # Move files to subfolders
+    subfolder = None
+    for i, file in enumerate(files):
+        if i % max_files_per_subfolder == 0:
+            subfolder = os.path.join(folder_path, generate_random_folder_name())
+            os.makedirs(subfolder, exist_ok=True)
+
+        shutil.move(os.path.join(folder_path, file), os.path.join(subfolder, file))
 
 
 def main():
@@ -235,7 +338,7 @@ def main():
     - deleted files will be moved to ./src/deleted_documents (which is a text file contains ids to be deleted)
     """
     # TODO: change debug to False before deployment, rebuild the docker image and redeploy
-    tools_to_INEO, datasets_to_INEO = call_harvester(threshold=3, debug=True)
+    tools_to_INEO, datasets_to_INEO = call_harvester(threshold=3, debug=False)
     logger.info(f"Harvested {len(tools_to_INEO)} tools and {len(datasets_to_INEO)} datasets ...")
 
     # init basex first
@@ -245,7 +348,7 @@ def main():
     Get INEO properties, e.g. research activities and domains from the INEO API
     If folder exsits and 2 or more json files present, the download of new properties is skipped
     """
-    call_get_properties()
+    # call_get_properties()
 
     # If the id lists are empty, there are no updates to be fed into INEO:
     if len(tools_to_INEO) == 0 and len(datasets_to_INEO) == 0:
@@ -262,16 +365,17 @@ def main():
 
         # Templates are ready, sync with the INEO api.
         # Also, researchdomains and researchactivities are further processed here.
-        logger.info("Syncing with INEO ...")
+        # logger.info(f"Syncing {len(tools_to_INEO)} tools ...")
+        # ineo_sync.bulk_del_from_ineo_by_remote_type("tools")
+        # call_ineo_sync("tools", 0)
+
         logger.info("Syncing datasets ...")
-        call_ineo_sync("datasets", 0, True)
+        # ineo_sync.bulk_del_from_ineo_by_remote_type("datasets")
+        # call_ineo_sync("datasets", 0)
 
-        logger.info("Syncing tools ...")
-        call_ineo_sync("tools", 0, True)
-
-        # logger.info("Syncing Huuygens ...")
-        # call_ineo_sync("huygens", 0, False)
-        logger.info("DONE!")
+        # logger.info("Syncing Huygens ...")
+        # call_ineo_sync("huygens", 0)
+        # logger.info("DONE!")
         exit("All done!")
 
         # TODO: The code below does house keeping after the sync with INEO is completed.
@@ -344,4 +448,12 @@ def main():
 
 
 if __name__ == "__main__":
+
+    """
+    profiling the templating function
+    traverse_data took 2.2 seconds, longest call
+    """
+    # profile_function(templating, 10, 'http_58__47__47_data.bibliotheken.nl_47_id_47_dataset_47_nbt', DATASETS_TEMPLATE, 'datasets')
+    # profile_templating('https_58__47__47_archief.nl_47_id_47_dataset_47_toegang_47_3.18.55.02', TOOLS_TEMPLATE, 'datasets')
+    # exit(0)
     main()
