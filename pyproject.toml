@@ -5,13 +5,11 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "httpx[socks]>=0.28.1",
+    "httpx>=0.28.1",
     "markdown>=3.10",
     "plain-text-markdown-extention",
     "pyyaml>=6.0.3",
     "requests[socks]>=2.32.5",
-    "rich>=14.2.0",
-    "typer>=0.20.0",
 ]
 
 [tool.uv.sources]

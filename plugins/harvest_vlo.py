@@ -1,7 +1,6 @@
 import os
 import sys
 import json
-import httpx
 import logging
 import requests
 import concurrent.futures
@@ -10,7 +9,6 @@ from typing import List, Dict
 from utils.utils import get_logger, remove_html_tags, shorten_list_or_string
 
 logger = get_logger(__name__, logging.INFO)
-
 
 # limits
 title_limit: int | None = 65536
@@ -39,7 +37,8 @@ def _fetch_solr_records(query: str, solr_url: str, username, password, start=0, 
     return data["response"]
 
 
-def fetch_solr_records(query: str, solr_url: str, username: str, password: str, start=0, rows=10000, proxies=None) -> List[Dict]:
+def fetch_solr_records(query: str, solr_url: str, username: str, password: str, start=0, rows=10000, proxies=None) -> \
+List[Dict]:
     """
     Retrieve Solr records in parallel with a given query.
     """
@@ -63,7 +62,8 @@ def fetch_solr_records(query: str, solr_url: str, username: str, password: str, 
     return records
 
 
-def store_solr_response(base_query: str, solr_url: str, username, password, parsed_datasets_directory: str, proxies: dict = None) -> None:
+def store_solr_response(base_query: str, solr_url: str, username, password, parsed_datasets_directory: str,
+                        proxies: dict = None) -> None:
     """
     Store the list of records from fetch_solr_records into individual JSON files.
     """
@@ -112,6 +112,7 @@ def store_solr_response(base_query: str, solr_url: str, username, password, pars
             logger.error(f"Error saving dataset to {dataset_filename}: {ex}")
             logger.error(doc)
             sys.exit(1)
+
 
 def harvest_vlo(name: str, params: dict[str, str]) -> None:
     logger.info(f"### Starting {name}... ###")
