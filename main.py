@@ -87,12 +87,14 @@ def main(config_path: str):
     steps = load_plugins([p for p in plugins])
     # Example of running a specific plugin
     # config, func, display_name, plugin_name = get_function_with_config_by_name(steps, "display name of the step")
+    logger.info("##### Starting pipeline execution #####")
     for step in steps:
-        logger.info(f"### Current step: {step} ###")
+        logger.debug(f"### Current step: {step} ###")
         config, func, display_name, plugin_name = get_function_with_config_by_name(steps, step)
         logger.debug(f"Running plugin {display_name}:{plugin_name} with config: {config}")
         if func:
             func(display_name, config)
+    logger.info("##### Pipeline execution completed #####")
 
 
 if __name__ == "__main__":
