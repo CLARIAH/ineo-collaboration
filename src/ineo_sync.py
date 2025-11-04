@@ -363,16 +363,7 @@ def call_ineo_bulk(ineo_package: list, api_url: str) -> None:
     print(f"#### Response {response.status_code} - {api_url} - {response.text}")
 
 
-def sync_with_ineo(record_type: str = "tools", limit: int = 0, remove_first: bool = False) -> None:
-    """
-    This function syncs either tools or datasets with ineo depends on the parameters passed.
-
-    :param record_type: str
-    :param limit: int limit the amount of packages to sync
-    :param remove_first: bool remove the packages first before syncing
-    :return: None
-
-    """
+def get_processed_files_folder_from_type(record_type: str = "tools") -> str:
     # check tool properties and replace with INEO property if match is found
     if record_type == "tools":
         processed_files = processed_jsonfiles
@@ -383,7 +374,106 @@ def sync_with_ineo(record_type: str = "tools", limit: int = 0, remove_first: boo
     else:
         logger.error(f"Record type {record_type} not implemented yet.")
         sys.exit(1)
+    return processed_files
 
+
+def get_resources_id_from_ineo_api_by_type(record_type: str = "tools") -> list:
+    """
+    This function gets the resources from INEO API by type.
+
+    :param record_type: str = "tools" | "datasets" | None
+    :return: list of str
+
+    If the record_type is None, it will get all the resources from the INEO API.
+    If the record_type is "tools", the corresponding resourceType on INEO is "Tools".
+    If the record_type is "datasets", the corresponding resourceType on INEO is "Data".
+    """
+    response = requests.get(api_url, headers={"Authorization": f"Bearer {api_token}"})
+    assert response.status_code == 200, f"Error: {response.status_code}, cannot get data from the API. Exiting..."
+    data = response.json()
+
+    if record_type is None:
+        ids = [row.get("id") for row in data]
+    elif record_type == "tools":
+        ids = [row.get("id") for row in data if row.get("properties").get("resourceTypes")[0] == "Tools"]
+    elif record_type == "datasets":
+        ids = [row.get("id") for row in data if row.get("properties").get("resourceTypes")[0] == "Data"]
+    else:
+        logger.error(f"Record type {record_type} not implemented yet.")
+        sys.exit(1)
+    return ids
+
+
+def create_ineo_delete_packages(ids: list) -> list:
+    """
+    This function creates a list of INEO packages to delete resources.
+
+    :param ids: list
+    :return: list
+    """
+    ineo_packages = []
+    for id in ids:
+        ineo_packages.append({"operation": "delete", "document": {"id": id}})
+    return ineo_packages
+
+
+def bulk_del_from_ineo_by_remote_type(record_type: str = "tools") -> None:
+    """
+    This function deletes all the resources of given type from INEO. The ids of the resources to be deleted are
+    fetched from the INEO API.
+    """
+    ids = get_resources_id_from_ineo_api_by_type(record_type)
+    if ids is not None and len(ids) > 0:
+        print(f"Found {len(ids)} {record_type} ids in INEO. Deleting ...")
+        ineo_packages = create_ineo_delete_packages(ids)
+        print(f"Deleting {len(ineo_packages)} {record_type} packages. Exiting...")
+        call_ineo_bulk(ineo_packages, api_url)
+        print(f"Deleted {len(ineo_packages)} {record_type} packages. Exiting...")
+        # sys.exit(0)
+
+
+def bulk_del_from_ineo_by_local_type(record_type: str = "tools") -> None:
+    """
+    This function deletes all the resources of given type from INEO.
+    """
+    processed_files = get_processed_files_folder_from_type(record_type)
+
+    ineo_packages: list | None = get_files(processed_files)
+    if ineo_packages is None or len(ineo_packages) == 0:
+        logger.info(f"No packages found in the {record_type} processed folder.")
+        exit(0)
+    else:
+        logger.info(f"Found {len(ineo_packages)} packages in the {record_type}. Syncing ...")
+        bulk_package: list = []
+        for package in ineo_packages:
+            with open(package, 'r') as json_file:
+                ineo_package = json.load(json_file)
+                bulk_package.append(ineo_package[0])
+
+    bulk_delete_package = [{"operation": "delete", "document": {"id": package["document"]["id"]}} for package in bulk_package]
+    print(f"sample ineo package to be removed: {bulk_delete_package[0]}")
+    call_ineo_bulk(bulk_delete_package, api_url)
+    print(f"Deleted {len(bulk_delete_package)} {record_type} packages. Exiting...")
+    exit(0)
+
+
+def sync_with_ineo(record_type: str = "tools", limit: int = 0) -> None:
+    """
+    This function syncs either tools or datasets with ineo depends on the parameters passed.
+
+    :param record_type: str
+    :param limit: int limit the amount of packages to sync
+    :param remove_first: bool remove the packages first before syncing
+    :return: None
+
+    """
+    if record_type == "huygens":
+        new_record_type = "datasets"
+    else:
+        new_record_type = record_type
+    existing_ineo_resources_ids = get_resources_id_from_ineo_api_by_type(new_record_type)
+    # check tool properties and replace with INEO property if match is found
+    processed_files = get_processed_files_folder_from_type(record_type)
     processed_document_ids = get_id_json(processed_files)
     for processed_id in processed_document_ids:
         if record_type in ["tools", "datasets"]:
@@ -408,15 +498,13 @@ def sync_with_ineo(record_type: str = "tools", limit: int = 0, remove_first: boo
         for package in ineo_packages:
             with open(package, 'r') as json_file:
                 ineo_package = json.load(json_file)
+            if ineo_package[0]["document"]["id"] in existing_ineo_resources_ids:
+                logger.info(f"Resource {ineo_package[0]['document']['id']} already exists in INEO. Updating the record")
+                update_ineo_package = {"operation": "update", "document": ineo_package[0]["document"]}
+                bulk_package.append(update_ineo_package)
+            else:
+                logger.debug(f"Resource {ineo_package[0]['document']['id']} does not exist in INEO. Creating the record")
                 bulk_package.append(ineo_package[0])
-
-        # delete records before creating new ones
-        if remove_first:
-            bulk_delete_package: list[dict] = []
-            for package in bulk_package:
-                bulk_delete_package.append({"operation": "delete", "document": {"id": package["document"]["id"]}})
-            call_ineo_bulk(bulk_delete_package, api_url)
-            time.sleep(30)
 
         # Syncing the packages in bulk or batch
         logger.info(f"Syncing in total {len(bulk_package)} {record_type} packages.")
@@ -431,8 +519,8 @@ def sync_with_ineo(record_type: str = "tools", limit: int = 0, remove_first: boo
             call_ineo_bulk(bulk_package, api_url)
 
 
-def main(record_type: str, limit: int = 5, remove_before_create: bool = False) -> None:
-    sync_with_ineo(record_type, limit, remove_before_create)
+def main(record_type: str, limit: int = 5) -> None:
+    sync_with_ineo(record_type, limit)
 
     logger.info("Sync done, deletion skipped. returning none...")
     return None
@@ -456,6 +544,6 @@ def main(record_type: str, limit: int = 5, remove_before_create: bool = False) -
 
 if __name__ == "__main__":
     # exit("Please call from main")
-    main(limit=1)
+    main(record_type="datasets", limit=1)
     # main()
     
