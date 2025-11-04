@@ -2,6 +2,9 @@ import logging
 import os
 import re
 import sys
+import time
+from tqdm import tqdm
+
 import requests
 from typing import List, Optional
 from markdown_plain_text.extention import convert_to_plain_text
@@ -58,7 +61,7 @@ def get_files(folder_name: str, file_postfix: str = "json") -> Optional[List[str
 
 
 def call_basex(query: str, host: str, port: int, user: str, password: str, action: str,
-               db: str = None, content_type: str = "application/json", http_caller=requests) -> requests.Response:
+               db: str = None, content_type: str = "application/json", http_caller=requests, cooldown: int = 300) -> requests.Response:
     """
     This function calls the basex query
 
@@ -70,23 +73,19 @@ def call_basex(query: str, host: str, port: int, user: str, password: str, actio
 
     return (str): The response of the basex query
     """
-    logger = get_logger("basex.log", "basex")
-
     if db:
         url: str = f"http://{user}:{password}@{host}:{port}/rest/{db}"
     else:
         url: str = f"http://{user}:{password}@{host}:{port}/rest"
 
-    logger.info(f"Executing the basex query: {query} on {url=} with {action=} ...")
+    # print(f"Executing the basex query: {query} on {url=} with {action=} ...")
+    # logger.info(f"Executing the basex query: {query} on {url=} with {action=} ...")
     if action == "get":
         response = http_caller.get(url, data=query, headers={"Content-Type": content_type})
     elif action == "post":
         response = http_caller.post(url, data=query, headers={"Content-Type": content_type})
     else:
         raise Exception(f"Invalid action {action}; Valid actions are 'get' and 'post'")
-
-    if response.status_code < 200 or response.status_code > 299:
-        logger.error(f"Failed to execute the basex query: {query}")
 
     return response
 
