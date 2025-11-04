@@ -37,8 +37,10 @@ username = dotenv.get_key(".env", "USERNAME")
 password = dotenv.get_key(".env", "PASSWORD")
 
 # title should be 67 characters with 3 dots, and description should be 297 characters with 3 dots
-title_limit: int = 67
-description_limit: int = 297
+# title_limit: int = 67 # limit for 8 media ineo
+# description_limit: int = 297 # limit for 8 media ineo
+title_limit: int = 65535
+description_limit: int = 65535
 more_characters: str = "..."
 # ID length limit
 id_limit: int = 128
