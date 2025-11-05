@@ -1,11 +1,15 @@
 import os
 import re
+import sys
 import yaml
 import json
+import shutil
 import logging
 import subprocess
 # local imports
-from utils.utils import get_logger, shorten_list_or_string, title_limit, description_limit, more_characters
+from utils.utils import (get_logger, shorten_list_or_string,
+                         title_limit, description_limit, more_characters,
+                         get_files_with_postfix)
 
 logger = get_logger(__name__, logging.INFO)
 
@@ -42,6 +46,7 @@ def extract_ruc(ruc_content) -> dict:
     ## Overview
 
     """
+    logger.debug(f"Extracting Rich User Content from markdown content...\n{ruc_content}\n")
     re_fields = re.compile(r'^---(.*)---', flags=re.DOTALL)
     re_descriptions = re.compile(r'---\n+#(.*?)\n\n(.*?)\n\n##', flags=re.DOTALL)
     re_sections = re.compile(r'(?m)^(##\s+.*?)$(.*?)(?=^##\s|\Z)', flags=re.DOTALL | re.MULTILINE)
@@ -72,59 +77,50 @@ def extract_ruc(ruc_content) -> dict:
     return dictionary
 
 
-def sync_ruc(github_url, github_dir):
+def sync_ruc(github_url, github_dir) -> None:
     """
-    Retrieves Rich User Content of Gihub repository "ineo-content".
+    Retrieves Rich User Content of GiHub repository.
     """
     # store the current working directory
-    current_dir = os.getcwd()
-
-    # Check if the ineo-content github repository directory exists
-    if not os.path.exists(github_dir):
-        logger.info(f"The github directory '{github_dir}' does not exist. Cloning...")
-        # Clone the repository
-        subprocess.run(["git", "clone", github_url])
-    else:
-        logger.info(f"The github directory '{github_dir}' already exists. Pulling...")
-
-        # cd ineo-content
-        os.chdir(github_dir)
-
-        # Run git pull and capture the output
-        result = subprocess.run(["git", "stash"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        result = subprocess.run(["git", "stash", "clear"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        result = subprocess.run(["git", "pull"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-
-        # Check if the "Already up to date" message is in the output
-        if "Already up to date." in result.stdout:
-            logger.info("Repository is already up to date. The RUC have not changed")
-        else:
-            logger.info("Repository is not up to date.")
-
-        # Change back to the previous working directory
-        os.chdir(current_dir)
+    if os.path.exists(github_dir):
+        try:
+            shutil.rmtree(github_dir)
+        except Exception as e:
+            logger.error(f"Error removing directory '{github_dir}': {e}")
+            sys.exit(1)
+    # Clone the repository
+    subprocess.run(["git", "clone", github_url, github_dir])
 
 
-def get_ruc_contents(github_url: str, github_dir: str) -> dict:
+def get_ruc_contents(github_url: str, github_dir: str, skip_files: list | None) -> dict:
     """
     This script synchronizes with the GitHub repository of ineo-content, extracts Rich User Content (RUC)
     and returns the RUC data in a dictionary.
 
+    params:
+        github_url (str): The URL of the GitHub repository to clone.
+        github_dir (str): The local directory where the GitHub repository will be cloned.
+        skip_files (list | None): A list of file paths to skip during processing.
+
+    returns:
+        dict: A dictionary containing the RUC data extracted from the markdown files.
+
     The 'extract_ruc' function is used to parse the RUC data from a given content string using regex.
     It extracts metadata fields, descriptions, and sections, returning them as a dictionary.
     """
-
+    # Clone the GitHub repository
     sync_ruc(github_url, github_dir)
 
-    folder_path = "./ineo-content/src/tools"
+    fullpath_md = os.path.join(github_dir, "src")
+    logger.info(f"Extracting Rich User Content from markdown files in '{fullpath_md}'...")
     all_ruc_contents = {}
 
-    for filename in os.listdir(folder_path):
-        file_path = os.path.join(folder_path, filename)
-        with open(file_path, 'r') as file:
+    for filename in get_files_with_postfix(fullpath_md, postfix=".md", skip_files=skip_files):
+        logger.info(f"Processing file: {filename}")
+        with open(filename, 'r') as file:
             contents = file.read()
             ruc_contents: dict = extract_ruc(contents)
-            logger.debug(f"Rich User Contents of {file_path} is:\n{ruc_contents}\n")
+            logger.debug(f"Rich User Contents of {filename} is:\n{ruc_contents}\n")
             all_ruc_contents[filename] = ruc_contents
 
     # Check if the RUC filename is identical to the identifier and replace if not
@@ -182,8 +178,9 @@ def harvest_ruc(name: str, params: dict[str, str]) -> None:
     github_url = params.get("github_url", None)
     github_dir = params.get("github_dir", None)
     ineo_ruc_path = params.get("ineo_ruc_path", None)
+    skip_files = params.get("skip_files", None)
 
-    ruc_data = get_ruc_contents(github_url, github_dir)
+    ruc_data = get_ruc_contents(github_url, github_dir, skip_files)
     serialize_ruc_to_json(ruc_data, ineo_ruc_path)
 
     logger.info(f"### Finished {name}. ###")

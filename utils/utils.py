@@ -1,3 +1,4 @@
+import os
 import re
 import logging
 from markdown_plain_text.extention import convert_to_plain_text
@@ -23,6 +24,16 @@ def get_logger(name: str, level: int = logging.INFO) -> logging.Logger:
         ch.setFormatter(formatter)
         logger.addHandler(ch)
     return logger
+
+
+def get_files_with_postfix(folder_path: str, postfix: str = ".json", skip_files: list | None = None) -> list[str]:
+    matched_files = []
+    for root, _, files in os.walk(folder_path):
+        for filename in files:
+            full_path = os.path.join(root, filename)
+            if filename.endswith(postfix) and (skip_files is None or full_path not in skip_files):
+                matched_files.append(full_path)
+    return matched_files
 
 
 def remove_html_tags(html_str: str) -> str:
