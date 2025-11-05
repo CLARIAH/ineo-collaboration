@@ -84,3 +84,4 @@ def harvest_codemeta(name: str, params: dict[str, str]) -> None:
     output_path_data = params.get("output_path_data", None)
     backup_directory = params.get("backup_directory", None)
     download_json_files(url, output_path_data, backup_directory)
+    logger.info(f"### Finished {name}. ###")
