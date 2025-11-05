@@ -30,4 +30,5 @@ src/HI
 test
 **/test*.py
 config.yml
-
+data/
+.venv/

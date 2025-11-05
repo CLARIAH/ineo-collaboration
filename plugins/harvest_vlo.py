@@ -6,15 +6,14 @@ import requests
 import concurrent.futures
 from typing import List, Dict
 # local imports
-from utils.utils import get_logger, remove_html_tags, shorten_list_or_string
+from utils.utils import (get_logger, remove_html_tags, shorten_list_or_string,
+                         title_limit, description_limit, more_characters, id_limit)
 
 logger = get_logger(__name__, logging.INFO)
 
-# limits
-title_limit: int | None = 65536
-description_limit: int | None = None
-more_characters: str = "..."
-id_limit: int = 128
+
+def skip_plugin() -> None:
+    logger.info(f"Skipping {__name__} plugin as per configuration.")
 
 
 def _fetch_solr_records(query: str, solr_url: str, username, password, start=0, rows=10000, proxies=None) -> Dict:
@@ -37,8 +36,15 @@ def _fetch_solr_records(query: str, solr_url: str, username, password, start=0, 
     return data["response"]
 
 
-def fetch_solr_records(query: str, solr_url: str, username: str, password: str, start=0, rows=10000, proxies=None) -> \
-List[Dict]:
+def fetch_solr_records(
+        query: str,
+        solr_url: str,
+        username: str,
+        password: str,
+        start=0,
+        rows=10000,
+        proxies=None
+) -> List[Dict]:
     """
     Retrieve Solr records in parallel with a given query.
     """

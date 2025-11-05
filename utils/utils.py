@@ -2,6 +2,12 @@ import re
 import logging
 from markdown_plain_text.extention import convert_to_plain_text
 
+# limits
+title_limit: int | None = 65536
+description_limit: int | None = None
+more_characters: str = "..."
+id_limit: int = 128
+
 
 def is_url(url: str) -> bool:
     return url.startswith("http://") or url.startswith("https://")
