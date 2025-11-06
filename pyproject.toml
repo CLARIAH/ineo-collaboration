@@ -10,6 +10,7 @@ dependencies = [
     "markdown>=3.10",
     "plain-text-markdown-extention",
     "pyyaml>=6.0.3",
+    "redis>=7.0.1",
     "requests[socks]>=2.32.5",
 ]
 

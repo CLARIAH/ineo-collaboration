@@ -1,5 +1,8 @@
 import os
 import re
+import sys
+import json
+import redis
 import httpx
 import shutil
 import logging
@@ -29,6 +32,18 @@ def get_logger(name: str, level: int = logging.INFO) -> logging.Logger:
         ch.setFormatter(formatter)
         logger.addHandler(ch)
     return logger
+
+
+def fetch_key_fron_json(file_path: str, key: str) -> str:
+    """
+    Fetch a specific key from a JSON file.
+    """
+    with open(file_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+        if key in data:
+            return data[key]
+        else:
+            raise KeyError(f"Key '{key}' not found in {file_path}")
 
 
 def get_files_with_postfix(folder_path: str, postfix: str = ".json", skip_files: list | None = None) -> list[str]:
@@ -137,3 +152,95 @@ def backup_files(source_directory: str, backup_directory: str) -> None:
             except Exception as e:
                 logger.error(f"Failed to copy {source_file} to {backup_file}: {e}")
     logger.info("Backup of previous JSON files created.")
+
+
+def diff_files(file1: str | None, file2: str | None) -> bool:
+    """
+    Compare two files and return True if they are different, False otherwise.
+    """
+    if file1 is None:
+        raise ValueError("file1 cannot be None")
+
+    if file2 is None:
+        return True
+
+    if not os.path.exists(file1):
+        raise FileNotFoundError(f"File not found: {file1}")
+
+    if not os.path.exists(file2):
+        return True
+
+    with open(file1, 'rb') as f1, open(file2, 'rb') as f2:
+        content1 = f1.read()
+        content2 = f2.read()
+        return content1 != content2
+
+
+def test_redis_connection(host: str | None, port: str | None, db: str | None) -> None:
+    try:
+        r = redis.Redis(host=host or "localhost", port=int(port or 6379), db=int(db or 0))
+        r.ping()
+        logger.debug("Redis connection successful.")
+    except Exception as e:
+        logger.error(f"Redis connection failed: {e}")
+        sys.exit(1)
+
+
+def delete_redis_key(host: str, port: int, db: int, key: str) -> None:
+    """
+    Delete a key from Redis database.
+    """
+    try:
+        r = redis.Redis(host=host, port=port, db=db)
+        r.delete(key)
+        logger.info(f"Deleted Redis key: {key}")
+    except Exception as e:
+        logger.error(f"Failed to delete Redis key {key}: {e}")
+
+
+def delete_redis_keys(host: str, port: int, db: int, keys: list[str]) -> None:
+    """
+    Delete multiple keys from Redis database.
+    """
+    try:
+        r = redis.Redis(host=host, port=port, db=db)
+        logger.info(f"Deleting Redis keys: {keys}")
+        for key in keys:
+            r.delete(key)
+            logger.debug(f"Deleted Redis key: {key}")
+    except Exception as e:
+        logger.error(f"Failed to delete Redis keys: {e}")
+
+
+def get_redis_key(host: str, port: int, db: int, key: str) -> dict | list | str | None:
+    """
+    Get a key from Redis database. Decodes JSON if possible.
+    """
+    try:
+        r = redis.Redis(host=host, port=port, db=db)
+        value = r.get(key)
+        if value is None:
+            logger.info(f"Redis key not found: {key}")
+            return None
+        value = value.decode("utf-8")
+        try:
+            return json.loads(value)
+        except (json.JSONDecodeError, TypeError):
+            return value
+    except Exception as e:
+        logger.error(f"Failed to get Redis key {key}: {e}")
+        return None
+
+
+def set_redis_key(host: str, port: int, db: int, key: str, value: str | dict | list) -> None:
+    """
+    Set a key in Redis database. Serializes dict or list to JSON.
+    """
+    try:
+        r = redis.Redis(host=host, port=port, db=db)
+        if isinstance(value, (dict, list)):
+            value = json.dumps(value)
+        r.set(key, value)
+        logger.info(f"Set Redis key: {key}")
+    except Exception as e:
+        logger.error(f"Failed to set Redis key {key}: {e}")
