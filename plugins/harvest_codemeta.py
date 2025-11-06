@@ -6,32 +6,10 @@ import logging
 from typing import List
 from bs4 import BeautifulSoup
 # local imports
-from utils.utils import get_logger, shorten_list_or_string, title_limit, description_limit, more_characters
+from utils.utils import get_logger, shorten_list_or_string, title_limit, description_limit, more_characters, \
+    backup_files
 
 logger = get_logger(__name__, logging.INFO)
-
-
-def backup_json_files(source_directory: str, backup_directory: str) -> None:
-    """
-    Make a backup copy of the previously downloaded JSON files.
-    """
-    if not os.path.exists(source_directory):
-        logger.warning(f"Source directory does not exist, skipping backup: {source_directory}")
-        return
-
-    if not os.path.exists(backup_directory):
-        logger.info(f"Creating backup directory: {backup_directory}")
-        os.makedirs(backup_directory)
-
-    for file_name in os.listdir(source_directory):
-        source_file = os.path.join(source_directory, file_name)
-        backup_file = os.path.join(backup_directory, file_name)
-        if os.path.isfile(source_file):
-            try:
-                shutil.copy2(source_file, backup_file)
-            except Exception as e:
-                logger.error(f"Failed to copy {source_file} to {backup_file}: {e}")
-    logger.info("Backup of previous JSON files created.")
 
 
 def download_json_files(url: str, save_directory: str, backup_directory: str) -> List[str]:
@@ -40,7 +18,7 @@ def download_json_files(url: str, save_directory: str, backup_directory: str) ->
 
     """
     # first backup previous JSON files
-    backup_json_files(save_directory, backup_directory)
+    backup_files(save_directory, backup_directory)
 
     files_list = []
 

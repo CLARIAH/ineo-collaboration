@@ -9,7 +9,7 @@ import subprocess
 # local imports
 from utils.utils import (get_logger, shorten_list_or_string,
                          title_limit, description_limit, more_characters,
-                         get_files_with_postfix)
+                         get_files_with_postfix, backup_files)
 
 logger = get_logger(__name__, logging.INFO)
 
@@ -178,9 +178,13 @@ def harvest_ruc(name: str, params: dict[str, str]) -> None:
     github_url = params.get("github_url", None)
     github_dir = params.get("github_dir", None)
     ineo_ruc_path = params.get("ineo_ruc_path", None)
+    backup_directory = params.get("backup_directory", None)
     skip_files = params.get("skip_files", None)
 
     ruc_data = get_ruc_contents(github_url, github_dir, skip_files)
+    logger.info(f"copying from {ineo_ruc_path} to {backup_directory} ...")
+    backup_files(ineo_ruc_path, backup_directory)
+    logger.info(f"serializing RUC data to {ineo_ruc_path} ...")
     serialize_ruc_to_json(ruc_data, ineo_ruc_path)
 
     logger.info(f"### Finished {name}. ###")

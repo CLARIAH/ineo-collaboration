@@ -1,8 +1,9 @@
 import os
 import re
 import httpx
-import requests
+import shutil
 import logging
+import requests
 from markdown_plain_text.extention import convert_to_plain_text
 
 # limits
@@ -10,6 +11,8 @@ title_limit: int | None = 65536
 description_limit: int | None = None
 more_characters: str = "..."
 id_limit: int = 128
+
+logger = logging.getLogger(__name__)
 
 
 def is_url(url: str) -> bool:
@@ -83,7 +86,8 @@ def test_basex_connection(protocol: str,
 
 
 def call_basex(protocol: str, query: str, host: str, port: int, user: str, password: str, action: str,
-               db: str = None, content_type: str = "application/json", http_caller=requests, cooldown: int = 300) -> requests.Response:
+               db: str = None, content_type: str = "application/json", http_caller=requests,
+               cooldown: int = 300) -> requests.Response:
     """
     This function calls the basex query
 
@@ -110,3 +114,26 @@ def call_basex(protocol: str, query: str, host: str, port: int, user: str, passw
         raise Exception(f"Invalid action {action}; Valid actions are 'get' and 'post'")
 
     return response
+
+
+def backup_files(source_directory: str, backup_directory: str) -> None:
+    """
+    Make a backup copy of the previously downloaded JSON files.
+    """
+    if not os.path.exists(source_directory):
+        logger.warning(f"Source directory does not exist, skipping backup: {source_directory}")
+        return
+
+    if not os.path.exists(backup_directory):
+        logger.info(f"Creating backup directory: {backup_directory}")
+        os.makedirs(backup_directory)
+
+    for file_name in os.listdir(source_directory):
+        source_file = os.path.join(source_directory, file_name)
+        backup_file = os.path.join(backup_directory, file_name)
+        if os.path.isfile(source_file):
+            try:
+                shutil.copy2(source_file, backup_file)
+            except Exception as e:
+                logger.error(f"Failed to copy {source_file} to {backup_file}: {e}")
+    logger.info("Backup of previous JSON files created.")

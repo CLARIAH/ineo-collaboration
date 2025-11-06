@@ -6,7 +6,7 @@ import requests
 import concurrent.futures
 from typing import List, Dict
 # local imports
-from utils.utils import (get_logger, remove_html_tags, shorten_list_or_string,
+from utils.utils import (get_logger, remove_html_tags, shorten_list_or_string, backup_files,
                          title_limit, description_limit, more_characters, id_limit)
 
 logger = get_logger(__name__, logging.INFO)
@@ -128,6 +128,7 @@ def harvest_vlo(name: str, params: dict[str, str]) -> None:
     solr_username = params.get("solr_username", None)
     solr_password = params.get("solr_password", None)
     parsed_datasets_directory = params.get("output_folder", None)
+    parsed_datasets_backup_directory = params.get("backup_directory", None)
     proxies = params.get("proxies", None)
     if not solr_url:
         raise ValueError("solr_url parameter is required")
@@ -138,6 +139,7 @@ def harvest_vlo(name: str, params: dict[str, str]) -> None:
         logger.info(f"Creating output directory at {parsed_datasets_directory}")
         os.makedirs(parsed_datasets_directory, exist_ok=True)
 
+    backup_files(parsed_datasets_directory, parsed_datasets_backup_directory)
     try:
         store_solr_response(base_query, solr_url, solr_username, solr_password, parsed_datasets_directory, proxies)
     except Exception as e:
