@@ -244,3 +244,23 @@ def set_redis_key(host: str, port: int, db: int, key: str, value: str | dict | l
         logger.info(f"Set Redis key: {key}")
     except Exception as e:
         logger.error(f"Failed to set Redis key {key}: {e}")
+
+
+def get_identifier(file_path: str, field_names: list) -> str:
+    """
+    Extract the identifier from the file name.
+    Assumes the identifier is the file name without extension.
+    """
+    for field_name in field_names:
+        try:
+            identifier = fetch_key_fron_json(file_path, field_name)
+            return identifier
+        except:
+            continue
+
+    base_name = os.path.basename(file_path)
+    identifier, _ = os.path.splitext(base_name)
+    if not identifier:
+        logger.error(f"Could not extract identifier from file: {file_path}")
+        sys.exit(1)
+    return identifier

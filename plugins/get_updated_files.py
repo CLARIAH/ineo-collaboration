@@ -5,29 +5,10 @@ import redis
 import logging
 # local imports
 from utils.utils import (get_logger, diff_files, get_files_with_postfix,
-                         delete_redis_key, get_redis_key, test_redis_connection, fetch_key_fron_json, set_redis_key)
+                         delete_redis_key, get_redis_key, test_redis_connection, fetch_key_fron_json,
+                         set_redis_key, get_identifier)
 
 logger = get_logger(__name__, logging.INFO)
-
-
-def get_identifier(file_path: str, field_names: list) -> str:
-    """
-    Extract the identifier from the file name.
-    Assumes the identifier is the file name without extension.
-    """
-    for field_name in field_names:
-        try:
-            identifier = fetch_key_fron_json(file_path, field_name)
-            return identifier
-        except:
-            continue
-
-    base_name = os.path.basename(file_path)
-    identifier, _ = os.path.splitext(base_name)
-    if not identifier:
-        logger.error(f"Could not extract identifier from file: {file_path}")
-        sys.exit(1)
-    return identifier
 
 
 def get_previous_file(current_file: str, previous_files_path: str) -> str | None:
