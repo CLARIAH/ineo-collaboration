@@ -1,0 +1,1222 @@
+[
+    {
+        "index": "6.3.1",
+        "title": "Abstract Thinking",
+        "link": "https://vocabs.dariah.eu/tadirah/abstractThinking"
+    },
+    {
+        "index": "4.5.1",
+        "title": "Academic Publishing",
+        "link": "https://vocabs.dariah.eu/tadirah/academicPublishing"
+    },
+    {
+        "index": "5.3.1",
+        "title": "Adding",
+        "link": "https://vocabs.dariah.eu/tadirah/adding"
+    },
+    {
+        "index": "2.5.1",
+        "title": "Aggregating",
+        "link": "https://vocabs.dariah.eu/tadirah/aggregating"
+    },
+    {
+        "index": "1",
+        "title": "Analyzing",
+        "link": "https://vocabs.dariah.eu/tadirah/analyzing"
+    },
+    {
+        "index": "5.1",
+        "title": "Annotating",
+        "link": "https://vocabs.dariah.eu/tadirah/annotating"
+    },
+    {
+        "index": "2.5.2",
+        "title": "Archiving",
+        "link": "https://vocabs.dariah.eu/tadirah/archiving"
+    },
+    {
+        "index": "7.1",
+        "title": "Archiving",
+        "link": "https://vocabs.dariah.eu/tadirah/archiving"
+    },
+    {
+        "index": "4.2.1.1",
+        "title": "Associate",
+        "link": "https://vocabs.dariah.eu/tadirah/associate"
+    },
+    {
+        "index": "5.1.3.1",
+        "title": "Associate",
+        "link": "https://vocabs.dariah.eu/tadirah/associate"
+    },
+    {
+        "index": "6.1.1",
+        "title": "Associate",
+        "link": "https://vocabs.dariah.eu/tadirah/associate"
+    },
+    {
+        "index": "5.1.1",
+        "title": "Associating",
+        "link": "https://vocabs.dariah.eu/tadirah/associating"
+    },
+    {
+        "index": "5.1.2",
+        "title": "Audio Annotation",
+        "link": "https://vocabs.dariah.eu/tadirah/audioAnnotation"
+    },
+    {
+        "index": "4.3.1",
+        "title": "Audio Conferencing",
+        "link": "https://vocabs.dariah.eu/tadirah/audioConferencing"
+    },
+    {
+        "index": "2.7.1",
+        "title": "Audio Recording",
+        "link": "https://vocabs.dariah.eu/tadirah/audioRecording"
+    },
+    {
+        "index": "1.6.1",
+        "title": "Authorship Attribution",
+        "link": "https://vocabs.dariah.eu/tadirah/authorshipAttribution"
+    },
+    {
+        "index": "2.5.6.1",
+        "title": "Bit Stream Preservation",
+        "link": "https://vocabs.dariah.eu/tadirah/bitStreamPreservation"
+    },
+    {
+        "index": "7.4.1",
+        "title": "Bit Stream Preservation",
+        "link": "https://vocabs.dariah.eu/tadirah/bitStreamPreservation"
+    },
+    {
+        "index": "4.5.2",
+        "title": "Blogging",
+        "link": "https://vocabs.dariah.eu/tadirah/blogging"
+    },
+    {
+        "index": "2.3.1",
+        "title": "Browsing",
+        "link": "https://vocabs.dariah.eu/tadirah/browsing"
+    },
+    {
+        "index": "2",
+        "title": "Capturing",
+        "link": "https://vocabs.dariah.eu/tadirah/capturing"
+    },
+    {
+        "index": "2.5.3",
+        "title": "Cataloging",
+        "link": "https://vocabs.dariah.eu/tadirah/cataloging"
+    },
+    {
+        "index": "2.5.2.1",
+        "title": "Cataloging",
+        "link": "https://vocabs.dariah.eu/tadirah/cataloging"
+    },
+    {
+        "index": "7.1.1",
+        "title": "Cataloging",
+        "link": "https://vocabs.dariah.eu/tadirah/cataloging"
+    },
+    {
+        "index": "1.3.1",
+        "title": "Cluster Analysis",
+        "link": "https://vocabs.dariah.eu/tadirah/clusterAnalysis"
+    },
+    {
+        "index": "1.6.2",
+        "title": "Cluster Analysis",
+        "link": "https://vocabs.dariah.eu/tadirah/clusterAnalysis"
+    },
+    {
+        "index": "4.2.1.2",
+        "title": "Co-Occurrence",
+        "link": "https://vocabs.dariah.eu/tadirah/coOccurrence"
+    },
+    {
+        "index": "5.1.3.2",
+        "title": "Co-Occurrence",
+        "link": "https://vocabs.dariah.eu/tadirah/coOccurrence"
+    },
+    {
+        "index": "6.1.2",
+        "title": "Co-Occurrence",
+        "link": "https://vocabs.dariah.eu/tadirah/coOccurrence"
+    },
+    {
+        "index": "4.1",
+        "title": "Collaborating",
+        "link": "https://vocabs.dariah.eu/tadirah/collaborating"
+    },
+    {
+        "index": "1.3.2",
+        "title": "Collating",
+        "link": "https://vocabs.dariah.eu/tadirah/collating"
+    },
+    {
+        "index": "2.5.4",
+        "title": "Collating",
+        "link": "https://vocabs.dariah.eu/tadirah/collating"
+    },
+    {
+        "index": "2.5.2.2",
+        "title": "Collecting",
+        "link": "https://vocabs.dariah.eu/tadirah/collecting"
+    },
+    {
+        "index": "2.5.5",
+        "title": "Collecting",
+        "link": "https://vocabs.dariah.eu/tadirah/collecting"
+    },
+    {
+        "index": "7.1.2",
+        "title": "Collecting",
+        "link": "https://vocabs.dariah.eu/tadirah/collecting"
+    },
+    {
+        "index": "1.5.1",
+        "title": "Collocation Analysis",
+        "link": "https://vocabs.dariah.eu/tadirah/collocationAnalysis"
+    },
+    {
+        "index": "4.2",
+        "title": "Commenting",
+        "link": "https://vocabs.dariah.eu/tadirah/commenting"
+    },
+    {
+        "index": "4.3",
+        "title": "Communicating",
+        "link": "https://vocabs.dariah.eu/tadirah/communicating"
+    },
+    {
+        "index": "1.3.3",
+        "title": "Comparing",
+        "link": "https://vocabs.dariah.eu/tadirah/comparing"
+    },
+    {
+        "index": "2.1.1",
+        "title": "Compiling",
+        "link": "https://vocabs.dariah.eu/tadirah/compiling"
+    },
+    {
+        "index": "6.3.2",
+        "title": "Conceptualizing",
+        "link": "https://vocabs.dariah.eu/tadirah/conceptualizing"
+    },
+    {
+        "index": "1.5.2",
+        "title": "Concordance",
+        "link": "https://vocabs.dariah.eu/tadirah/concordance"
+    },
+    {
+        "index": "1.1",
+        "title": "Content Analysis",
+        "link": "https://vocabs.dariah.eu/tadirah/contentAnalysis"
+    },
+    {
+        "index": "4.2.1",
+        "title": "Contextualizing",
+        "link": "https://vocabs.dariah.eu/tadirah/contextualizing"
+    },
+    {
+        "index": "5.1.3",
+        "title": "Contextualizing",
+        "link": "https://vocabs.dariah.eu/tadirah/contextualizing"
+    },
+    {
+        "index": "6.1",
+        "title": "Contextualizing",
+        "link": "https://vocabs.dariah.eu/tadirah/contextualizing"
+    },
+    {
+        "index": "1.6.3",
+        "title": "Contrastive Analysis",
+        "link": "https://vocabs.dariah.eu/tadirah/contrastiveAnalysis"
+    },
+    {
+        "index": "2.1",
+        "title": "Converting",
+        "link": "https://vocabs.dariah.eu/tadirah/converting"
+    },
+    {
+        "index": "5.2.1",
+        "title": "Correcting",
+        "link": "https://vocabs.dariah.eu/tadirah/correcting"
+    },
+    {
+        "index": "5.3.2",
+        "title": "Correcting",
+        "link": "https://vocabs.dariah.eu/tadirah/correcting"
+    },
+    {
+        "index": "3",
+        "title": "Creating",
+        "link": "https://vocabs.dariah.eu/tadirah/creating"
+    },
+    {
+        "index": "5.3.3",
+        "title": "Cropping",
+        "link": "https://vocabs.dariah.eu/tadirah/cropping"
+    },
+    {
+        "index": "4.4",
+        "title": "Crowdsourcing",
+        "link": "https://vocabs.dariah.eu/tadirah/crowdsourcing"
+    },
+    {
+        "index": "5.2",
+        "title": "Data Cleansing",
+        "link": "https://vocabs.dariah.eu/tadirah/dataCleansing"
+    },
+    {
+        "index": "2.5.2.3",
+        "title": "Data Ingestion",
+        "link": "https://vocabs.dariah.eu/tadirah/dataIngestion"
+    },
+    {
+        "index": "7.1.3",
+        "title": "Data Ingestion",
+        "link": "https://vocabs.dariah.eu/tadirah/dataIngestion"
+    },
+    {
+        "index": "6.2.1",
+        "title": "Data Mapping",
+        "link": "https://vocabs.dariah.eu/tadirah/dataMapping"
+    },
+    {
+        "index": "2.4.1",
+        "title": "Data Mining",
+        "link": "https://vocabs.dariah.eu/tadirah/dataMining"
+    },
+    {
+        "index": "2.2",
+        "title": "Data Recognition",
+        "link": "https://vocabs.dariah.eu/tadirah/dataRecognition"
+    },
+    {
+        "index": "1.7.1",
+        "title": "Data Visualization",
+        "link": "https://vocabs.dariah.eu/tadirah/dataVisualization"
+    },
+    {
+        "index": "5.2.2",
+        "title": "Debugging",
+        "link": "https://vocabs.dariah.eu/tadirah/debugging"
+    },
+    {
+        "index": "6.3.3",
+        "title": "Defining",
+        "link": "https://vocabs.dariah.eu/tadirah/defining"
+    },
+    {
+        "index": "2.5.6.2",
+        "title": "Description",
+        "link": "https://vocabs.dariah.eu/tadirah/description"
+    },
+    {
+        "index": "7.4.2",
+        "title": "Description",
+        "link": "https://vocabs.dariah.eu/tadirah/description"
+    },
+    {
+        "index": "3.1",
+        "title": "Designing",
+        "link": "https://vocabs.dariah.eu/tadirah/designing"
+    },
+    {
+        "index": "3.1.1",
+        "title": "Diagramming",
+        "link": "https://vocabs.dariah.eu/tadirah/diagramming"
+    },
+    {
+        "index": "1.1.2.1",
+        "title": "Digital Object Identifier",
+        "link": "https://vocabs.dariah.eu/tadirah/digitalObjectIdentifier"
+    },
+    {
+        "index": "1.2.1.1",
+        "title": "Digital Object Identifier",
+        "link": "https://vocabs.dariah.eu/tadirah/digitalObjectIdentifier"
+    },
+    {
+        "index": "1.3.4.1",
+        "title": "Digital Object Identifier",
+        "link": "https://vocabs.dariah.eu/tadirah/digitalObjectIdentifier"
+    },
+    {
+        "index": "7.2.1",
+        "title": "Digital Object Identifier",
+        "link": "https://vocabs.dariah.eu/tadirah/digitalObjectIdentifier"
+    },
+    {
+        "index": "4.5.3",
+        "title": "Digital Publishing",
+        "link": "https://vocabs.dariah.eu/tadirah/digitalPublishing"
+    },
+    {
+        "index": "1.1.1",
+        "title": "Discourse Analysis",
+        "link": "https://vocabs.dariah.eu/tadirah/discourseAnalysis"
+    },
+    {
+        "index": "2.3",
+        "title": "Discovering",
+        "link": "https://vocabs.dariah.eu/tadirah/discovering"
+    },
+    {
+        "index": "4.1.1",
+        "title": "Discussing",
+        "link": "https://vocabs.dariah.eu/tadirah/discussing"
+    },
+    {
+        "index": "4",
+        "title": "Disseminating",
+        "link": "https://vocabs.dariah.eu/tadirah/disseminating"
+    },
+    {
+        "index": "1.6.4",
+        "title": "Distance Measures",
+        "link": "https://vocabs.dariah.eu/tadirah/distanceMeasures"
+    },
+    {
+        "index": "3.1.2",
+        "title": "Drawing",
+        "link": "https://vocabs.dariah.eu/tadirah/drawing"
+    },
+    {
+        "index": "4.3.2",
+        "title": "E-mailing",
+        "link": "https://vocabs.dariah.eu/tadirah/eMailing"
+    },
+    {
+        "index": "5.3",
+        "title": "Editing",
+        "link": "https://vocabs.dariah.eu/tadirah/editing"
+    },
+    {
+        "index": "2.5.6.3",
+        "title": "Emulation",
+        "link": "https://vocabs.dariah.eu/tadirah/emulation"
+    },
+    {
+        "index": "7.4.3",
+        "title": "Emulation",
+        "link": "https://vocabs.dariah.eu/tadirah/emulation"
+    },
+    {
+        "index": "2.2.1",
+        "title": "Encoding",
+        "link": "https://vocabs.dariah.eu/tadirah/encoding"
+    },
+    {
+        "index": "3.2.1",
+        "title": "Encoding",
+        "link": "https://vocabs.dariah.eu/tadirah/encoding"
+    },
+    {
+        "index": "5.1.4",
+        "title": "Encoding",
+        "link": "https://vocabs.dariah.eu/tadirah/encoding"
+    },
+    {
+        "index": "5",
+        "title": "Enriching",
+        "link": "https://vocabs.dariah.eu/tadirah/enriching"
+    },
+    {
+        "index": "6.3.4",
+        "title": "Explanation",
+        "link": "https://vocabs.dariah.eu/tadirah/explanation"
+    },
+    {
+        "index": "2.3.2",
+        "title": "Exploration",
+        "link": "https://vocabs.dariah.eu/tadirah/exploration"
+    },
+    {
+        "index": "4.2.2",
+        "title": "Expressing Opinion",
+        "link": "https://vocabs.dariah.eu/tadirah/expressingOpinion"
+    },
+    {
+        "index": "2.4",
+        "title": "Extracting",
+        "link": "https://vocabs.dariah.eu/tadirah/extracting"
+    },
+    {
+        "index": "4.1.2.1",
+        "title": "Finding",
+        "link": "https://vocabs.dariah.eu/tadirah/finding"
+    },
+    {
+        "index": "7.3.1",
+        "title": "Finding",
+        "link": "https://vocabs.dariah.eu/tadirah/finding"
+    },
+    {
+        "index": "5.3.4",
+        "title": "Formatting",
+        "link": "https://vocabs.dariah.eu/tadirah/formatting"
+    },
+    {
+        "index": "4.4.1",
+        "title": "Gamification",
+        "link": "https://vocabs.dariah.eu/tadirah/gamification"
+    },
+    {
+        "index": "2.5",
+        "title": "Gathering",
+        "link": "https://vocabs.dariah.eu/tadirah/gathering"
+    },
+    {
+        "index": "1.6.5",
+        "title": "Genre Recognition",
+        "link": "https://vocabs.dariah.eu/tadirah/genreRecognition"
+    },
+    {
+        "index": "1.4.1",
+        "title": "Georeferencing",
+        "link": "https://vocabs.dariah.eu/tadirah/georeferencing"
+    },
+    {
+        "index": "5.1.5",
+        "title": "Georeferencing",
+        "link": "https://vocabs.dariah.eu/tadirah/georeferencing"
+    },
+    {
+        "index": "3.2.2",
+        "title": "Graphics Programming",
+        "link": "https://vocabs.dariah.eu/tadirah/graphicsProgramming"
+    },
+    {
+        "index": "5.1.6",
+        "title": "Highlighting",
+        "link": "https://vocabs.dariah.eu/tadirah/highlighting"
+    },
+    {
+        "index": "1.1.2.2",
+        "title": "Identifier",
+        "link": "https://vocabs.dariah.eu/tadirah/identifier"
+    },
+    {
+        "index": "1.2.1.2",
+        "title": "Identifier",
+        "link": "https://vocabs.dariah.eu/tadirah/identifier"
+    },
+    {
+        "index": "1.3.4.2",
+        "title": "Identifier",
+        "link": "https://vocabs.dariah.eu/tadirah/identifier"
+    },
+    {
+        "index": "7.2.2",
+        "title": "Identifier",
+        "link": "https://vocabs.dariah.eu/tadirah/identifier"
+    },
+    {
+        "index": "1.1.2",
+        "title": "Identifying",
+        "link": "https://vocabs.dariah.eu/tadirah/identifying"
+    },
+    {
+        "index": "1.2.1",
+        "title": "Identifying",
+        "link": "https://vocabs.dariah.eu/tadirah/identifying"
+    },
+    {
+        "index": "1.3.4",
+        "title": "Identifying",
+        "link": "https://vocabs.dariah.eu/tadirah/identifying"
+    },
+    {
+        "index": "7.2",
+        "title": "Identifying",
+        "link": "https://vocabs.dariah.eu/tadirah/identifying"
+    },
+    {
+        "index": "2.6",
+        "title": "Imaging",
+        "link": "https://vocabs.dariah.eu/tadirah/imaging"
+    },
+    {
+        "index": "5.2.3",
+        "title": "Improving",
+        "link": "https://vocabs.dariah.eu/tadirah/improving"
+    },
+    {
+        "index": "2.4.2",
+        "title": "Information Mining",
+        "link": "https://vocabs.dariah.eu/tadirah/informationMining"
+    },
+    {
+        "index": "1.1.3",
+        "title": "Information Retrieval",
+        "link": "https://vocabs.dariah.eu/tadirah/informationRetrieval"
+    },
+    {
+        "index": "2.3.3",
+        "title": "Information Retrieval",
+        "link": "https://vocabs.dariah.eu/tadirah/informationRetrieval"
+    },
+    {
+        "index": "4.3.3",
+        "title": "Instant Messaging",
+        "link": "https://vocabs.dariah.eu/tadirah/instantMessaging"
+    },
+    {
+        "index": "4.2.1.3",
+        "title": "Integrating",
+        "link": "https://vocabs.dariah.eu/tadirah/integrating"
+    },
+    {
+        "index": "5.1.3.3",
+        "title": "Integrating",
+        "link": "https://vocabs.dariah.eu/tadirah/integrating"
+    },
+    {
+        "index": "6.1.3",
+        "title": "Integrating",
+        "link": "https://vocabs.dariah.eu/tadirah/integrating"
+    },
+    {
+        "index": "6",
+        "title": "Interpreting",
+        "link": "https://vocabs.dariah.eu/tadirah/interpreting"
+    },
+    {
+        "index": "2.4.3",
+        "title": "Knowledge Discovery",
+        "link": "https://vocabs.dariah.eu/tadirah/knowledgeDiscovery"
+    },
+    {
+        "index": "2.4.4",
+        "title": "Knowledge Extraction",
+        "link": "https://vocabs.dariah.eu/tadirah/knowledgeExtraction"
+    },
+    {
+        "index": "2.1.2",
+        "title": "Lemmatizing",
+        "link": "https://vocabs.dariah.eu/tadirah/lemmatizing"
+    },
+    {
+        "index": "3.5.1",
+        "title": "Lettering",
+        "link": "https://vocabs.dariah.eu/tadirah/lettering"
+    },
+    {
+        "index": "4.5.4",
+        "title": "Linked Open Data",
+        "link": "https://vocabs.dariah.eu/tadirah/linkedOpenData"
+    },
+    {
+        "index": "5.1.7",
+        "title": "Linked Open Data",
+        "link": "https://vocabs.dariah.eu/tadirah/linkedOpenData"
+    },
+    {
+        "index": "1.1.4",
+        "title": "Machine Learning",
+        "link": "https://vocabs.dariah.eu/tadirah/machineLearning"
+    },
+    {
+        "index": "1.3.5",
+        "title": "Machine Learning",
+        "link": "https://vocabs.dariah.eu/tadirah/machineLearning"
+    },
+    {
+        "index": "1.5.3",
+        "title": "Machine Learning",
+        "link": "https://vocabs.dariah.eu/tadirah/machineLearning"
+    },
+    {
+        "index": "1.6.6",
+        "title": "Machine Learning",
+        "link": "https://vocabs.dariah.eu/tadirah/machineLearning"
+    },
+    {
+        "index": "4.1.2.2",
+        "title": "Managing",
+        "link": "https://vocabs.dariah.eu/tadirah/managing"
+    },
+    {
+        "index": "7.3.2",
+        "title": "Managing",
+        "link": "https://vocabs.dariah.eu/tadirah/managing"
+    },
+    {
+        "index": "1.7.2",
+        "title": "Mapping",
+        "link": "https://vocabs.dariah.eu/tadirah/mapping"
+    },
+    {
+        "index": "4.2.1.4",
+        "title": "Mapping",
+        "link": "https://vocabs.dariah.eu/tadirah/mapping"
+    },
+    {
+        "index": "5.1.3.4",
+        "title": "Mapping",
+        "link": "https://vocabs.dariah.eu/tadirah/mapping"
+    },
+    {
+        "index": "6.1.4",
+        "title": "Mapping",
+        "link": "https://vocabs.dariah.eu/tadirah/mapping"
+    },
+    {
+        "index": "5.3.5",
+        "title": "Merging",
+        "link": "https://vocabs.dariah.eu/tadirah/merging"
+    },
+    {
+        "index": "4.3.4",
+        "title": "Microblogging",
+        "link": "https://vocabs.dariah.eu/tadirah/microblogging"
+    },
+    {
+        "index": "2.5.6.4",
+        "title": "Migration",
+        "link": "https://vocabs.dariah.eu/tadirah/migration"
+    },
+    {
+        "index": "7.4.4",
+        "title": "Migration",
+        "link": "https://vocabs.dariah.eu/tadirah/migration"
+    },
+    {
+        "index": "1.7.3",
+        "title": "Mind Mapping",
+        "link": "https://vocabs.dariah.eu/tadirah/mindMapping"
+    },
+    {
+        "index": "6.2",
+        "title": "Modeling",
+        "link": "https://vocabs.dariah.eu/tadirah/modeling"
+    },
+    {
+        "index": "5.3.6",
+        "title": "Modifying",
+        "link": "https://vocabs.dariah.eu/tadirah/modifying"
+    },
+    {
+        "index": "1.1.5",
+        "title": "Named Entity Recognition",
+        "link": "https://vocabs.dariah.eu/tadirah/namedEntityRecognition"
+    },
+    {
+        "index": "1.2.2",
+        "title": "Named Entity Recognition",
+        "link": "https://vocabs.dariah.eu/tadirah/namedEntityRecognition"
+    },
+    {
+        "index": "1.4.2",
+        "title": "Named Entity Recognition",
+        "link": "https://vocabs.dariah.eu/tadirah/namedEntityRecognition"
+    },
+    {
+        "index": "5.1.8",
+        "title": "Named Entity Recognition",
+        "link": "https://vocabs.dariah.eu/tadirah/namedEntityRecognition"
+    },
+    {
+        "index": "1.1.2.3",
+        "title": "Naming Convention",
+        "link": "https://vocabs.dariah.eu/tadirah/namingConvention"
+    },
+    {
+        "index": "1.2.1.3",
+        "title": "Naming Convention",
+        "link": "https://vocabs.dariah.eu/tadirah/namingConvention"
+    },
+    {
+        "index": "1.3.4.3",
+        "title": "Naming Convention",
+        "link": "https://vocabs.dariah.eu/tadirah/namingConvention"
+    },
+    {
+        "index": "7.2.3",
+        "title": "Naming Convention",
+        "link": "https://vocabs.dariah.eu/tadirah/namingConvention"
+    },
+    {
+        "index": "2.1.3",
+        "title": "Natural Language Processing",
+        "link": "https://vocabs.dariah.eu/tadirah/naturalLanguageProcessing"
+    },
+    {
+        "index": "1.2",
+        "title": "Network Analysis",
+        "link": "https://vocabs.dariah.eu/tadirah/networkAnalysis"
+    },
+    {
+        "index": "2.2.2",
+        "title": "Optical Character Recognition",
+        "link": "https://vocabs.dariah.eu/tadirah/opticalCharacterRecognition"
+    },
+    {
+        "index": "2.2.3",
+        "title": "Optical Music Recognition",
+        "link": "https://vocabs.dariah.eu/tadirah/opticalMusicRecognition"
+    },
+    {
+        "index": "4.1.2",
+        "title": "Organizing",
+        "link": "https://vocabs.dariah.eu/tadirah/organizing"
+    },
+    {
+        "index": "7.3",
+        "title": "Organizing",
+        "link": "https://vocabs.dariah.eu/tadirah/organizing"
+    },
+    {
+        "index": "1.5.4",
+        "title": "POS-Tagging",
+        "link": "https://vocabs.dariah.eu/tadirah/posTagging"
+    },
+    {
+        "index": "5.1.9",
+        "title": "POS-Tagging",
+        "link": "https://vocabs.dariah.eu/tadirah/posTagging"
+    },
+    {
+        "index": "2.1.4",
+        "title": "Parsing",
+        "link": "https://vocabs.dariah.eu/tadirah/parsing"
+    },
+    {
+        "index": "1.3.6",
+        "title": "Pattern Recognition",
+        "link": "https://vocabs.dariah.eu/tadirah/patternRecognition"
+    },
+    {
+        "index": "1.1.2.4",
+        "title": "Persistent Identifier",
+        "link": "https://vocabs.dariah.eu/tadirah/persistentIdentifier"
+    },
+    {
+        "index": "1.2.1.4",
+        "title": "Persistent Identifier",
+        "link": "https://vocabs.dariah.eu/tadirah/persistentIdentifier"
+    },
+    {
+        "index": "1.3.4.4",
+        "title": "Persistent Identifier",
+        "link": "https://vocabs.dariah.eu/tadirah/persistentIdentifier"
+    },
+    {
+        "index": "7.2.4",
+        "title": "Persistent Identifier",
+        "link": "https://vocabs.dariah.eu/tadirah/persistentIdentifier"
+    },
+    {
+        "index": "2.6.1",
+        "title": "Photographing",
+        "link": "https://vocabs.dariah.eu/tadirah/photographing"
+    },
+    {
+        "index": "1.7.4",
+        "title": "Plotting",
+        "link": "https://vocabs.dariah.eu/tadirah/plotting"
+    },
+    {
+        "index": "4.1.2.3.1",
+        "title": "Posting",
+        "link": "https://vocabs.dariah.eu/tadirah/posting"
+    },
+    {
+        "index": "4.6.1",
+        "title": "Posting",
+        "link": "https://vocabs.dariah.eu/tadirah/posting"
+    },
+    {
+        "index": "7.3.3.1",
+        "title": "Posting",
+        "link": "https://vocabs.dariah.eu/tadirah/posting"
+    },
+    {
+        "index": "2.2.4",
+        "title": "Preprocessing",
+        "link": "https://vocabs.dariah.eu/tadirah/preprocessing"
+    },
+    {
+        "index": "2.5.6.5",
+        "title": "Preservation Metadata",
+        "link": "https://vocabs.dariah.eu/tadirah/preservationMetadata"
+    },
+    {
+        "index": "7.4.5",
+        "title": "Preservation Metadata",
+        "link": "https://vocabs.dariah.eu/tadirah/preservationMetadata"
+    },
+    {
+        "index": "2.5.6",
+        "title": "Preserving",
+        "link": "https://vocabs.dariah.eu/tadirah/preserving"
+    },
+    {
+        "index": "7.4",
+        "title": "Preserving",
+        "link": "https://vocabs.dariah.eu/tadirah/preserving"
+    },
+    {
+        "index": "1.3.7",
+        "title": "Principal Component Analysis",
+        "link": "https://vocabs.dariah.eu/tadirah/principalComponentAnalysis"
+    },
+    {
+        "index": "1.6.7",
+        "title": "Principal Component Analysis",
+        "link": "https://vocabs.dariah.eu/tadirah/principalComponentAnalysis"
+    },
+    {
+        "index": "3.2",
+        "title": "Programming",
+        "link": "https://vocabs.dariah.eu/tadirah/programming"
+    },
+    {
+        "index": "3.2.3",
+        "title": "Pseudo Coding",
+        "link": "https://vocabs.dariah.eu/tadirah/pseudoCoding"
+    },
+    {
+        "index": "4.5",
+        "title": "Publishing",
+        "link": "https://vocabs.dariah.eu/tadirah/publishing"
+    },
+    {
+        "index": "2.3.4",
+        "title": "Querying",
+        "link": "https://vocabs.dariah.eu/tadirah/querying"
+    },
+    {
+        "index": "6.3.5",
+        "title": "Reasoning",
+        "link": "https://vocabs.dariah.eu/tadirah/reasoning"
+    },
+    {
+        "index": "2.7",
+        "title": "Recording",
+        "link": "https://vocabs.dariah.eu/tadirah/recording"
+    },
+    {
+        "index": "1.3",
+        "title": "Relational Analysis",
+        "link": "https://vocabs.dariah.eu/tadirah/relationalAnalysis"
+    },
+    {
+        "index": "5.2.4",
+        "title": "Removing",
+        "link": "https://vocabs.dariah.eu/tadirah/removing"
+    },
+    {
+        "index": "2.5.6.6",
+        "title": "Replication",
+        "link": "https://vocabs.dariah.eu/tadirah/replication"
+    },
+    {
+        "index": "7.4.6",
+        "title": "Replication",
+        "link": "https://vocabs.dariah.eu/tadirah/replication"
+    },
+    {
+        "index": "1.6.8",
+        "title": "Rhetorical Analysis",
+        "link": "https://vocabs.dariah.eu/tadirah/rhetoricalAnalysis"
+    },
+    {
+        "index": "2.5.2.4",
+        "title": "Scanning",
+        "link": "https://vocabs.dariah.eu/tadirah/scanning"
+    },
+    {
+        "index": "2.6.2",
+        "title": "Scanning",
+        "link": "https://vocabs.dariah.eu/tadirah/scanning"
+    },
+    {
+        "index": "7.1.4",
+        "title": "Scanning",
+        "link": "https://vocabs.dariah.eu/tadirah/scanning"
+    },
+    {
+        "index": "2.7.2",
+        "title": "Screencast",
+        "link": "https://vocabs.dariah.eu/tadirah/screencast"
+    },
+    {
+        "index": "2.3.5",
+        "title": "Searching",
+        "link": "https://vocabs.dariah.eu/tadirah/searching"
+    },
+    {
+        "index": "5.1.10",
+        "title": "Segmenting",
+        "link": "https://vocabs.dariah.eu/tadirah/segmenting"
+    },
+    {
+        "index": "4.2.1.5",
+        "title": "Semantification",
+        "link": "https://vocabs.dariah.eu/tadirah/semantification"
+    },
+    {
+        "index": "5.1.3.5",
+        "title": "Semantification",
+        "link": "https://vocabs.dariah.eu/tadirah/semantification"
+    },
+    {
+        "index": "6.1.5",
+        "title": "Semantification",
+        "link": "https://vocabs.dariah.eu/tadirah/semantification"
+    },
+    {
+        "index": "1.1.6",
+        "title": "Sentiment Analysis",
+        "link": "https://vocabs.dariah.eu/tadirah/sentimentAnalysis"
+    },
+    {
+        "index": "1.3.8",
+        "title": "Sequence Alignment",
+        "link": "https://vocabs.dariah.eu/tadirah/sequenceAlignment"
+    },
+    {
+        "index": "4.1.2.3",
+        "title": "Sharing",
+        "link": "https://vocabs.dariah.eu/tadirah/sharing"
+    },
+    {
+        "index": "4.6",
+        "title": "Sharing",
+        "link": "https://vocabs.dariah.eu/tadirah/sharing"
+    },
+    {
+        "index": "7.3.3",
+        "title": "Sharing",
+        "link": "https://vocabs.dariah.eu/tadirah/sharing"
+    },
+    {
+        "index": "4.1.3",
+        "title": "Social Networking",
+        "link": "https://vocabs.dariah.eu/tadirah/socialNetworking"
+    },
+    {
+        "index": "1.4",
+        "title": "Spatial Analysis",
+        "link": "https://vocabs.dariah.eu/tadirah/spatialAnalysis"
+    },
+    {
+        "index": "2.8.1",
+        "title": "Speech Recognizing",
+        "link": "https://vocabs.dariah.eu/tadirah/speechRecognizing"
+    },
+    {
+        "index": "7",
+        "title": "Storing",
+        "link": "https://vocabs.dariah.eu/tadirah/storing"
+    },
+    {
+        "index": "1.5",
+        "title": "Structural Analysis",
+        "link": "https://vocabs.dariah.eu/tadirah/structuralAnalysis"
+    },
+    {
+        "index": "1.6",
+        "title": "Stylistic Analysis",
+        "link": "https://vocabs.dariah.eu/tadirah/stylisticAnalysis"
+    },
+    {
+        "index": "1.3.9",
+        "title": "Stylometry",
+        "link": "https://vocabs.dariah.eu/tadirah/stylometry"
+    },
+    {
+        "index": "1.6.9",
+        "title": "Stylometry",
+        "link": "https://vocabs.dariah.eu/tadirah/stylometry"
+    },
+    {
+        "index": "5.3.7",
+        "title": "Subtracting",
+        "link": "https://vocabs.dariah.eu/tadirah/subtracting"
+    },
+    {
+        "index": "5.3.8",
+        "title": "Supplementing",
+        "link": "https://vocabs.dariah.eu/tadirah/supplementing"
+    },
+    {
+        "index": "1.1.7",
+        "title": "Tagging",
+        "link": "https://vocabs.dariah.eu/tadirah/tagging"
+    },
+    {
+        "index": "5.1.11",
+        "title": "Tagging",
+        "link": "https://vocabs.dariah.eu/tadirah/tagging"
+    },
+    {
+        "index": "4.7",
+        "title": "Teaching",
+        "link": "https://vocabs.dariah.eu/tadirah/teaching"
+    },
+    {
+        "index": "1.6.10",
+        "title": "Text Categorization",
+        "link": "https://vocabs.dariah.eu/tadirah/textCategorization"
+    },
+    {
+        "index": "4.3.5",
+        "title": "Text Messaging",
+        "link": "https://vocabs.dariah.eu/tadirah/textMessaging"
+    },
+    {
+        "index": "6.3",
+        "title": "Theorizing",
+        "link": "https://vocabs.dariah.eu/tadirah/theorizing"
+    },
+    {
+        "index": "1.1.8",
+        "title": "Topic Modeling",
+        "link": "https://vocabs.dariah.eu/tadirah/topicModeling"
+    },
+    {
+        "index": "2.1.5",
+        "title": "Transcoding",
+        "link": "https://vocabs.dariah.eu/tadirah/transcoding"
+    },
+    {
+        "index": "2.8",
+        "title": "Transcribing",
+        "link": "https://vocabs.dariah.eu/tadirah/transcribing"
+    },
+    {
+        "index": "6.2.2",
+        "title": "Transformation",
+        "link": "https://vocabs.dariah.eu/tadirah/transformation"
+    },
+    {
+        "index": "3.3",
+        "title": "Translating",
+        "link": "https://vocabs.dariah.eu/tadirah/translating"
+    },
+    {
+        "index": "1.5.5",
+        "title": "Tree-Tagging",
+        "link": "https://vocabs.dariah.eu/tadirah/treeTagging"
+    },
+    {
+        "index": "4.5.5",
+        "title": "Tweet",
+        "link": "https://vocabs.dariah.eu/tadirah/tweet"
+    },
+    {
+        "index": "1.1.2.5",
+        "title": "Uniform Resource Identifier",
+        "link": "https://vocabs.dariah.eu/tadirah/uniformResourceIdentifier"
+    },
+    {
+        "index": "1.2.1.5",
+        "title": "Uniform Resource Identifier",
+        "link": "https://vocabs.dariah.eu/tadirah/uniformResourceIdentifier"
+    },
+    {
+        "index": "1.3.4.5",
+        "title": "Uniform Resource Identifier",
+        "link": "https://vocabs.dariah.eu/tadirah/uniformResourceIdentifier"
+    },
+    {
+        "index": "7.2.5",
+        "title": "Uniform Resource Identifier",
+        "link": "https://vocabs.dariah.eu/tadirah/uniformResourceIdentifier"
+    },
+    {
+        "index": "4.1.2.3.2",
+        "title": "Upload",
+        "link": "https://vocabs.dariah.eu/tadirah/upload"
+    },
+    {
+        "index": "4.6.2",
+        "title": "Upload",
+        "link": "https://vocabs.dariah.eu/tadirah/upload"
+    },
+    {
+        "index": "7.3.3.2",
+        "title": "Upload",
+        "link": "https://vocabs.dariah.eu/tadirah/upload"
+    },
+    {
+        "index": "4.4.2",
+        "title": "User Generated Content",
+        "link": "https://vocabs.dariah.eu/tadirah/userGeneratedContent"
+    },
+    {
+        "index": "2.5.6.7",
+        "title": "Versioning",
+        "link": "https://vocabs.dariah.eu/tadirah/versioning"
+    },
+    {
+        "index": "7.4.7",
+        "title": "Versioning",
+        "link": "https://vocabs.dariah.eu/tadirah/versioning"
+    },
+    {
+        "index": "2.7.3",
+        "title": "Video Capture",
+        "link": "https://vocabs.dariah.eu/tadirah/videoCapture"
+    },
+    {
+        "index": "4.3.6",
+        "title": "Video Conference",
+        "link": "https://vocabs.dariah.eu/tadirah/videoConference"
+    },
+    {
+        "index": "5.3.9",
+        "title": "Video Editing",
+        "link": "https://vocabs.dariah.eu/tadirah/videoEditing"
+    },
+    {
+        "index": "1.7",
+        "title": "Visual Analysis",
+        "link": "https://vocabs.dariah.eu/tadirah/visualAnalysis"
+    },
+    {
+        "index": "5.1.12",
+        "title": "Visual Annotation",
+        "link": "https://vocabs.dariah.eu/tadirah/visualAnnotation"
+    },
+    {
+        "index": "2.5.7",
+        "title": "Web Crawling",
+        "link": "https://vocabs.dariah.eu/tadirah/webCrawling"
+    },
+    {
+        "index": "3.4",
+        "title": "Web Development",
+        "link": "https://vocabs.dariah.eu/tadirah/webDevelopment"
+    },
+    {
+        "index": "2.5.2.5",
+        "title": "Web Scraping",
+        "link": "https://vocabs.dariah.eu/tadirah/webScraping"
+    },
+    {
+        "index": "2.5.8",
+        "title": "Web Scraping",
+        "link": "https://vocabs.dariah.eu/tadirah/webScraping"
+    },
+    {
+        "index": "7.1.5",
+        "title": "Web Scraping",
+        "link": "https://vocabs.dariah.eu/tadirah/webScraping"
+    },
+    {
+        "index": "3.1.3",
+        "title": "Wireframing",
+        "link": "https://vocabs.dariah.eu/tadirah/wireframing"
+    },
+    {
+        "index": "3.5",
+        "title": "Writing",
+        "link": "https://vocabs.dariah.eu/tadirah/writing"
+    }
+]
