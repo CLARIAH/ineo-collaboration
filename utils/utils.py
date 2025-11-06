@@ -1,5 +1,7 @@
 import os
 import re
+import httpx
+import requests
 import logging
 from markdown_plain_text.extention import convert_to_plain_text
 
@@ -65,3 +67,46 @@ def shorten_list_or_string(long_text: str | list, limit: int | None, more_charac
     else:
         raise TypeError(f"Name field is not a string or a list: {type(long_text)} - {long_text}")
     return shortened
+
+
+def test_basex_connection(protocol: str,
+                          host: str,
+                          port: int,
+                          user: str,
+                          password: str) -> bool:
+    """
+    Tests connection to the BaseX server.
+    Returns True if connection is successful, False otherwise.
+    """
+    response = call_basex(protocol, "", host, port, user, password, action="get")
+    return 199 < response.status_code < 300
+
+
+def call_basex(protocol: str, query: str, host: str, port: int, user: str, password: str, action: str,
+               db: str = None, content_type: str = "application/json", http_caller=requests, cooldown: int = 300) -> requests.Response:
+    """
+    This function calls the basex query
+
+    query (str): The query to be executed
+    host (str): The host of the basex server
+    port (int): The port of the basex server
+    user (str): The user of the basex server
+    password (str): The password of the basex server
+
+    return (str): The response of the basex query
+    """
+    if db:
+        url: str = f"{protocol}://{user}:{password}@{host}:{port}/rest/{db}"
+    else:
+        url: str = f"{protocol}://{user}:{password}@{host}:{port}/rest"
+
+    # print(f"Executing the basex query: {query} on {url=} with {action=} ...")
+    # logger.info(f"Executing the basex query: {query} on {url=} with {action=} ...")
+    if action == "get":
+        response = http_caller.get(url, data=query, headers={"Content-Type": content_type})
+    elif action == "post":
+        response = http_caller.post(url, data=query, headers={"Content-Type": content_type})
+    else:
+        raise Exception(f"Invalid action {action}; Valid actions are 'get' and 'post'")
+
+    return response

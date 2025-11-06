@@ -32,3 +32,4 @@ test
 config.yml
 data/
 .venv/
+basex_data_volume
