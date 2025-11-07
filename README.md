@@ -16,4 +16,5 @@ File structure:
 - `registry.py`: Registry for managing plugins.
 - `step*_*.py`: Individual processing steps as modular scripts.
 - `properties/`: Directory for property definitions and mappings. The contents should be fetched from NWO. It's a TODO. 
+- `templates/`: Directory for template files used in data merging.
 

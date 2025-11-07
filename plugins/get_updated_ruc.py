@@ -7,19 +7,20 @@ from utils.utils import (get_logger, get_redis_key, set_redis_key,
 logger = get_logger(__name__, logging.INFO)
 
 
-def get_file_list(paths: list) -> dict:
+def get_file_list(paths: dict) -> dict:
     """
 
     """
     all_files = {
         # identifier: [file_path, type]
     }
-    for file_path in paths:
+    for file_path in paths.keys():
         new_files = get_files_with_postfix(file_path, ".json")
         # Check each new file against its previous version
         for file in new_files:
             identifier = get_identifier(file, ["id", "identifier"])
-            all_files[identifier] = file
+            dataset_type = paths[file_path]
+            all_files[identifier] = (file, dataset_type)
     return all_files
 
 
@@ -70,7 +71,10 @@ def get_updated_ruc(name: str, params: dict[str, str]) -> None:
     # Merge RUC datasets to updated_keys and set the path rightly
     for ruc_id, _ in updated_ruc.items():
         if ruc_id in all_files.keys():
-            updated_files[ruc_id] = (all_files[ruc_id],)
+            if ruc_id not in updated_files.keys():
+                # (f, t) in a tuple, f is the file path, t is the dataset type
+                f, t = all_files[ruc_id]
+                updated_files[ruc_id] = (f, t)
         else:
             logger.warning(f"RUC ID {ruc_id} not found in provided file paths.")
     logger.info(f"Merging {len(updated_ruc)} RUC entries into {len(updated_files)} updated_files ... {list(updated_files.items())[-1]}")
@@ -88,7 +92,8 @@ def get_updated_ruc(name: str, params: dict[str, str]) -> None:
 
 
     # # Delete to merge key after merging
-    delete_redis_key(redis_host, int(redis_port), int(redis_db), to_merge_key)
+    # delete_redis_key(redis_host, int(redis_port), int(redis_db), to_merge_key)
+
     # # Delete and update the merged key
     update_redis_key(redis_host, int(redis_port), int(redis_db), merge_with_key, updated_files)
     logger.info(f"### Finished {name}. ###")
