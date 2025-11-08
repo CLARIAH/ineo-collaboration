@@ -1,0 +1,18 @@
+let $creators :=
+    for $i in json-file("{JSONL}", 10)
+    where $i.id eq "{ID}"
+    return $i.creator
+
+let $creator :=
+    if (exists($creators[])) 
+    then 
+        for $c in $creators[]
+        return [
+            {
+                "title": $c,
+                "link": null
+            }
+        ]
+    else ()
+
+return $creator

@@ -100,6 +100,41 @@ def test_basex_connection(protocol: str,
     return 199 < response.status_code < 300
 
 
+def call_basex_with_query(query: str,
+                          protocol: str,
+                          host: str,
+                          port: int,
+                          user: str,
+                          password: str,
+                          action: str,
+                          db: str,
+                          content_type: str = "application/json",
+                          http_caller=requests
+                          ) -> requests.Response:
+    """
+    This function calls the basex query
+
+    file_path (str): The file path to the query to be executed
+    host (str): The host of the basex server
+    port (int): The port of the basex server
+    user (str): The user of the basex server
+    password (str): The password of the basex server
+
+    return (str): The response of the basex query
+    """
+    query = query.replace("<js:", "&lt;js:")
+    query = query.replace("</js:", "&lt;/js:")
+    query = """
+    <query>
+        <text>
+            {query}
+        </text>
+    </query>
+    """.format(query=query)
+    response = call_basex(protocol, query, host, port, user, password, action, db, content_type, http_caller)
+    return response
+
+
 def call_basex(protocol: str, query: str, host: str, port: int, user: str, password: str, action: str,
                db: str = None, content_type: str = "application/json", http_caller=requests,
                cooldown: int = 300) -> requests.Response:

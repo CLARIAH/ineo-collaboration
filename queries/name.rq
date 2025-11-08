@@ -1,0 +1,20 @@
+(: This query takes the value of the name field in the codemeta. Some of these values are lowercase only.  
+It first checks if there's a non-empty result. If there is, it capitalizes the first letter of the string stored in $result and returns the modified string:
+substring($result, 1, 1): Extracts the first character of $result.
+upper-case(): Converts the first character to uppercase.
+substring($result, 2): Extracts the substring starting from the second character of $result.
+concat(): Combines the uppercase first character with the rest of the string starting from the second character.
+
+If $result is empty, it returns nothing. :)
+
+let $results := (
+    for $i in json-file("{JSONL}", 10) 
+    where $i.identifier eq "{ID}" 
+    return $i.name
+)
+
+let $result := if (count($results) > 0) then $results[1] else ()
+
+return if ($result) then concat(upper-case(substring($result, 1, 1)), substring($result, 2))
+       else ()
+

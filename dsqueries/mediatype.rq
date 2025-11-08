@@ -1,0 +1,16 @@
+(: This query focuses on the "format" key of the datasets, which will be mapped to the Mediatype field in INEO. Descriptions returns a list of format (e.g. "video/x-mpeg1").
+These values are then split by the "/" delimiter, ensuring uniqueness in the format names (e.g. video, x-mpeg1"). :)
+
+
+let $descriptions := (
+    for $i in json-file("{JSONL}", 10)
+    where $i.id eq "{ID}"
+    return $i.format
+)
+
+let $splitValues :=
+  for $value in $descriptions[]
+  for $component in tokenize($value, "/")
+  return $component
+
+return [distinct-values($splitValues)]

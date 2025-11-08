@@ -1,0 +1,82 @@
+(: This query extracts and organizes maintainers' names and associated links (emails or reference links), 
+ensuring uniqueness in the title-link pairs while handling various formats of email addresses.
+It first iterates through the codemeta file and checks the structure of the "maintainer" field.
+Depending on whether the "maintainer" is an object, an array, or contains specific properties like "email" or "sameAs," 
+it constructs objects containing "title" (a combination of given and family names) and "link" (an email address or a reference link).
+It processes various scenarios for email addresses within the "maintainer" field, ensuring that links are formatted correctly as mailto: email. :)
+
+
+let $results :=
+  for $i in json-file("{JSONL}")
+  where $i.identifier eq "{ID}"
+  return
+    if ($i.maintainer instance of object) then
+      if (exists($i.maintainer."email")) then
+        if ($i.maintainer."email" instance of xs:string) then
+          {
+            "title": $i.maintainer."givenName" || " " || $i.maintainer."familyName",
+            "link": 
+              if (contains($i.maintainer."email", "mailto:")) then $i.maintainer."email"
+              else concat("mailto:", $i.maintainer."email")
+          }
+        else if ($i.maintainer."email" instance of array) then
+          {
+            "title": $i.maintainer."givenName" || " " || $i.maintainer."familyName",
+            "link": 
+              if (contains($i.maintainer."email"[[1]], "mailto:")) then $i.maintainer."email"[[1]]
+              else concat("mailto:", $i.maintainer."email"[[1]])
+          }
+          else ()
+      else if (exists($i.maintainer."sameAs")) then
+        {
+          "title": $i.maintainer."givenName" || " " || $i.maintainer."familyName",
+          "link": $i.maintainer."sameAs"
+        }
+      else if (exists($i.maintaner."@id")) then
+        {
+          "title": $i.maintainer."givenName" || " " || $i.maintainer."familyName",
+          "link": $i.maintainer."@id"
+        }
+      else
+       {
+          "title": $i.maintainer."givenName" || " " || $i.maintainer."familyName",
+          "link": ()
+        }
+
+    else if ($i.maintainer instance of array) then
+      let $contacts := $i.maintainer[]
+      for $contact in $contacts
+      return {
+        "title": $contact."givenName" || " " || $contact."familyName",
+        "link": 
+          if (exists($contact."email")) then
+            (
+              let $emails := $contact."email"
+              return
+                if (exists($emails[1])) then
+                  if ($emails[1] instance of xs:string) then
+                    if (contains($emails[1], "mailto:")) then $emails[1] else concat("mailto:", $emails[1])
+                  else ()
+                else if (exists($contact."sameAs")) then $contact."sameAs"
+                else ()
+            )
+          else if (exists($contact."sameAs")) then $contact."sameAs"
+          else ()
+      }
+    else ()
+
+let $uniqueValues :=
+  for $result in distinct-values(
+    for $r in $results
+    return fn:concat($r."title", "|", $r."link")
+  )
+  return {
+    "title": fn:substring-before($result, "|"),
+    "link": if ($result != "null") then
+              if (contains($result, "mailto:")) then fn:substring-after($result, "|")
+              else if (contains(fn:substring-after($result, "|"), "@")) then concat("mailto:", fn:substring-after($result, "|"))
+              else fn:substring-after($result, "|")
+            else ()
+  }
+
+return [$uniqueValues]

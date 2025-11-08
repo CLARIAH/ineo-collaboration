@@ -1,0 +1,16 @@
+(: This query extracts and organizes values from the "programmingLanguage" field in the codemeta.
+It creates objects with "title" representing programming language names and "link" set to null, 
+catering to different data types (string, object, array) within the codemeta field of programmingLanguage.:)
+
+
+
+
+for $i in json-file("{JSONL}", 10)
+where $i.identifier eq "{ID}"
+for $item in $i.programmingLanguage
+return if ($item instance of string) then [{"title": $i.programmingLanguage, "link": null}] 
+else if ($item instance of object) then [{"title": $i.programmingLanguage."name", "link": null}]
+else if ($item instance of array) then [
+for $l in $item[]
+return {"title": [$l."name",$l][[1]]}]
+else ()

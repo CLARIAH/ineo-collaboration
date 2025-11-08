@@ -1,0 +1,22 @@
+(: This query processes each item in the "developmentStatus" field of the codemeta.
+If developmentStatus is an object or array, it checks if the "skos:prefLabel" property is "WIP" (which is then changed to Work in Progress).
+If not, it returns an array containing the value of "skos:prefLabel".
+If the item is an array, it further processes each element in the array.
+The [[1]] is used to access the first element in the resulting array.
+If none of the conditions match, it returns nothing. :)
+
+
+
+for $i in json-file("{JSONL}", 10) 
+where $i.identifier eq "{ID}" 
+for $item in $i.developmentStatus
+return if ($item instance of object) then
+  if ($i.developmentStatus."skos:prefLabel" eq "WIP") then ["Work in Progress"]
+  else [$i.developmentStatus."skos:prefLabel"]
+else if ($item instance of array) then [
+  for $l in $item[]
+  return
+    if ($l."skos:prefLabel" eq "WIP") then ["Work in Progress"]
+    else [$l."skos:prefLabel"]
+][[1]]
+else ()

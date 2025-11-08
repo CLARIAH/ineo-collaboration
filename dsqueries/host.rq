@@ -1,0 +1,29 @@
+(: This query iterates over the urls in _landingPageRef and applies the following logic:
+it first filters out those URLs that contain the substring "handle" (e.g.  "http://hdl.handle.net"). 
+The regex then captures the part of a URL that starts with either "http://" or "https://", 
+followed by the domain (characters until the first "/"). The captured part includes both the protocol and domain, while ignoring the rest of the URL.
+(https://archive.mpi.nl/islandora/object/lat%3A1839_00_0000_0000_0008_8C94_0#" >  "https://archive.mpi.nl"). If the host contains archive.mpi the title becomes 
+"Max Planck Institute for Psycholinguistics" otherwise the title is set on the url. 
+:)
+
+
+let $urls :=
+  for $i in json-file("{JSONL}", 10)
+  where $i.id eq "{ID}"
+
+return parse-json($i."_landingPageRef"[])
+
+let $parsedUrls :=
+  for $entry in $urls
+  let $url := $entry.url
+  where not contains($url, "handle")
+  return replace($url, "^(https?://[^/]+).*", "$1")
+
+let $host :=
+for $item in $parsedUrls
+return 
+{"title": if (contains($item, "archive.mpi")) then "Max Planck Institute for Psycholinguistics" else $item, "link": $item}
+
+
+return [$host]
+

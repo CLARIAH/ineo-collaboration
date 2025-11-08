@@ -1,0 +1,32 @@
+(:
+This query maps a URL to the link field in the template for INEO. The link field maps to the "Go to resource" button in INEO.
+
+It first checks if there is a targetProduct field for WebApplication and WebSite (e.g. for mediasuite) in the codemeta.
+If there is, then it takes the url of the targetProduct as the link. So, the targetproduct url has only priority over the url root field in case the type is "WebApplication" of "Website". 
+
+If the tool is not a WebApplication or a WebSite, it checks for the 'url' root field. It checks if the value of url is an object (dictionary) 
+or a string with a 'url' property in the codemeta file.
+If there is not a url key in the codemeta (e.g. for alud) it returns the value of the codeRepository as a fallback :)
+
+
+for $i in json-file("{JSONL}", 10)
+where $i.identifier eq "{ID}"
+return
+if (exists($i.targetProduct)) then
+    if ($i.targetProduct."@type" eq "WebApplication" or $i.targetProduct."@type" eq "WebSite") then
+        if (exists($i.targetProduct.url)) then
+            $i.targetProduct.url
+        else if (exists($i.url) and $i.url instance of object and exists($i.url.url)) then
+            $i.url.url
+        else
+            $i.codeRepository
+else
+    if (exists($i.url) and $i.url instance of object and exists($i.url.url)) then
+        $i.url.url
+    else
+        $i.codeRepository
+
+else($i.codeRepository)
+
+
+

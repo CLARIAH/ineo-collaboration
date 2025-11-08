@@ -1,0 +1,10 @@
+(: Because the value in the datasets jsons are in a list, this query converts it to a string and ensures a single item in case of multiple matches :)
+
+let $name :=
+    (
+        for $i in json-file("{JSONL}", 10)
+        where $i.id eq "{ID}"
+        return $i.name
+    )[[1]]
+    
+return string($name)

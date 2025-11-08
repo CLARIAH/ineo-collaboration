@@ -1,0 +1,6 @@
+(: This query retrieves the version from the codemeta files. :)
+
+
+for $i in json-file("{JSONL}", 10) 
+where $i.identifier eq "{ID}" return 
+[{"title": $i.version, "link": null}]

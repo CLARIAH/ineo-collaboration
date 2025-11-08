@@ -1,0 +1,46 @@
+(: This query focuses on the consumed and produced data formats within the targetProduct of codemeta.
+It first checks the structure of the consumesData and producesData fields within the targetProduct.
+If these fields are arrays, it iterates through each item to extract the encodingFormat.
+If they are objects, it directly retrieves the encodingFormat.
+It constructs a list of consumed and produced data formats ($consumesFormats and $producesFormats respectively (e.g. plain/text)).
+The values are then split by the "/" delimiter, ensuring uniqueness in the format names (e.g. plain, text). :)
+
+
+
+let $results := (
+  for $i in json-file("{JSONL}", 10)
+  where $i.identifier eq "{ID}"
+
+  return
+    let $consumesFormats :=
+      if ($i.targetProduct.consumesData instance of array) then
+        for $data in $i.targetProduct.consumesData[]
+        return
+            $data.encodingFormat
+      else if ($i.targetProduct.consumesData instance of object) then
+        $i.targetProduct.consumesData.encodingFormat
+      else
+        ()
+    
+
+
+let $producesFormats :=
+      if ($i.targetProduct.producesData instance of array) then
+        for $data in $i.targetProduct.producesData[]
+        return
+            $data.encodingFormat
+      else if ($i.targetProduct.producesData instance of object) then
+        $i.targetProduct.producesData.encodingFormat
+      else
+        ()
+    return ($consumesFormats, $producesFormats)
+)
+
+
+
+let $splitValues :=
+  for $value in $results
+  for $component in tokenize($value, "/")
+  return $component
+
+return [distinct-values($splitValues)]
