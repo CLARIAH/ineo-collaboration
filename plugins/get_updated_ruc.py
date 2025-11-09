@@ -77,6 +77,9 @@ def get_updated_ruc(name: str, params: dict[str, str]) -> None:
                 updated_files[ruc_id] = (f, t)
         else:
             logger.warning(f"RUC ID {ruc_id} not found in provided file paths.")
+    if len(updated_ruc) == 0:
+        logger.info("No RUC entries to merge.")
+        return
     logger.info(f"Merging {len(updated_ruc)} RUC entries into {len(updated_files)} updated_files ... {list(updated_files.items())[-1]}")
 
 
