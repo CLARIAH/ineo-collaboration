@@ -1,8 +1,0 @@
-(: This query filters resources where the reviewRating is equal or more than 3, 
-and returns the identifier field from the filtered resources. :)
-
-
-for $i in json-file("{JSONL}",10)
-where $i.review.reviewRating ge 3
-return $i.identifier
-        
