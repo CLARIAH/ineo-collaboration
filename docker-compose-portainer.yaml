@@ -9,8 +9,8 @@ volumes:
     driver: local
 
 services:
-  ineo-run:
-    image: registry.diginfra.net/tsd/ineo-sync:latest
+  ineo-sync:
+    image: registry.diginfra.net/tsd/ineo-sync:0.8
     container_name: ineo-sync
     volumes:
       - ineo-sync-data:/src/data
@@ -27,3 +27,12 @@ services:
       - ./basex_data:/basex/dbdata
     networks:
         - traefik-public
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - traefik-public
