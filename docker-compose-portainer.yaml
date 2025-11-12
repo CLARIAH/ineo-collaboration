@@ -13,7 +13,7 @@ services:
     image: registry.diginfra.net/tsd/ineo-sync:0.8
     container_name: ineo-sync
     volumes:
-      - ineo-sync-data:/src/data
+      - ineo-sync-data:/app/data
     restart: unless-stopped
     networks:
       - traefik-public
