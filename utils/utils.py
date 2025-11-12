@@ -155,7 +155,7 @@ def call_basex(protocol: str, query: str, host: str, port: int, user: str, passw
         url: str = f"{protocol}://{user}:{password}@{host}:{port}/rest"
 
     # print(f"Executing the basex query: {query} on {url=} with {action=} ...")
-    # logger.info(f"Executing the basex query: {query} on {url=} with {action=} ...")
+    logger.debug(f"Executing the basex query: {query} on {url=} with {action=} ...")
     if action == "get":
         response = http_caller.get(url, data=query, headers={"Content-Type": content_type})
     elif action == "post":

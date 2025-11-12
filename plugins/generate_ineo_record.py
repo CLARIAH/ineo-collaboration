@@ -516,10 +516,9 @@ def process_record(args):
     with open(filename, 'w') as file:
         json.dump(processed_results, file, indent=2)
 
-
+# single thread version
 def generate_ineo_record(name: str, params: dict[str, str]) -> None:
     logger.info(f"### Starting {name}... ###")
-    # logger.info(f"Parameters: {params}")
     logger.info(f"Parameters: {json.dumps(params, indent=2)}")
 
     redis_host = params.get("redis_host", None)
@@ -535,7 +534,6 @@ def generate_ineo_record(name: str, params: dict[str, str]) -> None:
     properties_path = params.get("properties_path", None)
     datasets = params.get("datasets", {})
 
-    # Fetch updated files from Redis
     updated_files = get_redis_key(redis_host, int(redis_port), int(redis_db), redis_key)
     logger.info(f"Fetched {len(updated_files)} updated files from Redis.")
 
@@ -558,12 +556,115 @@ def generate_ineo_record(name: str, params: dict[str, str]) -> None:
     logger.info(f"Creating output folder")
     create_output_folder(datasets)
 
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        args_list = [
-            (k, v, datasets, ruc_path, basex_protocol, basex_host, basex_port, basex_user, basex_password,
-             properties_path)
-            for k, v in updated_files.items()
-        ]
-        list(tqdm(executor.map(process_record, args_list), total=len(args_list)))
+    args_list = [
+        (k, v, datasets, ruc_path, basex_protocol, basex_host, basex_port, basex_user, basex_password, properties_path)
+        for k, v in updated_files.items()
+    ]
+    for args in tqdm(args_list, total=len(args_list)):
+        process_record(args)
 
     logger.info(f"### Finished {name}. ###")
+
+
+# multi processing version
+# def generate_ineo_record(name: str, params: dict[str, str]) -> None:
+#     logger.info(f"### Starting {name}... ###")
+#     logger.info(f"Parameters: {json.dumps(params, indent=2)}")
+#
+#     redis_host = params.get("redis_host", None)
+#     redis_port = params.get("redis_port", None)
+#     redis_db = params.get("redis_db", None)
+#     redis_key = params.get("redis_key", None)
+#     basex_protocol = params.get("basex_protocol", None)
+#     basex_host = params.get("basex_host", None)
+#     basex_port = params.get("basex_port", None)
+#     basex_user = params.get("basex_user", None)
+#     basex_password = params.get("basex_password", None)
+#     ruc_path = params.get("ruc_path", None)
+#     properties_path = params.get("properties_path", None)
+#     datasets = params.get("datasets", {})
+#
+#     updated_files = get_redis_key(redis_host, int(redis_port), int(redis_db), redis_key)
+#     logger.info(f"Fetched {len(updated_files)} updated files from Redis.")
+#
+#     counters = {}
+#     for identifier, file_info in list(updated_files.items()):
+#         if len(file_info) == 2:
+#             file_path = file_info[0]
+#             file_type = file_info[1]
+#         else:
+#             logger.warning(f"Unexpected file info format for {identifier}: {file_info}")
+#             continue
+#
+#         if file_type not in counters:
+#             counters[file_type] = 1
+#         else:
+#             counters[file_type] += 1
+#
+#     logger.info(f"Records to update: {json.dumps(counters, indent=2)}")
+#
+#     logger.info(f"Creating output folder")
+#     create_output_folder(datasets)
+#
+#     with concurrent.futures.ProcessPoolExecutor() as executor:
+#         args_list = [
+#             (k, v, datasets, ruc_path, basex_protocol, basex_host, basex_port, basex_user, basex_password,
+#              properties_path)
+#             for k, v in updated_files.items()
+#         ]
+#         list(tqdm(executor.map(process_record, args_list), total=len(args_list)))
+#
+#     logger.info(f"### Finished {name}. ###")
+
+
+# multi threading version
+# def generate_ineo_record(name: str, params: dict[str, str]) -> None:
+#     logger.info(f"### Starting {name}... ###")
+#     # logger.info(f"Parameters: {params}")
+#     logger.info(f"Parameters: {json.dumps(params, indent=2)}")
+#
+#     redis_host = params.get("redis_host", None)
+#     redis_port = params.get("redis_port", None)
+#     redis_db = params.get("redis_db", None)
+#     redis_key = params.get("redis_key", None)
+#     basex_protocol = params.get("basex_protocol", None)
+#     basex_host = params.get("basex_host", None)
+#     basex_port = params.get("basex_port", None)
+#     basex_user = params.get("basex_user", None)
+#     basex_password = params.get("basex_password", None)
+#     ruc_path = params.get("ruc_path", None)
+#     properties_path = params.get("properties_path", None)
+#     datasets = params.get("datasets", {})
+#
+#     # Fetch updated files from Redis
+#     updated_files = get_redis_key(redis_host, int(redis_port), int(redis_db), redis_key)
+#     logger.info(f"Fetched {len(updated_files)} updated files from Redis.")
+#
+#     counters = {}
+#     for identifier, file_info in list(updated_files.items()):
+#         if len(file_info) == 2:
+#             file_path = file_info[0]
+#             file_type = file_info[1]
+#         else:
+#             logger.warning(f"Unexpected file info format for {identifier}: {file_info}")
+#             continue
+#
+#         if file_type not in counters:
+#             counters[file_type] = 1
+#         else:
+#             counters[file_type] += 1
+#
+#     logger.info(f"Records to update: {json.dumps(counters, indent=2)}")
+#
+#     logger.info(f"Creating output folder")
+#     create_output_folder(datasets)
+#
+#     with concurrent.futures.ThreadPoolExecutor() as executor:
+#         args_list = [
+#             (k, v, datasets, ruc_path, basex_protocol, basex_host, basex_port, basex_user, basex_password,
+#              properties_path)
+#             for k, v in updated_files.items()
+#         ]
+#         list(tqdm(executor.map(process_record, args_list), total=len(args_list)))
+#
+#     logger.info(f"### Finished {name}. ###")
