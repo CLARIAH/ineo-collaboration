@@ -4,15 +4,15 @@ networks:
 
 
 services:
-#  python-run:
-#    build: .
-#    image: ineo-sync:latest
-#    container_name: ineo-sync
-#    volumes:
-#      - ./:/src
-#    restart: unless-stopped
-#    networks:
-#      - traefik-public
+  ineo-sync:
+#    image: registry.diginfra.net/tsd/ineo-sync:0.8
+    image: ineo-sync:test
+    container_name: ineo-sync
+    volumes:
+      - ./:/app
+    restart: unless-stopped
+    networks:
+      - traefik-public
 
   basex:
     image: registry.diginfra.net/tsd/basex:latest
