@@ -1,29 +1,39 @@
 # ineo-collaboration
-This project serves as a tool to gather, process, and synchronize metadata from different sources (tools codemeta, 
+
+This project serves as a tool to gather, process, and synchronize metadata from different sources (tools codemeta,
 VLO datasets, SD Editor and so on) and Rich User Content (RUC) files.
 
+### Current version
+
+`0.8` is the current version of the scripts and Docker image.
+For example, the docker image is labeled as `registry.diginfra.net/tsd/ineo-sync:0.8`.
+
 ### File structure:
+
 - `utils/`: Utility functions for data processing and API interactions.
 - `plugins/`: Contains source-specific harvesting and processing plugins.
 - `config.yml`: Configuration file for the project.
 - `main.py`: Main script to run the data processing and synchronization.
 - `registry.py`: Registry for managing plugins.
 - `step*_*.py`: Individual processing steps as modular scripts.
-- `properties/`: Directory for property definitions and mappings. The contents should be fetched from NWO. It's a TODO. 
+- `properties/`: Directory for property definitions and mappings. The contents should be fetched from [url place](url). It's a TODO.
 - `templates/`: Directory for template files used in data merging.
 - `dsqueries/`: Directory containing basex queries for generating INEO record from datasets.
 - `queries/`: Directory containing basex queries for generating INEO record from tools_metadata files.
 
-
 ### Prerequisites
+
 - `docker compose up -d` to start the required services (e.g., basex, redis)
 
 ### How to build and run
+
 1. `docker build -t ineo-sync .` to build the Docker image for current architecture.
-2. `docker buildx build --platform linux/amd64,linux/arm64 -t ineo-sync:latest --push .` to build and push multi-architecture image.
-3. `docker run -v $(pwd)/config.yml:/app/config.yml ineo-sync` to run the container with the configuration file.
+2. `docker buildx build --platform linux/amd64,linux/arm64 -t ineo-sync:latest --push .` to build and push
+   multi-architecture image.
+3. `docker exec -it ineo-sync uv run main.py` to run the container with the configuration file.
 
 ### Configuration examples
+
 ```yaml
 pipeline:
   - name: "Harvest VLO Data"
@@ -72,7 +82,7 @@ pipeline:
   - name: "Fetch property"
     description: "Dummy placeholder for fetch property plugin, properties are existing files, should be fetched in the future"
     plugin: fetch_property
-    config: {}
+    config: { }
   - name: "Get updated files"
     description: "Get and store IDs and file paths of updated files in Redis"
     plugin: get_updated_files
