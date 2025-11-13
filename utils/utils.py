@@ -166,6 +166,18 @@ def call_basex(protocol: str, query: str, host: str, port: int, user: str, passw
     return response
 
 
+def clean_folder(folder_path: str) -> None:
+    """
+    remove all files in the given folder by deleting and recreating the folder
+    """
+    try:
+        shutil.rmtree(folder_path, ignore_errors=True)
+        os.makedirs(folder_path)
+        logger.info(f"Cleaned folder: {folder_path}")
+    except Exception as e:
+        logger.error(f"Failed to clean folder {folder_path}: {e}")
+
+
 def backup_files(source_directory: str, backup_directory: str) -> None:
     """
     Make a backup copy of the previously downloaded JSON files.

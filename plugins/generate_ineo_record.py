@@ -5,7 +5,7 @@ import logging
 import concurrent.futures
 from tqdm import tqdm
 # local imports
-from utils.utils import get_logger, get_redis_key, call_basex_with_query
+from utils.utils import get_logger, get_redis_key, call_basex_with_query, backup_files, clean_folder
 
 logger = get_logger(__name__, logging.INFO)
 
@@ -463,11 +463,19 @@ def traverse_data(template, ruc, template_type: str, current_id: str, basex_info
     return res
 
 
-def create_output_folder(datasets: dict[str, dict[str, str]]) -> None:
+def prepare_output_folders(datasets: dict[str, dict[str, str]]) -> None:
     for dataset_type, dataset_info in datasets.items():
         output_folder = dataset_info.get("output_folder", None)
-        if output_folder is not None:
-            os.makedirs(output_folder, exist_ok=True)
+        backup_folder = dataset_info.get("backup_folder", None)
+
+        if output_folder is not None and backup_folder is not None:
+            # remove existing backup folder and recreate it
+            clean_folder(backup_folder)
+            # make backup of existing files
+            backup_files(output_folder, backup_folder)
+            # remove existing output folder and recreate it
+            clean_folder(output_folder)
+
             logger.info(f"Created output folder: {output_folder}")
         else:
             logger.error(f"No output folder specified for dataset type: {dataset_type}")
@@ -553,8 +561,8 @@ def generate_ineo_record(name: str, params: dict[str, str]) -> None:
 
     logger.info(f"Records to update: {json.dumps(counters, indent=2)}")
 
-    logger.info(f"Creating output folder")
-    create_output_folder(datasets)
+    logger.info(f"Creating output folder and make backup of existing files")
+    prepare_output_folders(datasets)
 
     args_list = [
         (k, v, datasets, ruc_path, basex_protocol, basex_host, basex_port, basex_user, basex_password, properties_path)
