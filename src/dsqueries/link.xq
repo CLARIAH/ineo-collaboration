@@ -15,7 +15,7 @@ let $resourceRef :=
 let $landingPageRef :=
   (for $i in js:map
     where $i/js:string[@key='id']=$ID
-    let $landingPageRef := $i/js:*[@key="_landingPageRef"][1]
+    let $landingPageRef := $i/js:*[@key="_landingPageRef","_resourceRef"][1]
     return if (exists($landingPageRef)) then parse-json($landingPageRef)('url') else ()
   )
 
