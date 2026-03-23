@@ -10,7 +10,7 @@ volumes:
 
 services:
   ineo-sync:
-    image: registry.diginfra.net/tsd/ineo-sync:test
+    image: registry.diginfra.net/tsd/ineo-sync:0.8
     container_name: ineo-sync
     volumes:
       - ineo-sync-data:/app/data
