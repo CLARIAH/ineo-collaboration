@@ -167,10 +167,10 @@ def ingest_ineo_records(name: str, config: dict[str, Any]) -> None:
         # Test connection
         manager.client.info()
         auth_status = "with authentication" if use_auth else "without authentication"
-        print(f"✓ Connected to Elasticsearch at {es_scheme}://{es_host}:{es_port} {auth_status}")
+        logger.info(f"✓ Connected to Elasticsearch at {es_scheme}://{es_host}:{es_port} {auth_status}")
     except Exception as e:
-        print(f"✗ Failed to connect to Elasticsearch: {e}")
-        print(
+        logger.error(f"✗ Failed to connect to Elasticsearch: {e}")
+        logger.error(
             f"  Config: scheme={es_scheme}, host={es_host}, port={es_port}, auth={'enabled' if use_auth else 'disabled'}")
         sys.exit(1)
 
