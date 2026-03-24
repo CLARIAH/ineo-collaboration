@@ -7,7 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "aiofiles>=25.1.0",
     "bs4>=0.0.2",
-    "elasticsearch>=9.3.0",
+    "elasticsearch<9",
     "httpx>=0.28.1",
     "markdown>=3.10",
     "plain-text-markdown-extention",
