@@ -73,9 +73,10 @@ def get_function_with_config_by_name(plugins_runnables: dict, name: str) -> tupl
         plugin_display_name = name
         plugin_name = plugin.get("plugin", None)
         config = plugin.get("config", None)
+        active = plugin.get("active", False)
         func = plugin.get("func", None)
         logger.debug(f"Retrieved plugin '{plugin_display_name}' with config: {config}")
-        return config, func, plugin_display_name, plugin_name
+        return config, active, func, plugin_display_name, plugin_name
     else:
         logger.error(f"Plugin with name '{name}' not found. {plugins_runnables}")
     return None
@@ -90,9 +91,10 @@ def main(config_path: str):
     logger.info("##### Starting pipeline execution #####")
     for step in steps:
         logger.debug(f"### Current step: {step} ###")
-        config, func, display_name, plugin_name = get_function_with_config_by_name(steps, step)
+        config, active, func, display_name, plugin_name = get_function_with_config_by_name(steps, step)
         logger.debug(f"Running plugin {display_name}:{plugin_name} with config: {config}")
-        if func:
+        if func and active:
+            logger.info(f"### Plugin {display_name}:{plugin_name} is active and running... ###")
             func(display_name, config)
     logger.info("##### Pipeline execution completed #####")
 
