@@ -54,6 +54,7 @@ def load_plugins(plugins: list) -> dict[str, str | Callable]:
             func = getattr(module, plugin.get("plugin", None))
             results[plugin.get("name")] = {"plugin": plugin.get("plugin", None),
                                            "config": plugin.get("config", None),
+                                           "active": plugin.get("active", None),
                                            "func": func}
         except (ModuleNotFoundError, AttributeError) as e:
             logger.error(f"Error loading plugin '{plugin}': {e}")
