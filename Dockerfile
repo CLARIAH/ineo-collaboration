@@ -5,7 +5,8 @@ RUN apk add --no-cache \
     bash \
     curl \
     git \
-    wget
+    wget \
+    vim
 
 ADD . /app
 WORKDIR /app
