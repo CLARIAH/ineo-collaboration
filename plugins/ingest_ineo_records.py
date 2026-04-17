@@ -165,7 +165,7 @@ def ingest_ineo_records(name: str, config: dict[str, Any]) -> None:
             verify_certs=False
         )
         # Test connection
-        manager.client.info()
+        manager.client.search(index=es_index, size=0, body={"query": {"match_all": {}}})
         auth_status = "with authentication" if use_auth else "without authentication"
         logger.info(f"✓ Connected to Elasticsearch at {es_scheme}://{es_host}:{es_port} {auth_status}")
     except Exception as e:
