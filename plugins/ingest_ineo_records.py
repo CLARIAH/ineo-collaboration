@@ -133,7 +133,7 @@ def processDir(data_path):
 
 def ingest_ineo_records(name: str, config: dict[str, Any]) -> None:
     logger.info(f"### Starting {name}... ###")
-    logger.info(f"Parameters: {json.dumps(config, indent=2)}")
+    logger.debug(f"Parameters: {json.dumps(config, indent=2)}")
 
     properties = load_properties(config.get("properties_path", "properties"))
 
