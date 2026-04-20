@@ -1,5 +1,5 @@
-(: This query focuses on the consumed and produced data formats within the targetProduct of codemeta.
-It first checks the structure of the consumesData and producesData fields within the targetProduct.
+(: This query focuses on the consumed and produced data formats within the isSourceCodeOf of codemeta.
+It first checks the structure of the consumesData and producesData fields within the isSourceCodeOf.
 If these fields are arrays, it iterates through each item to extract the encodingFormat.
 If they are objects, it directly retrieves the encodingFormat.
 It constructs a list of consumed and produced data formats ($consumesFormats and $producesFormats respectively (e.g. plain/text)).
@@ -13,24 +13,24 @@ let $results := (
 
   return
     let $consumesFormats :=
-      if ($i.targetProduct.consumesData instance of array) then
-        for $data in $i.targetProduct.consumesData[]
+      if ($i.isSourceCodeOf.consumesData instance of array) then
+        for $data in $i.isSourceCodeOf.consumesData[]
         return
             $data.encodingFormat
-      else if ($i.targetProduct.consumesData instance of object) then
-        $i.targetProduct.consumesData.encodingFormat
+      else if ($i.isSourceCodeOf.consumesData instance of object) then
+        $i.isSourceCodeOf.consumesData.encodingFormat
       else
         ()
     
 
 
 let $producesFormats :=
-      if ($i.targetProduct.producesData instance of array) then
-        for $data in $i.targetProduct.producesData[]
+      if ($i.isSourceCodeOf.producesData instance of array) then
+        for $data in $i.isSourceCodeOf.producesData[]
         return
             $data.encodingFormat
-      else if ($i.targetProduct.producesData instance of object) then
-        $i.targetProduct.producesData.encodingFormat
+      else if ($i.isSourceCodeOf.producesData instance of object) then
+        $i.isSourceCodeOf.producesData.encodingFormat
       else
         ()
     return ($consumesFormats, $producesFormats)

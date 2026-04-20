@@ -1,4 +1,4 @@
-(: This script focuses on extracting provider names and associated URLs from the "targetProduct" field, 
+(: This script focuses on extracting provider names and associated URLs from the "isSourceCodeOf" field, 
 ensuring that for arrays of names, it selects the English name with the respective URL. :)
 
 
@@ -7,12 +7,12 @@ let $results := (
   for $i in json-file("{JSONL}", 10) 
   where $i.identifier eq "{ID}"
   return
-  if ($i.targetProduct.provider.name instance of string) 
-  then [{"title": $i.targetProduct.provider.name, "link": $i.targetProduct.provider.url}]
+  if ($i.isSourceCodeOf.provider.name instance of string) 
+  then [{"title": $i.isSourceCodeOf.provider.name, "link": $i.isSourceCodeOf.provider.url}]
   else [
-    for $name in $i.targetProduct.provider.name[]
+    for $name in $i.isSourceCodeOf.provider.name[]
     where $name."@language" eq "en"
-    return {"title": $name."@value", "link": $i.targetProduct.provider.url}
+    return {"title": $name."@value", "link": $i.isSourceCodeOf.provider.url}
   ]
 )
 
