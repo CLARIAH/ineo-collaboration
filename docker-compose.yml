@@ -6,7 +6,8 @@ networks:
 services:
   ineo-sync:
 #    image: registry.diginfra.net/tsd/ineo-sync:0.8
-    image: ineo-sync:test
+    #image: ineo-sync:test
+    image: registry.diginfra.net/tsd/ineo-sync:test
     container_name: ineo-sync
     volumes:
       - ./:/app
