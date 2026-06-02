@@ -5,19 +5,13 @@ declare namespace js="http://www.w3.org/2005/xpath-functions";
 
 let $ID:="{ID}"
 
-
 let $descriptions := (
     for $i in js:map
     where $i/js:string[@key='id']=$ID
-    return $i/js:*[@key='format']
+    return $i/js:array[@key='format']/js:string
 )
 
-let $splitValues :=
-  for $value in $descriptions
-  for $component in tokenize($value, "/")
-  return $component
-
-let $distinct-results := distinct-values($splitValues)
+let $distinct-results := distinct-values($descriptions)
 return
 if (empty($distinct-results)) then ""
 else

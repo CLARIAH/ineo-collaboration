@@ -38,12 +38,13 @@ let $results := (
 )
 
 
-let $splitValues :=
+(:let $splitValues :=
   for $value in $results
   for $component in tokenize($value, "/")
   return $component
+:)
 
-let $distinct-results := distinct-values($splitValues)
+let $distinct-results := distinct-values($results)
 return
 if (empty($distinct-results)) then ""
 else
