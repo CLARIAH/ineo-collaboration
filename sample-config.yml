@@ -1,0 +1,17 @@
+pipeline:
+  - name: "Harvest VLO Data"
+    description: "Harvest data from VLO"
+    plugin: harvest_vlo
+    config:
+      vlo_url: value1
+      vlo_token: value2
+      vlo_user: value3
+      vlo_password: value4
+  - name: "Harvest codemeta"
+    description: "Harvest codemeta"
+    plugin: harvest_codemeta
+    config:
+      vlo_url: value5
+      vlo_token: value6
+      vlo_user: value7
+      vlo_password: value8

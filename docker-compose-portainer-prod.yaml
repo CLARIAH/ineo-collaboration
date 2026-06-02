@@ -1,0 +1,38 @@
+version: "3"
+
+networks:
+  traefik-public:
+    external: true
+
+volumes:
+  ineo-sync-data:
+    driver: local
+
+services:
+  ineo-sync:
+    image: registry.diginfra.net/tsd/ineo-sync:0.9
+    container_name: ineo-sync
+    volumes:
+      - ineo-sync-data:/app/data
+    restart: unless-stopped
+    networks:
+      - traefik-public
+
+  basex:
+    image: registry.diginfra.net/tsd/basex:latest
+    container_name: basex
+    restart: unless-stopped
+    volumes:
+      - ineo-sync-data:/data
+      - ./basex_data:/basex/dbdata
+    networks:
+        - traefik-public
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - traefik-public

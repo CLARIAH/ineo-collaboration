@@ -9,11 +9,30 @@ volumes:
     driver: local
 
 services:
-  ineo-run:
-    image: registry.diginfra.net/tsd/ineo-sync:latest
+  ineo-service:
+    image: ghcr.io/knaw-huc/ineo_service:0.5
+    container_name: service
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.service.rule=Host(`ineo-service.sd.di.huc.knaw.nl`)"
+      - "traefik.http.routers.service.entrypoints=http"
+      - "traefik.http.services.service.loadbalancer.server.port=8000"
+    networks:
+      - traefik-public
+    environment:
+      ELASTICSEARCH_SCHEME: ${ELASTICSEARCH_SCHEME}
+      ELASTICSEARCH_HOST: ${ELASTICSEARCH_HOST}
+      ELASTICSEARCH_PORT: ${ELASTICSEARCH_PORT}
+      ELASTICSEARCH_INDEX: ${ELASTICSEARCH_INDEX}
+      ELASTICSEARCH_USERNAME: ${ELASTICSEARCH_USERNAME}
+      ELASTICSEARCH_PASSWORD: ${ELASTICSEARCH_PASSWORD}
+      FRONTEND_HOST: ${FRONTEND_HOST}
+  ineo-sync:
+    image: registry.diginfra.net/tsd/ineo-sync:0.9
     container_name: ineo-sync
     volumes:
-      - ineo-sync-data:/src/data
+      - ineo-sync-data:/app/data
     restart: unless-stopped
     networks:
       - traefik-public
@@ -27,3 +46,12 @@ services:
       - ./basex_data:/basex/dbdata
     networks:
         - traefik-public
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - traefik-public

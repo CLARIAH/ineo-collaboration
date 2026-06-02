@@ -1,0 +1,21 @@
+[project]
+name = "ineo-collaboration"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aiofiles>=25.1.0",
+    "bs4>=0.0.2",
+    "elasticsearch<9",
+    "httpx>=0.28.1",
+    "markdown>=3.10",
+    "plain-text-markdown-extention",
+    "pyyaml>=6.0.3",
+    "redis>=7.0.1",
+    "requests[socks]>=2.32.5",
+    "tqdm>=4.67.1",
+]
+
+[tool.uv.sources]
+plain-text-markdown-extention = { git = "https://github.com/kostyachum/python-markdown-plain-text.git" }
