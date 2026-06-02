@@ -46,7 +46,7 @@
                 "intro": "<md:description,null",
                 "researchActivities": "<md:@queries/activities.xq,null",
                 "researchDomains": "<md:@queries/domains.xq:researchDomains,null",
-                "mediaTypes": "<md:@queries/mediatype.xq:mediaTypes,null",
+                "mediaTypes": "<md:@queries/mediatype.xq,null",
                 "provenance": [],
                 "community": "<md:@queries/issuetracker.xq,null",
                 "development": "<md:@queries/author.xq,null"

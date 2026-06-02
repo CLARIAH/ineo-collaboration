@@ -40,7 +40,7 @@
                 "intro": "<md:@dsqueries/description.xq,null",
                 "researchActivities": [],
                 "researchDomains": "<md:subject,null",
-                "mediaTypes": "<md:@dsqueries/mediatype.xq:mediaTypes,null",
+                "mediaTypes": "<md:@dsqueries/mediatype.xq,null",
                 "provenance": [],
                 "community": [],
                 "development": "<md:@dsqueries/creator.xq,null"
