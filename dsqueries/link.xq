@@ -9,15 +9,18 @@ let $ID:="{ID}"
 let $resourceRef :=
     (for $i in js:map
     where $i/js:string[@key='id']=$ID
-   return $i/js:*[@key="_resourceRef"])
+    return $i/js:array[@key="_resourceRef"]/js:string)
 
 
 let $landingPageRef :=
   (for $i in js:map
     where $i/js:string[@key='id']=$ID
-    (:let $landingPageRef := $i/js:*[@key=("_landingPageRef","_resourceRef")][1]:)
     let $first := $i/js:*[@key="_landingPageRef" or @key="_resourceRef"][1]
-    return if (exists($first)) then parse-json($first)('url') else ()
+    return if (exists($first)) then
+      try {
+        parse-json($first)('url')
+      } catch * { () }
+    else ()
   )
 
 let $parsed :=
@@ -34,7 +37,7 @@ let $parsed :=
 let $selflink :=
   (for $i in js:map
     where $i/js:string[@key='id']=$ID
-   return $i/js:*[@key="_selfLink"])
+   return $i/js:string[@key="_selfLink"])
 
 return
 xml-to-json(
