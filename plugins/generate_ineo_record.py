@@ -22,7 +22,8 @@ def process_vocabs(vocabs, vocab, val):
 
     It merges the index number and title of the properties in the format {index + title} "7.23 plain"
     """
-
+    if vocab.lower() == "mediatypes":
+        return f"{val}"
     # Check if the 'properties' key of e.g. MediaType is present in the properties
     if vocab in vocabs:
         # Iterate through the 'mediaTypes' list
