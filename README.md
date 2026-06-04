@@ -3,6 +3,9 @@
 This project serves as a tool to gather, process, and synchronize metadata from different sources (tools codemeta,
 VLO datasets, SD Editor and so on) and Rich User Content (RUC) files.
 
+## NOTE: 
+`docker-compose-portainer.yaml` is the production yaml while `docker-compose-portainer-prod.yaml` is for testing on dev server. 
+
 ### Current version
 
 `0.8` is the current version of the scripts and Docker image.
