@@ -12,12 +12,13 @@ let $descriptions := (
 )
 
 let $distinct-results := distinct-values($descriptions)
+let $filtered-results := $distinct-results[. != "unknown type"]
 return
-if (empty($distinct-results)) then ""
+if (empty($filtered-results)) then ""
 else
 xml-to-json(
   <js:array>{
-    for $item in $distinct-results
+    for $item in $filtered-results
     return
     <js:string>{$item}</js:string>
   }</js:array>
